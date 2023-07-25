@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 double defaultRadius = 12.0;
-double defaultMargin = 36.0;
+double defaultMargin = 16.0;
 
 Color neutral50 = const Color(0xffFAFAFF);
 Color neutral100 = const Color(0xffEEF0F2);
@@ -46,7 +46,7 @@ TextStyle header3 = GoogleFonts.montserrat(
 );
 TextStyle body = GoogleFonts.montserrat(
   color: textDarkColor,
-  fontSize: 12,
+  fontSize: 16,
   fontWeight: regular,
 );
 TextStyle buttonText = GoogleFonts.montserrat(

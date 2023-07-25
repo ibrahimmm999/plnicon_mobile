@@ -34,8 +34,8 @@ class LoginPage extends StatelessWidget {
                     "Login",
                     style: header1.copyWith(color: primaryBlue),
                   ),
-                  SizedBox(
-                    height: defaultMargin,
+                  const SizedBox(
+                    height: 36,
                   ),
                   TextInput(
                     controller: usernameController,

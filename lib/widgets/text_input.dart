@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import '../theme/theme.dart';
 
@@ -22,6 +23,8 @@ class _TextInputState extends State<TextInput> {
   Widget build(BuildContext context) {
     return TextFormField(
       obscureText: widget.isPassword ? isObscure : false,
+      style: GoogleFonts.montserrat(
+          color: textDarkColor, fontSize: 16, fontWeight: medium),
       controller: widget.controller,
       decoration: InputDecoration(
         suffixIcon: Visibility(
@@ -32,8 +35,10 @@ class _TextInputState extends State<TextInput> {
                     isObscure = !isObscure;
                   });
                 },
-                child:
-                    Icon(isObscure ? Icons.visibility : Icons.visibility_off))),
+                child: Icon(
+                  (isObscure ? Icons.visibility : Icons.visibility_off),
+                  color: primaryBlue,
+                ))),
         border: InputBorder.none,
         contentPadding:
             const EdgeInsets.symmetric(vertical: 12, horizontal: 16),

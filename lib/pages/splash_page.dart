@@ -29,7 +29,7 @@ class _SplashPageState extends State<SplashPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Padding(
-        padding: EdgeInsets.all(defaultMargin),
+        padding: const EdgeInsets.all(36),
         child: Center(
             child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
