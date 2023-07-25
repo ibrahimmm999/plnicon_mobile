@@ -8,6 +8,7 @@ Color neutral50 = const Color(0xffFAFAFF);
 Color neutral100 = const Color(0xffEEF0F2);
 Color neutral300 = const Color(0xffECEBE4);
 Color neutral500 = const Color(0xffDADDD8);
+Color neutral600 = const Color(0xff6B6B6B);
 Color neutral700 = const Color(0xff1C1C1C);
 
 Color textDarkColor = const Color(0xff031B34);
