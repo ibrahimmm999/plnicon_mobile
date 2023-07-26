@@ -4,6 +4,7 @@ import 'package:plnicon_mobile/pages/main_page.dart';
 import 'package:plnicon_mobile/theme/theme.dart';
 import 'package:plnicon_mobile/widgets/custom_appbar.dart';
 import 'package:plnicon_mobile/widgets/custom_button.dart';
+import 'package:plnicon_mobile/widgets/custom_dropdown.dart';
 import 'package:plnicon_mobile/widgets/text_input.dart';
 
 class ACPage extends StatefulWidget {
@@ -16,7 +17,6 @@ class ACPage extends StatefulWidget {
 class _ACPageState extends State<ACPage> {
   @override
   Widget build(BuildContext context) {
-    String? selectedItem;
     List<String> listHasilPengujian = ["Ok", "B aja", "Buruk"];
     TextEditingController suhuController = TextEditingController();
     TextEditingController temuanController = TextEditingController();
@@ -54,36 +54,7 @@ class _ACPageState extends State<ACPage> {
               "Hasil Pengujian",
               style: buttonText.copyWith(color: textDarkColor),
             ),
-            DropdownButtonFormField(
-              alignment: Alignment.centerLeft,
-              style: buttonText.copyWith(color: textDarkColor),
-              borderRadius: BorderRadius.circular(defaultRadius),
-              decoration: InputDecoration(
-                contentPadding: EdgeInsets.all(defaultRadius),
-                hintText: "-",
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(defaultRadius),
-                  borderSide: BorderSide(width: 2, color: primaryBlue),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(defaultRadius),
-                  borderSide: BorderSide(width: 2, color: neutral500),
-                ),
-                hintStyle: buttonText.copyWith(color: textDarkColor),
-              ),
-              items: listHasilPengujian
-                  .map((e) => DropdownMenuItem(
-                        value: e,
-                        child: Text(
-                          e,
-                        ),
-                      ))
-                  .toList(),
-              value: selectedItem,
-              onChanged: (value) {
-                selectedItem = value;
-              },
-            ),
+            CustomDropDown(list: listHasilPengujian),
             const SizedBox(
               height: 20,
             ),
