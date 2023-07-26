@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:plnicon_mobile/pages/home_page.dart';
+import 'package:plnicon_mobile/pages/main_page.dart';
 import 'package:plnicon_mobile/theme/theme.dart';
 import 'package:plnicon_mobile/widgets/custom_button.dart';
 import 'package:plnicon_mobile/widgets/text_input.dart';
@@ -59,7 +59,7 @@ class LoginPage extends StatelessWidget {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => const HomePage()));
+                                builder: (context) => const MainPage()));
                       },
                       color: primaryBlue,
                       clickColor: clickBlue)

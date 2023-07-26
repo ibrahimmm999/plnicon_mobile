@@ -1,6 +1,6 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:plnicon_mobile/pages/ac_page.dart';
 import 'package:plnicon_mobile/theme/theme.dart';
 import 'package:plnicon_mobile/widgets/workorder_card.dart';
 
@@ -17,30 +17,6 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     List listpm = ["Rutin", "Incidental", "Improvement"];
-
-    PreferredSizeWidget header() {
-      return AppBar(
-        leadingWidth: double.infinity,
-        leading: Padding(
-          padding: EdgeInsets.symmetric(horizontal: defaultMargin, vertical: 8),
-          child:
-              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-            Image.asset("assets/logo.png"),
-            Text(
-              "Icon Plus",
-              style: GoogleFonts.montserrat(fontSize: 20, color: textDarkColor),
-            ),
-            InkWell(
-              onTap: () {},
-              child: const Icon(
-                Icons.notifications,
-                size: 28,
-              ),
-            )
-          ]),
-        ),
-      );
-    }
 
     Widget cardPM(String type) {
       return Container(
@@ -142,7 +118,7 @@ class _HomePageState extends State<HomePage> {
                   enlargeCenterPage: true,
                   autoPlay: true,
                   autoPlayAnimationDuration: const Duration(seconds: 2),
-                  autoPlayInterval: const Duration(seconds: 10),
+                  autoPlayInterval: const Duration(seconds: 6),
                   aspectRatio: 2.6,
                   onPageChanged: (index, reason) {
                     setState(() {
@@ -153,8 +129,7 @@ class _HomePageState extends State<HomePage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: listpm.asMap().entries.map((e) {
-                return InkWell(
-                  radius: 360,
+                return GestureDetector(
                   onTap: () => _controller.animateToPage(e.key),
                   child: Container(
                     width: 12,
@@ -163,7 +138,7 @@ class _HomePageState extends State<HomePage> {
                     decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         color: primaryBlue
-                            .withOpacity(_current == e.key ? 0.9 : 0.4)),
+                            .withOpacity(_current == e.key ? 1 : 0.3)),
                   ),
                 );
               }).toList(),
@@ -178,7 +153,8 @@ class _HomePageState extends State<HomePage> {
         children: [
           carousel(),
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: defaultMargin),
+            padding: EdgeInsets.only(
+                left: defaultMargin, right: defaultMargin, bottom: 140),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -189,9 +165,23 @@ class _HomePageState extends State<HomePage> {
                 const SizedBox(
                   height: 16,
                 ),
-                WorkOrderCard(),
-                WorkOrderCard(),
-                WorkOrderCard(),
+                WorkOrderCard(
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const ACPage()));
+                  },
+                ),
+                WorkOrderCard(
+                  onTap: () {},
+                ),
+                WorkOrderCard(
+                  onTap: () {},
+                ),
+                WorkOrderCard(
+                  onTap: () {},
+                ),
               ],
             ),
           )
@@ -201,7 +191,6 @@ class _HomePageState extends State<HomePage> {
 
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: header(),
       body: content(),
     );
   }
