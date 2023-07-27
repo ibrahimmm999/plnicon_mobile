@@ -1,6 +1,9 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:plnicon_mobile/pages/ac_page.dart';
+import 'package:plnicon_mobile/pages/environment_page.dart';
+import 'package:plnicon_mobile/pages/inverter_page.dart';
+import 'package:plnicon_mobile/pages/kwh_page.dart';
 import 'package:plnicon_mobile/theme/theme.dart';
 import 'package:plnicon_mobile/widgets/workorder_card.dart';
 
@@ -174,13 +177,28 @@ class _HomePageState extends State<HomePage> {
                   },
                 ),
                 WorkOrderCard(
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const KWHPage()));
+                  },
                 ),
                 WorkOrderCard(
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const EnvironmentPage()));
+                  },
                 ),
                 WorkOrderCard(
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const InverterPage()));
+                  },
                 ),
               ],
             ),

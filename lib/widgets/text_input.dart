@@ -9,6 +9,7 @@ class TextInput extends StatefulWidget {
       required this.controller,
       this.placeholder = "",
       this.label = "",
+      this.suffixText = "",
       this.isLongText = false,
       this.isPassword = false});
   final TextEditingController controller;
@@ -16,6 +17,7 @@ class TextInput extends StatefulWidget {
   final String label;
   final bool isPassword;
   final bool isLongText;
+  final String suffixText;
 
   @override
   State<TextInput> createState() => _TextInputState();
@@ -41,18 +43,28 @@ class _TextInputState extends State<TextInput> {
               color: textDarkColor, fontSize: 16, fontWeight: medium),
           controller: widget.controller,
           decoration: InputDecoration(
-            suffixIcon: Visibility(
-                visible: widget.isPassword,
-                child: InkWell(
-                    onTap: () {
-                      setState(() {
-                        isObscure = !isObscure;
-                      });
-                    },
-                    child: Icon(
-                      (isObscure ? Icons.visibility : Icons.visibility_off),
-                      color: primaryBlue,
-                    ))),
+            suffixIcon: widget.suffixText.isNotEmpty
+                ? Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        widget.suffixText,
+                        style: buttonText.copyWith(color: textDarkColor),
+                      ),
+                    ],
+                  )
+                : Visibility(
+                    visible: widget.isPassword,
+                    child: InkWell(
+                        onTap: () {
+                          setState(() {
+                            isObscure = !isObscure;
+                          });
+                        },
+                        child: Icon(
+                          (isObscure ? Icons.visibility : Icons.visibility_off),
+                          color: primaryBlue,
+                        ))),
             border: InputBorder.none,
             contentPadding:
                 const EdgeInsets.symmetric(vertical: 12, horizontal: 16),

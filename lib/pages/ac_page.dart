@@ -5,6 +5,7 @@ import 'package:plnicon_mobile/theme/theme.dart';
 import 'package:plnicon_mobile/widgets/custom_appbar.dart';
 import 'package:plnicon_mobile/widgets/custom_button.dart';
 import 'package:plnicon_mobile/widgets/custom_dropdown.dart';
+import 'package:plnicon_mobile/widgets/input_dokumentasi.dart';
 import 'package:plnicon_mobile/widgets/text_input.dart';
 
 class ACPage extends StatefulWidget {
@@ -58,26 +59,7 @@ class _ACPageState extends State<ACPage> {
             const SizedBox(
               height: 20,
             ),
-            Text(
-              "Dokumentasi",
-              style: buttonText.copyWith(color: textDarkColor),
-            ),
-            Container(
-              width: double.infinity,
-              padding: EdgeInsets.all(defaultMargin),
-              decoration: BoxDecoration(
-                color: primaryBlue,
-                borderRadius: BorderRadius.circular(defaultRadius),
-              ),
-              child: Row(
-                children: [
-                  Text(
-                    "Tambahkan dokumentasi",
-                    style: buttonText,
-                  )
-                ],
-              ),
-            ),
+            const InputDokumentasi(),
             const SizedBox(
               height: 20,
             ),

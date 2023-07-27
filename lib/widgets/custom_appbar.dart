@@ -11,6 +11,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     return isMainPage
         ? AppBar(
+            backgroundColor: primaryBlue,
             leadingWidth: double.infinity,
             leading: Padding(
               padding:
@@ -36,6 +37,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
             ),
           )
         : AppBar(
+            backgroundColor: primaryBlue,
             title: Center(
               child: Container(
                 margin: const EdgeInsets.only(right: 60),
