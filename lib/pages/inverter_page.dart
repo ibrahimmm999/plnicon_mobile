@@ -4,6 +4,7 @@ import 'package:plnicon_mobile/theme/theme.dart';
 import 'package:plnicon_mobile/widgets/custom_appbar.dart';
 import 'package:plnicon_mobile/widgets/custom_button.dart';
 import 'package:plnicon_mobile/widgets/custom_dropdown.dart';
+import 'package:plnicon_mobile/widgets/input_dokumentasi.dart';
 import 'package:plnicon_mobile/widgets/text_input.dart';
 
 class InverterPage extends StatelessWidget {
@@ -76,6 +77,10 @@ class InverterPage extends StatelessWidget {
             style: buttonText.copyWith(color: textDarkColor),
           ),
           const CustomDropDown(list: ["OK", "Not OK"]),
+          const SizedBox(
+            height: 20,
+          ),
+          const InputDokumentasi(),
           const SizedBox(
             height: 20,
           ),
