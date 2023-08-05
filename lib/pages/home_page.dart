@@ -1,6 +1,8 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:plnicon_mobile/providers/user_provider.dart';
 import 'package:plnicon_mobile/theme/theme.dart';
+import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -14,6 +16,7 @@ class _HomePageState extends State<HomePage> {
   final CarouselController _controller = CarouselController();
   @override
   Widget build(BuildContext context) {
+    UserProvider userProvider = Provider.of(context);
     List listpm = ["Rutin", "Incidental", "Improvement"];
 
     Widget cardPM(String type) {
@@ -99,7 +102,7 @@ class _HomePageState extends State<HomePage> {
             Padding(
               padding: EdgeInsets.only(left: defaultMargin, bottom: 18),
               child: Text(
-                "Budiman",
+                userProvider.user.nama,
                 style: header2.copyWith(color: primaryYellow),
               ),
             ),
