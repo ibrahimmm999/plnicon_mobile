@@ -2,8 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:plnicon_mobile/theme/theme.dart';
 
 class WorkOrderCard extends StatelessWidget {
-  const WorkOrderCard({super.key, required this.onTap});
+  const WorkOrderCard({
+    super.key,
+    required this.onTap,
+    required this.nama,
+    required this.popKode,
+    required this.tanggal,
+    required this.detail,
+  });
   final Function() onTap;
+  final String nama;
+  final String popKode;
+  final String tanggal;
+  final String detail;
 
   @override
   Widget build(BuildContext context) {
@@ -26,19 +37,19 @@ class WorkOrderCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              "POP Cawang GI Shelter",
+              nama,
               style: header3,
             ),
             Text(
-              "1234567",
+              popKode,
               style: body,
             ),
             Text(
-              "dd-mm-yyyy",
+              tanggal,
               style: body,
             ),
             Text(
-              "Requirements: AC, Recti",
+              "Requirements: $detail",
               style: body,
             ),
           ],

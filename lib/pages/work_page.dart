@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:plnicon_mobile/pages/pm_detail_page.dart';
 import 'package:plnicon_mobile/providers/page_provider.dart';
+import 'package:plnicon_mobile/providers/pm_provider.dart';
 import 'package:plnicon_mobile/theme/theme.dart';
 import 'package:plnicon_mobile/widgets/workorder_card.dart';
 import 'package:provider/provider.dart';
@@ -11,6 +12,7 @@ class WorkPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     PageProvider pageProvider = Provider.of<PageProvider>(context);
+    PmProvider pmProvider = Provider.of<PmProvider>(context);
     Widget switchContent() {
       return SizedBox(
         width: MediaQuery.sizeOf(context).width,
@@ -37,54 +39,47 @@ class WorkPage extends StatelessWidget {
         case 0:
           return Expanded(
             child: ListView(
-              children: [
-                WorkOrderCard(
+              children: pmProvider.listPm
+                  .where((element) => element.status == "PLAN")
+                  .map((pm) {
+                return WorkOrderCard(
                   onTap: () {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
                             builder: (context) => const PMDetailPage()));
                   },
-                ),
-                WorkOrderCard(
-                  onTap: () {},
-                ),
-              ],
+                  nama: pm.pop.nama,
+                  popKode: pm.pop.popKode,
+                  tanggal: pm.plan.toString(),
+                  detail: pm.detailPm,
+                );
+              }).toList(),
             ),
           );
         case 1:
           return Expanded(
             child: ListView(
-              children: [
-                WorkOrderCard(
+              children: pmProvider.listPm
+                  .where((element) => element.status == "REALISASI")
+                  .map((pm) {
+                return WorkOrderCard(
                   onTap: () {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
                             builder: (context) => const PMDetailPage()));
                   },
-                ),
-              ],
+                  nama: pm.pop.nama,
+                  popKode: pm.pop.popKode,
+                  tanggal: pm.plan.toString(),
+                  detail: pm.detailPm,
+                );
+              }).toList(),
             ),
           );
         default:
-          return Expanded(
-            child: ListView(
-              children: [
-                WorkOrderCard(
-                  onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const PMDetailPage()));
-                  },
-                ),
-                WorkOrderCard(
-                  onTap: () {},
-                ),
-              ],
-            ),
-          );
+          return const SizedBox();
       }
     }
 
