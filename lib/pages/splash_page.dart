@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plnicon_mobile/providers/pm_provider.dart';
 import 'package:plnicon_mobile/theme/theme.dart';
 import 'package:provider/provider.dart';
 
@@ -23,12 +24,16 @@ class _SplashPageState extends State<SplashPage> {
     final navigator = Navigator.of(context);
     UserProvider userProvider =
         Provider.of<UserProvider>(context, listen: false);
+    PmProvider pmProvider = Provider.of<PmProvider>(context, listen: false);
     final String? token = await UserService().getTokenPreference();
 
     if (token == null) {
       await navigator.pushNamedAndRemoveUntil('/log-in', (route) => false);
     } else {
       if (await userProvider.getUser(token: token)) {
+        // Get Data User
+        await pmProvider.getDataPm(token: token);
+
         await navigator.pushNamedAndRemoveUntil('/main', (route) => false);
       } else {
         await navigator.pushNamedAndRemoveUntil('/log-in', (route) => false);

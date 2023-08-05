@@ -1,5 +1,6 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:plnicon_mobile/providers/pm_provider.dart';
 import 'package:plnicon_mobile/providers/user_provider.dart';
 import 'package:plnicon_mobile/theme/theme.dart';
 import 'package:provider/provider.dart';
@@ -16,10 +17,11 @@ class _HomePageState extends State<HomePage> {
   final CarouselController _controller = CarouselController();
   @override
   Widget build(BuildContext context) {
-    UserProvider userProvider = Provider.of(context);
+    UserProvider userProvider = Provider.of<UserProvider>(context);
+    PmProvider pmProvider = Provider.of<PmProvider>(context);
     List listpm = ["Rutin", "Incidental", "Improvement"];
 
-    Widget cardPM(String type) {
+    Widget cardPM(String type, int total, int jumlah) {
       return Container(
         margin: const EdgeInsets.symmetric(horizontal: 12),
         padding: const EdgeInsets.all(16),
@@ -47,7 +49,7 @@ class _HomePageState extends State<HomePage> {
                   width: 6,
                 ),
                 Text(
-                  "123 PM Terjadwal",
+                  "$total PM Terjadwal",
                   style: body,
                 )
               ],
@@ -74,7 +76,7 @@ class _HomePageState extends State<HomePage> {
                       style: header3,
                     ),
                     Text(
-                      "2 PM Terjadwal",
+                      "$jumlah PM Terjadwal",
                       style: body,
                     )
                   ],
@@ -107,12 +109,22 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
             CarouselSlider(
-                items: listpm
-                    .map((e) => Container(
-                        margin: const EdgeInsets.only(
-                            bottom: 8, left: 12, right: 12),
-                        child: cardPM(e)))
-                    .toList(),
+                items: listpm.map(
+                  (tipe) {
+                    var hitung = 0;
+                    for (var pm in pmProvider.listPm) {
+                      if (tipe.toLowerCase() == pm.kategori.toLowerCase()) {
+                        hitung++;
+                      }
+                    }
+
+                    return Container(
+                      margin:
+                          const EdgeInsets.only(bottom: 8, left: 12, right: 12),
+                      child: cardPM(tipe, pmProvider.listPm.length, hitung),
+                    );
+                  },
+                ).toList(),
                 carouselController: _controller,
                 options: CarouselOptions(
                   viewportFraction: 1,
@@ -150,6 +162,13 @@ class _HomePageState extends State<HomePage> {
     }
 
     Widget content() {
+      int realisasi = 0;
+      for (var pm in pmProvider.listPm) {
+        if (pm.status == "REALISASI") {
+          realisasi++;
+        }
+      }
+
       return ListView(
         children: [
           carousel(),
@@ -166,7 +185,7 @@ class _HomePageState extends State<HomePage> {
                 const SizedBox(
                   height: 16,
                 ),
-                Text("10 dari 14 PM Selesai"),
+                Text("$realisasi dari ${pmProvider.listPm.length} PM Selesai"),
               ],
             ),
           )
