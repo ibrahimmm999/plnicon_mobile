@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:plnicon_mobile/providers/page_provider.dart';
+import 'package:plnicon_mobile/providers/pm_provider.dart';
 import 'package:plnicon_mobile/providers/user_provider.dart';
 import 'package:plnicon_mobile/theme/theme.dart';
 import 'package:plnicon_mobile/widgets/custom_button.dart';
@@ -20,6 +21,7 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     UserProvider userProvider = Provider.of<UserProvider>(context);
+    PmProvider pmProvider = Provider.of<PmProvider>(context);
     PageProvider pageProvider = Provider.of<PageProvider>(context);
 
     TextEditingController usernameController = TextEditingController();
@@ -35,8 +37,25 @@ class _LoginPageState extends State<LoginPage> {
       if (await userProvider.login(
           username: usernameController.text,
           password: passwordController.text)) {
-        pageProvider.setPage = 0;
-        navigator.pushNamedAndRemoveUntil('/main', (route) => false);
+        if (userProvider.user.role == "FieldSupport" ||
+            userProvider.user.role == "Engineer") {
+          // Get User Data
+          await pmProvider.getDataPm(token: userProvider.user.token);
+
+          pageProvider.setPage = 0;
+          navigator.pushNamedAndRemoveUntil('/main', (route) => false);
+        } else {
+          scaffoldMessenger.removeCurrentSnackBar();
+          scaffoldMessenger.showSnackBar(
+            SnackBar(
+              backgroundColor: primaryRed,
+              content: const Text(
+                "Role Anda tidak sesuai",
+                textAlign: TextAlign.center,
+              ),
+            ),
+          );
+        }
       } else {
         scaffoldMessenger.removeCurrentSnackBar();
         scaffoldMessenger.showSnackBar(

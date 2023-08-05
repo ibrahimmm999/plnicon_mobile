@@ -22,7 +22,7 @@ class ImagesProvider extends ChangeNotifier {
   Future<bool> pickImage() async {
     try {
       final pickedImage =
-          await ImagePicker().pickImage(source: ImageSource.gallery);
+          await ImagePicker().pickImage(source: ImageSource.camera);
       _imageFile = pickedImage != null ? File(pickedImage.path) : null;
       notifyListeners();
       return true;
