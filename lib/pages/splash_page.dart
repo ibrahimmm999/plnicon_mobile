@@ -1,8 +1,9 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
-import 'package:plnicon_mobile/pages/login_page.dart';
 import 'package:plnicon_mobile/theme/theme.dart';
+import 'package:provider/provider.dart';
+
+import '../providers/user_provider.dart';
+import '../services/user_service.dart';
 
 class SplashPage extends StatefulWidget {
   const SplashPage({super.key});
@@ -19,10 +20,20 @@ class _SplashPageState extends State<SplashPage> {
   }
 
   getinit() async {
-    Timer(const Duration(seconds: 2), () {
-      Navigator.push(
-          context, MaterialPageRoute(builder: (context) => const LoginPage()));
-    });
+    final navigator = Navigator.of(context);
+    UserProvider userProvider =
+        Provider.of<UserProvider>(context, listen: false);
+    final String? token = await UserService().getTokenPreference();
+
+    if (token == null) {
+      await navigator.pushNamedAndRemoveUntil('/log-in', (route) => false);
+    } else {
+      if (await userProvider.getUser(token: token)) {
+        await navigator.pushNamedAndRemoveUntil('/main', (route) => false);
+      } else {
+        await navigator.pushNamedAndRemoveUntil('/log-in', (route) => false);
+      }
+    }
   }
 
   @override
