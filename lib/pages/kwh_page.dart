@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:plnicon_mobile/pages/main_page.dart';
 import 'package:plnicon_mobile/providers/images_provider.dart';
@@ -17,17 +15,7 @@ class KWHPage extends StatefulWidget {
   State<KWHPage> createState() => _KWHPageState();
 }
 
-String contentPath = '';
-File? contentFile;
-
 class _KWHPageState extends State<KWHPage> {
-  @override
-  void initState() {
-    super.initState();
-    contentPath = '';
-    contentFile = null;
-  }
-
   @override
   Widget build(BuildContext context) {
     TextEditingController loadR = TextEditingController();
@@ -36,21 +24,10 @@ class _KWHPageState extends State<KWHPage> {
     TextEditingController teganganR = TextEditingController();
     TextEditingController teganganS = TextEditingController();
     TextEditingController teganganT = TextEditingController();
+    TextEditingController deskripsiController = TextEditingController();
     TextEditingController temuanController = TextEditingController();
     TextEditingController rekomendasiController = TextEditingController();
     ImagesProvider imagesProvider = Provider.of<ImagesProvider>(context);
-
-    Future<void> handlePicker() async {
-      imagesProvider.setCroppedImageFile = null;
-      await imagesProvider.pickImage();
-      await imagesProvider.cropImage(imageFile: imagesProvider.imageFile);
-      setState(() {
-        if (imagesProvider.croppedImagePath.isNotEmpty) {
-          contentPath = imagesProvider.croppedImagePath;
-          contentFile = imagesProvider.croppedImageFile;
-        }
-      });
-    }
 
     Widget input() {
       return Column(
@@ -129,10 +106,6 @@ class _KWHPageState extends State<KWHPage> {
           const SizedBox(
             height: 20,
           ),
-          const InputDokumentasi(),
-          const SizedBox(
-            height: 20,
-          ),
           TextInput(
             controller: temuanController,
             label: "Temuan",
@@ -166,46 +139,18 @@ class _KWHPageState extends State<KWHPage> {
       );
     }
 
-    Widget dokumentasi() {
-      return Column(
-        children: [
-          Container(
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(defaultRadius),
-                border: Border.all(
-                  width: 2,
-                  color: neutral500,
-                )),
-            height: 280,
-            width: double.infinity,
-            child: ListView(
-              scrollDirection: Axis.horizontal,
-              children: imagesProvider.listImage
-                  .map((e) => Container(
-                        decoration: BoxDecoration(
-                            image: DecorationImage(image: FileImage(e))),
-                        height: 240,
-                        width: 240,
-                      ))
-                  .toList(),
-            ),
-          ),
-          ElevatedButton(
-              onPressed: () async {
-                await handlePicker();
-              },
-              child: Text("Dokumentasi"))
-        ],
-      );
-    }
-
     return Scaffold(
       appBar: const CustomAppBar(isMainPage: false, title: "KWH"),
       backgroundColor: Colors.white,
       body: ListView(
           padding:
               EdgeInsets.symmetric(horizontal: defaultMargin, vertical: 20),
-          children: [dokumentasi(), input()]),
+          children: [
+            InputDokumentasi(
+                imagesProvider: imagesProvider,
+                controller: deskripsiController),
+            imagesProvider.listImage.length >= 2 ? input() : const SizedBox()
+          ]),
     );
   }
 }

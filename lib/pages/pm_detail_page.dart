@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:plnicon_mobile/pages/ac_page.dart';
-import 'package:plnicon_mobile/pages/baterai_page.dart';
 import 'package:plnicon_mobile/pages/kwh_page.dart';
-import 'package:plnicon_mobile/pages/recti_page.dart';
 import 'package:plnicon_mobile/providers/page_provider.dart';
 import 'package:plnicon_mobile/theme/theme.dart';
 import 'package:plnicon_mobile/widgets/custom_appbar.dart';
@@ -21,11 +18,11 @@ class PMDetailPage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             HomePageNav(
-                title: 'Master',
+                title: 'Data Teknis',
                 index: 0,
                 width: MediaQuery.sizeOf(context).width * 0.5),
             HomePageNav(
-                title: 'Transactional',
+                title: 'Hasil Ukur/Uji',
                 index: 1,
                 width: MediaQuery.sizeOf(context).width * 0.5),
           ],

@@ -4,7 +4,6 @@ import 'package:plnicon_mobile/theme/theme.dart';
 import 'package:plnicon_mobile/widgets/custom_appbar.dart';
 import 'package:plnicon_mobile/widgets/custom_button.dart';
 import 'package:plnicon_mobile/widgets/custom_dropdown.dart';
-import 'package:plnicon_mobile/widgets/input_dokumentasi.dart';
 import 'package:plnicon_mobile/widgets/text_input.dart';
 
 class EnvironmentPage extends StatelessWidget {
@@ -71,10 +70,6 @@ class EnvironmentPage extends StatelessWidget {
             label: "Kesehatan Bangunan",
             placeholder: "Kesehatan Bangunan",
           ),
-          const SizedBox(
-            height: 20,
-          ),
-          const InputDokumentasi(),
           const SizedBox(
             height: 20,
           ),

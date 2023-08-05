@@ -1,15 +1,11 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:plnicon_mobile/pages/main_page.dart';
-import 'package:plnicon_mobile/providers/images_provider.dart';
 import 'package:plnicon_mobile/theme/theme.dart';
 import 'package:plnicon_mobile/widgets/custom_appbar.dart';
 import 'package:plnicon_mobile/widgets/custom_button.dart';
 import 'package:plnicon_mobile/widgets/custom_dropdown.dart';
 import 'package:plnicon_mobile/widgets/text_input.dart';
-import 'package:provider/provider.dart';
 
 class ACPage extends StatefulWidget {
   const ACPage({super.key});
