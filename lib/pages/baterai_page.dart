@@ -4,6 +4,7 @@ import 'package:plnicon_mobile/theme/theme.dart';
 import 'package:plnicon_mobile/widgets/custom_appbar.dart';
 import 'package:plnicon_mobile/widgets/custom_button.dart';
 import 'package:plnicon_mobile/widgets/custom_dropdown.dart';
+import 'package:plnicon_mobile/widgets/input_dokumentasi.dart';
 import 'package:plnicon_mobile/widgets/text_input.dart';
 
 class BateraiPage extends StatelessWidget {
@@ -19,6 +20,7 @@ class BateraiPage extends StatelessWidget {
     TextEditingController vController = TextEditingController();
     TextEditingController temuanController = TextEditingController();
     TextEditingController rekomendasiController = TextEditingController();
+    TextEditingController deskripsiController = TextEditingController();
     return Scaffold(
       appBar: const CustomAppBar(
         isMainPage: false,
@@ -27,6 +29,8 @@ class BateraiPage extends StatelessWidget {
       body: ListView(
         padding: EdgeInsets.symmetric(horizontal: defaultMargin, vertical: 20),
         children: [
+          InputDokumentasi(
+              controller: deskripsiController, pageName: "baterai"),
           TextInput(
             controller: namaController,
             label: "Nama Baterai",

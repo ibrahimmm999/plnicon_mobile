@@ -37,40 +37,11 @@ class _RectiPageState extends State<RectiPage> {
     TextEditingController rekomendasiController = TextEditingController();
     ImagesProvider imagesProvider = Provider.of<ImagesProvider>(context);
 
-    Future<void> handlePicker() async {
-      imagesProvider.setCroppedImageFile = null;
-      await imagesProvider.pickImage();
-      await imagesProvider.cropImage(imageFile: imagesProvider.imageFile);
-      setState(() {
-        if (imagesProvider.croppedImagePath.isNotEmpty) {
-          contentPath = imagesProvider.croppedImagePath;
-          contentFile = imagesProvider.croppedImageFile;
-        }
-      });
-    }
-
     return Scaffold(
       appBar: const CustomAppBar(isMainPage: false, title: "RECTIFIER"),
       body: ListView(
         padding: EdgeInsets.symmetric(horizontal: defaultMargin, vertical: 20),
         children: [
-          contentFile != null
-              ? Image.file(
-                  contentFile!,
-                  height: 240,
-                  width: 240,
-                  fit: BoxFit.cover,
-                )
-              : GestureDetector(
-                  onTap: () async {
-                    await handlePicker();
-                  },
-                  child: Container(
-                    height: 240,
-                    width: 240,
-                    color: const Color.fromARGB(255, 223, 223, 223),
-                  ),
-                ),
           TextInput(
             controller: loadrController,
             label: "Load R",

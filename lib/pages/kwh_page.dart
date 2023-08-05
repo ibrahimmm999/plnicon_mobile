@@ -1,33 +1,42 @@
 import 'package:flutter/material.dart';
 import 'package:plnicon_mobile/pages/main_page.dart';
-import 'package:plnicon_mobile/providers/images_provider.dart';
 import 'package:plnicon_mobile/theme/theme.dart';
 import 'package:plnicon_mobile/widgets/custom_appbar.dart';
 import 'package:plnicon_mobile/widgets/custom_button.dart';
 import 'package:plnicon_mobile/widgets/input_dokumentasi.dart';
 import 'package:plnicon_mobile/widgets/text_input.dart';
-import 'package:provider/provider.dart';
 
-class KWHPage extends StatefulWidget {
+class KWHPage extends StatelessWidget {
   const KWHPage({super.key});
 
   @override
-  State<KWHPage> createState() => _KWHPageState();
-}
-
-class _KWHPageState extends State<KWHPage> {
-  @override
   Widget build(BuildContext context) {
-    TextEditingController loadR = TextEditingController();
-    TextEditingController loadS = TextEditingController();
-    TextEditingController loadT = TextEditingController();
-    TextEditingController teganganR = TextEditingController();
-    TextEditingController teganganS = TextEditingController();
-    TextEditingController teganganT = TextEditingController();
+    List<String> inputFoto = [
+      "Foto panel keseluruhan",
+      "Load R",
+      "Load S",
+      "Load T",
+      "Tegangan R",
+      "Tegangan S",
+      "Tegangan T"
+    ];
     TextEditingController deskripsiController = TextEditingController();
+
+    TextEditingController loadR = TextEditingController();
+
+    TextEditingController loadS = TextEditingController();
+
+    TextEditingController loadT = TextEditingController();
+
+    TextEditingController teganganR = TextEditingController();
+
+    TextEditingController teganganS = TextEditingController();
+
+    TextEditingController teganganT = TextEditingController();
+
     TextEditingController temuanController = TextEditingController();
+
     TextEditingController rekomendasiController = TextEditingController();
-    ImagesProvider imagesProvider = Provider.of<ImagesProvider>(context);
 
     Widget input() {
       return Column(
@@ -147,9 +156,10 @@ class _KWHPageState extends State<KWHPage> {
               EdgeInsets.symmetric(horizontal: defaultMargin, vertical: 20),
           children: [
             InputDokumentasi(
-                imagesProvider: imagesProvider,
-                controller: deskripsiController),
-            imagesProvider.listImage.length >= 2 ? input() : const SizedBox()
+              controller: deskripsiController,
+              pageName: "kwh",
+            ),
+            input()
           ]),
     );
   }

@@ -5,28 +5,29 @@ import 'package:plnicon_mobile/theme/theme.dart';
 import 'package:plnicon_mobile/widgets/custom_appbar.dart';
 import 'package:plnicon_mobile/widgets/custom_button.dart';
 import 'package:plnicon_mobile/widgets/custom_dropdown.dart';
+import 'package:plnicon_mobile/widgets/input_dokumentasi.dart';
 import 'package:plnicon_mobile/widgets/text_input.dart';
 
-class ACPage extends StatefulWidget {
+class ACPage extends StatelessWidget {
   const ACPage({super.key});
 
   @override
-  State<ACPage> createState() => _ACPageState();
-}
-
-class _ACPageState extends State<ACPage> {
-  @override
   Widget build(BuildContext context) {
+    TextEditingController suhuController = TextEditingController(text: '');
+
+    TextEditingController temuanController = TextEditingController(text: '');
+
+    TextEditingController rekomendasiController =
+        TextEditingController(text: '');
+    TextEditingController deskripsiController = TextEditingController(text: "");
     List<String> listHasilPengujian = ["Ok", "B aja", "Buruk"];
-    TextEditingController suhuController = TextEditingController();
-    TextEditingController temuanController = TextEditingController();
-    TextEditingController rekomendasiController = TextEditingController();
 
     return Scaffold(
         appBar: const CustomAppBar(isMainPage: false, title: "AC"),
         body: ListView(
           padding: EdgeInsets.all(defaultMargin),
           children: [
+            InputDokumentasi(controller: deskripsiController, pageName: "ac"),
             const SizedBox(
               height: 20,
             ),
