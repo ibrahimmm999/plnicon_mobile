@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:plnicon_mobile/pages/pm_detail_page.dart';
+import 'package:plnicon_mobile/pages/ac_page.dart';
+import 'package:plnicon_mobile/pages/baterai_page.dart';
+import 'package:plnicon_mobile/pages/kwh_page.dart';
+import 'package:plnicon_mobile/pages/recti_page.dart';
 import 'package:plnicon_mobile/providers/page_provider.dart';
 import 'package:plnicon_mobile/theme/theme.dart';
-import 'package:plnicon_mobile/widgets/workorder_card.dart';
+import 'package:plnicon_mobile/widgets/custom_appbar.dart';
 import 'package:provider/provider.dart';
 
-class WorkPage extends StatelessWidget {
-  const WorkPage({super.key});
+class PMDetailPage extends StatelessWidget {
+  const PMDetailPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    PageProvider pageProvider = Provider.of<PageProvider>(context);
     Widget switchContent() {
       return SizedBox(
         width: MediaQuery.sizeOf(context).width,
@@ -19,11 +21,11 @@ class WorkPage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             HomePageNav(
-                title: 'Work',
+                title: 'Master',
                 index: 0,
                 width: MediaQuery.sizeOf(context).width * 0.5),
             HomePageNav(
-                title: 'Completed',
+                title: 'Transactional',
                 index: 1,
                 width: MediaQuery.sizeOf(context).width * 0.5),
           ],
@@ -31,68 +33,49 @@ class WorkPage extends StatelessWidget {
       );
     }
 
+    Widget card(String title) {
+      return GestureDetector(
+        onTap: () {
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => const KWHPage()));
+        },
+        child: Container(
+          margin: const EdgeInsets.only(bottom: 20),
+          decoration: BoxDecoration(
+              color: neutral500,
+              boxShadow: const [
+                BoxShadow(
+                    color: Color.fromARGB(52, 0, 0, 0),
+                    offset: Offset(0, 4),
+                    blurRadius: 4)
+              ],
+              borderRadius: BorderRadius.circular(defaultRadius)),
+          width: double.infinity,
+          height: 60,
+          child: Center(
+              child: Text(
+            title,
+            style: buttonText.copyWith(color: textDarkColor),
+          )),
+        ),
+      );
+    }
+
     Widget content() {
-      int indexHome = pageProvider.homePage;
-      switch (indexHome) {
-        case 0:
-          return Expanded(
-            child: ListView(
-              children: [
-                WorkOrderCard(
-                  onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const PMDetailPage()));
-                  },
-                ),
-                WorkOrderCard(
-                  onTap: () {},
-                ),
-              ],
-            ),
-          );
-        case 1:
-          return Expanded(
-            child: ListView(
-              children: [
-                WorkOrderCard(
-                  onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const PMDetailPage()));
-                  },
-                ),
-              ],
-            ),
-          );
-        default:
-          return Expanded(
-            child: ListView(
-              children: [
-                WorkOrderCard(
-                  onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const PMDetailPage()));
-                  },
-                ),
-                WorkOrderCard(
-                  onTap: () {},
-                ),
-              ],
-            ),
-          );
-      }
+      return Expanded(
+        child: ListView(
+          padding:
+              EdgeInsets.symmetric(horizontal: defaultMargin, vertical: 24),
+          children: [card("AC 1"), card("AC 2")],
+        ),
+      );
     }
 
     return Scaffold(
-      body: Column(
-        children: [switchContent(), content()],
-      ),
-    );
+        appBar: const CustomAppBar(isMainPage: false, title: "Nama POP"),
+        body: Column(
+          children: [switchContent(), content()],
+        ));
   }
 }
 

@@ -3,6 +3,7 @@ import 'package:plnicon_mobile/pages/splash_page.dart';
 import 'package:provider/provider.dart';
 
 import 'providers/page_provider.dart';
+import 'providers/images_provider.dart';
 
 void main() {
   runApp(const MyApp());
@@ -17,6 +18,7 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => PageProvider()),
+        ChangeNotifierProvider(create: (context) => ImagesProvider()),
       ],
       child: const MaterialApp(
         debugShowCheckedModeBanner: false,

@@ -13,20 +13,28 @@ class InputDokumentasi extends StatelessWidget {
           "Dokumentasi",
           style: buttonText.copyWith(color: textDarkColor),
         ),
-        Container(
-          width: double.infinity,
-          padding: EdgeInsets.all(defaultMargin),
-          decoration: BoxDecoration(
-            color: primaryBlue,
-            borderRadius: BorderRadius.circular(defaultRadius),
-          ),
-          child: Row(
-            children: [
-              Text(
-                "Tambahkan dokumentasi",
-                style: buttonText,
-              )
-            ],
+        GestureDetector(
+          onTap: () {},
+          child: Container(
+            width: double.infinity,
+            padding: EdgeInsets.all(defaultMargin),
+            decoration: BoxDecoration(
+              color: primaryBlue,
+              borderRadius: BorderRadius.circular(defaultRadius),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  "Tambahkan dokumentasi",
+                  style: buttonText,
+                ),
+                Icon(
+                  Icons.play_arrow_sharp,
+                  color: textLightColor,
+                )
+              ],
+            ),
           ),
         ),
       ],

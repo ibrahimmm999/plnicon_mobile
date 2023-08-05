@@ -33,6 +33,9 @@ dependencies:
   flutter:
     sdk: flutter
   google_fonts: ^5.1.0
+  image_cropper: ^5.0.0
+  image_picker: ^1.0.1
+  loading_animation_widget: ^1.2.0+4
   provider: ^6.0.5
 
 dev_dependencies:

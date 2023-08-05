@@ -1,12 +1,15 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:plnicon_mobile/pages/main_page.dart';
+import 'package:plnicon_mobile/providers/images_provider.dart';
 import 'package:plnicon_mobile/theme/theme.dart';
 import 'package:plnicon_mobile/widgets/custom_appbar.dart';
 import 'package:plnicon_mobile/widgets/custom_button.dart';
 import 'package:plnicon_mobile/widgets/custom_dropdown.dart';
-import 'package:plnicon_mobile/widgets/input_dokumentasi.dart';
 import 'package:plnicon_mobile/widgets/text_input.dart';
+import 'package:provider/provider.dart';
 
 class ACPage extends StatefulWidget {
   const ACPage({super.key});
@@ -22,11 +25,15 @@ class _ACPageState extends State<ACPage> {
     TextEditingController suhuController = TextEditingController();
     TextEditingController temuanController = TextEditingController();
     TextEditingController rekomendasiController = TextEditingController();
+
     return Scaffold(
         appBar: const CustomAppBar(isMainPage: false, title: "AC"),
         body: ListView(
           padding: EdgeInsets.all(defaultMargin),
           children: [
+            const SizedBox(
+              height: 20,
+            ),
             Padding(
               padding: const EdgeInsets.only(right: 120, bottom: 20),
               child: Row(
@@ -59,7 +66,6 @@ class _ACPageState extends State<ACPage> {
             const SizedBox(
               height: 20,
             ),
-            const InputDokumentasi(),
             const SizedBox(
               height: 20,
             ),

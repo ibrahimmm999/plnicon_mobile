@@ -1,11 +1,6 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
-import 'package:plnicon_mobile/pages/data_perangkat_page.dart';
-import 'package:plnicon_mobile/pages/environment_page.dart';
-import 'package:plnicon_mobile/pages/genset_page.dart';
-import 'package:plnicon_mobile/pages/inverter_page.dart';
 import 'package:plnicon_mobile/theme/theme.dart';
-import 'package:plnicon_mobile/widgets/workorder_card.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -162,44 +157,13 @@ class _HomePageState extends State<HomePage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "Work Order",
+                  "Summary",
                   style: header1.copyWith(color: primaryBlue),
                 ),
                 const SizedBox(
                   height: 16,
                 ),
-                WorkOrderCard(
-                  onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const DataPerangkatPage()));
-                  },
-                ),
-                WorkOrderCard(
-                  onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const GensetPage()));
-                  },
-                ),
-                WorkOrderCard(
-                  onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const EnvironmentPage()));
-                  },
-                ),
-                WorkOrderCard(
-                  onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const InverterPage()));
-                  },
-                ),
+                Text("10 dari 14 PM Selesai"),
               ],
             ),
           )
