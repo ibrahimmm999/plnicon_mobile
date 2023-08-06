@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:plnicon_mobile/models/foto_model.dart';
 
 class AcNilaiModel extends Equatable {
   final int id;
@@ -10,6 +11,7 @@ class AcNilaiModel extends Equatable {
   final String rekomendasi;
   final DateTime createdAt;
   final DateTime updatedAt;
+  final List<FotoModel> foto;
 
   const AcNilaiModel({
     required this.id,
@@ -21,6 +23,7 @@ class AcNilaiModel extends Equatable {
     required this.rekomendasi,
     required this.createdAt,
     required this.updatedAt,
+    required this.foto,
   });
 
   factory AcNilaiModel.fromJson(Map<String, dynamic> json) {
@@ -34,6 +37,9 @@ class AcNilaiModel extends Equatable {
       rekomendasi: json['rekomendasi'] ?? "",
       createdAt: DateTime.parse(json['created_at']),
       updatedAt: DateTime.parse(json['created_at']),
+      foto: List<FotoModel>.from(
+        json['foto'].map((x) => FotoModel.fromJson(x)),
+      ),
     );
   }
 
@@ -48,5 +54,6 @@ class AcNilaiModel extends Equatable {
         rekomendasi,
         createdAt,
         updatedAt,
+        foto,
       ];
 }
