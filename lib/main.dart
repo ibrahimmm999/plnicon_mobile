@@ -3,6 +3,7 @@ import 'package:plnicon_mobile/pages/login_page.dart';
 import 'package:plnicon_mobile/pages/main_page.dart';
 import 'package:plnicon_mobile/pages/splash_page.dart';
 import 'package:plnicon_mobile/providers/pm_provider.dart';
+import 'package:plnicon_mobile/providers/transaksional_provider.dart';
 import 'package:plnicon_mobile/providers/user_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -25,6 +26,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => ImagesProvider()),
         ChangeNotifierProvider(create: (context) => UserProvider()),
         ChangeNotifierProvider(create: (context) => PmProvider()),
+        ChangeNotifierProvider(create: (context) => TransaksionalProvider()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
