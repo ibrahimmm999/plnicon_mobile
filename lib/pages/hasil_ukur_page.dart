@@ -85,8 +85,7 @@ class HasilUkurPage extends StatelessWidget {
     }
 
     Widget content() {
-      return Expanded(
-          child: ListView(
+      return ListView(
         padding: EdgeInsets.symmetric(horizontal: defaultMargin),
         children: [
           choice(),
@@ -105,7 +104,7 @@ class HasilUkurPage extends StatelessWidget {
               () => Navigator.push(
                   context, MaterialPageRoute(builder: (context) => ACPage())))
         ],
-      ));
+      );
     }
 
     return Scaffold(
