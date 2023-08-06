@@ -8,7 +8,21 @@ class ImagesProvider extends ChangeNotifier {
   File? _imageFile;
   File? _croppedImageFile;
   String _croppedImagePath = '';
-  List<File> listImage = [];
+  /*
+  ex : {"AC 1": {"path1": "Deskripsi foto"}}
+  */
+  Map<String, Map<String, String>> listImage = {
+    "kwh": {},
+    "ac": {},
+    "baterai": {},
+    "perangkat": {},
+    "environment": {},
+    "exalarm": {},
+    "genset": {},
+    "inverter": {},
+    "pdb": {},
+    "rectifier": {},
+  };
 
   File? get imageFile => _imageFile;
   File? get croppedImageFile => _croppedImageFile;
@@ -31,17 +45,27 @@ class ImagesProvider extends ChangeNotifier {
     }
   }
 
-  Future<bool> cropImage({required File? imageFile}) async {
+  Future<bool> cropImage(
+      {required File? imageFile, required String key}) async {
     try {
       var cropedImage =
           await ImageCropper().cropImage(sourcePath: imageFile!.path);
       _croppedImagePath = cropedImage != null ? cropedImage.path : '';
       _croppedImageFile = cropedImage != null ? File(cropedImage.path) : null;
-      listImage.add((cropedImage != null ? File(cropedImage.path) : File("")));
+      if (cropedImage != null) {
+        listImage[key]!
+            .addEntries(<String, String>{cropedImage.path: ""}.entries);
+      }
       notifyListeners();
       return true;
     } catch (e) {
       return false;
     }
+  }
+
+  void addDeskripsi(
+      {String? deskripsi, required String key, required String path}) {
+    listImage[key]?.update(path, (value) => deskripsi ?? "");
+    notifyListeners();
   }
 }

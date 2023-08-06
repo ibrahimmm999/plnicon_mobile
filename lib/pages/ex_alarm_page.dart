@@ -6,8 +6,8 @@ import 'package:plnicon_mobile/widgets/custom_button.dart';
 import 'package:plnicon_mobile/widgets/input_dokumentasi.dart';
 import 'package:plnicon_mobile/widgets/text_input.dart';
 
-class DataPerangkatPage extends StatelessWidget {
-  const DataPerangkatPage({super.key});
+class ExAlarmPage extends StatelessWidget {
+  const ExAlarmPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -15,13 +15,13 @@ class DataPerangkatPage extends StatelessWidget {
     TextEditingController temuanController = TextEditingController();
     TextEditingController rekomendasiController = TextEditingController();
     return Scaffold(
-      appBar: const CustomAppBar(isMainPage: false, title: "DATA PERANGKAT"),
+      appBar: const CustomAppBar(isMainPage: false, title: "EX ALARM"),
       body: ListView(
           padding:
               EdgeInsets.symmetric(horizontal: defaultMargin, vertical: 20),
           children: [
             InputDokumentasi(
-                controller: deskripsiController, pageName: "perangkat"),
+                controller: deskripsiController, pageName: "exalarm"),
             TextInput(
               controller: temuanController,
               label: "Temuan",

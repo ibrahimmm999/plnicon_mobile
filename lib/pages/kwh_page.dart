@@ -1,33 +1,45 @@
 import 'package:flutter/material.dart';
 import 'package:plnicon_mobile/pages/main_page.dart';
-import 'package:plnicon_mobile/providers/images_provider.dart';
 import 'package:plnicon_mobile/theme/theme.dart';
 import 'package:plnicon_mobile/widgets/custom_appbar.dart';
 import 'package:plnicon_mobile/widgets/custom_button.dart';
 import 'package:plnicon_mobile/widgets/input_dokumentasi.dart';
 import 'package:plnicon_mobile/widgets/text_input.dart';
-import 'package:provider/provider.dart';
 
-class KWHPage extends StatefulWidget {
+class KWHPage extends StatelessWidget {
   const KWHPage({super.key});
 
   @override
-  State<KWHPage> createState() => _KWHPageState();
-}
-
-class _KWHPageState extends State<KWHPage> {
-  @override
   Widget build(BuildContext context) {
-    TextEditingController loadR = TextEditingController();
-    TextEditingController loadS = TextEditingController();
-    TextEditingController loadT = TextEditingController();
-    TextEditingController teganganR = TextEditingController();
-    TextEditingController teganganS = TextEditingController();
-    TextEditingController teganganT = TextEditingController();
+    // List<String> inputFoto = [
+    //   "Foto panel keseluruhan",
+    //   "Load R",
+    //   "Load S",
+    //   "Load T",
+    //   "Tegangan R",
+    //   "Tegangan S",
+    //   "Tegangan T"
+    // ];
     TextEditingController deskripsiController = TextEditingController();
+
+    TextEditingController rAmpereController = TextEditingController();
+
+    TextEditingController sAmpereController = TextEditingController();
+
+    TextEditingController tAmpereController = TextEditingController();
+
+    TextEditingController rnVoltageController = TextEditingController();
+
+    TextEditingController snVoltageController = TextEditingController();
+
+    TextEditingController tnVoltageController = TextEditingController();
+    TextEditingController bebanAcRController = TextEditingController();
+    TextEditingController bebanAcSController = TextEditingController();
+    TextEditingController bebanAcTController = TextEditingController();
+
     TextEditingController temuanController = TextEditingController();
+
     TextEditingController rekomendasiController = TextEditingController();
-    ImagesProvider imagesProvider = Provider.of<ImagesProvider>(context);
 
     Widget input() {
       return Column(
@@ -36,8 +48,8 @@ class _KWHPageState extends State<KWHPage> {
             children: [
               Expanded(
                 child: TextInput(
-                  controller: loadR,
-                  label: "Load R",
+                  controller: rAmpereController,
+                  label: "R (ampere)",
                   suffixText: "A",
                 ),
               ),
@@ -46,8 +58,8 @@ class _KWHPageState extends State<KWHPage> {
               ),
               Expanded(
                 child: TextInput(
-                  controller: loadS,
-                  label: "Load S",
+                  controller: sAmpereController,
+                  label: "S (ampere)",
                   suffixText: "A",
                 ),
               ),
@@ -56,8 +68,8 @@ class _KWHPageState extends State<KWHPage> {
               ),
               Expanded(
                 child: TextInput(
-                  controller: loadT,
-                  label: "Load T",
+                  controller: tAmpereController,
+                  label: "T (ampere)",
                   suffixText: "A",
                 ),
               ),
@@ -73,8 +85,8 @@ class _KWHPageState extends State<KWHPage> {
             children: [
               Expanded(
                 child: TextInput(
-                  controller: teganganR,
-                  label: "Tegangan R",
+                  controller: rnVoltageController,
+                  label: "R-N voltage",
                   suffixText: "V",
                 ),
               ),
@@ -83,8 +95,22 @@ class _KWHPageState extends State<KWHPage> {
               ),
               Expanded(
                 child: TextInput(
-                  controller: teganganS,
-                  label: "Tegangan S",
+                  controller: snVoltageController,
+                  label: "S-N voltage",
+                  suffixText: "V",
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          Row(
+            children: [
+              Expanded(
+                child: TextInput(
+                  controller: tnVoltageController,
+                  label: "T-N voltage",
                   suffixText: "V",
                 ),
               ),
@@ -93,13 +119,44 @@ class _KWHPageState extends State<KWHPage> {
               ),
               Expanded(
                 child: TextInput(
-                  controller: teganganT,
-                  label: "Load T",
+                  controller: snVoltageController,
+                  label: "N-G voltage",
                   suffixText: "V",
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          Row(
+            children: [
+              Expanded(
+                child: TextInput(
+                  controller: bebanAcRController,
+                  label: "R Ampere",
+                  suffixText: "A",
                 ),
               ),
               const SizedBox(
                 width: 8,
+              ),
+              Expanded(
+                child: TextInput(
+                  controller: bebanAcSController,
+                  label: "S Ampere",
+                  suffixText: "A",
+                ),
+              ),
+              const SizedBox(
+                width: 8,
+              ),
+              Expanded(
+                child: TextInput(
+                  controller: bebanAcTController,
+                  label: "T Ampere",
+                  suffixText: "A",
+                ),
               ),
             ],
           ),
@@ -147,9 +204,10 @@ class _KWHPageState extends State<KWHPage> {
               EdgeInsets.symmetric(horizontal: defaultMargin, vertical: 20),
           children: [
             InputDokumentasi(
-                imagesProvider: imagesProvider,
-                controller: deskripsiController),
-            imagesProvider.listImage.length >= 2 ? input() : const SizedBox()
+              controller: deskripsiController,
+              pageName: "kwh",
+            ),
+            input()
           ]),
     );
   }

@@ -4,12 +4,17 @@ import 'package:flutter/material.dart';
 import 'package:plnicon_mobile/providers/images_provider.dart';
 import 'package:plnicon_mobile/theme/theme.dart';
 import 'package:plnicon_mobile/widgets/custom_popup.dart';
+import 'package:provider/provider.dart';
 
 class InputDokumentasi extends StatefulWidget {
   const InputDokumentasi(
-      {super.key, required this.imagesProvider, required this.controller});
-  final ImagesProvider imagesProvider;
+      {super.key,
+      required this.controller,
+      required this.pageName,
+      this.title = "Tambah Foto"});
   final TextEditingController controller;
+  final String title;
+  final String pageName;
 
   @override
   State<InputDokumentasi> createState() => _InputDokumentasiState();
@@ -28,15 +33,16 @@ class _InputDokumentasiState extends State<InputDokumentasi> {
 
   @override
   Widget build(BuildContext context) {
+    ImagesProvider imagesProvider = Provider.of<ImagesProvider>(context);
     Future<void> handlePicker() async {
-      widget.imagesProvider.setCroppedImageFile = null;
-      await widget.imagesProvider.pickImage();
-      await widget.imagesProvider
-          .cropImage(imageFile: widget.imagesProvider.imageFile);
+      imagesProvider.setCroppedImageFile = null;
+      await imagesProvider.pickImage();
+      await imagesProvider.cropImage(
+          imageFile: imagesProvider.imageFile, key: widget.pageName);
       setState(() {
-        if (widget.imagesProvider.croppedImagePath.isNotEmpty) {
-          contentPath = widget.imagesProvider.croppedImagePath;
-          contentFile = widget.imagesProvider.croppedImageFile;
+        if (imagesProvider.croppedImagePath.isNotEmpty) {
+          contentPath = imagesProvider.croppedImagePath;
+          contentFile = imagesProvider.croppedImageFile;
         }
       });
     }
@@ -51,25 +57,39 @@ class _InputDokumentasiState extends State<InputDokumentasi> {
                 width: 2,
                 color: neutral500,
               )),
-          height: 280,
+          height: 360,
           width: double.infinity,
-          child: ListView(
-            scrollDirection: Axis.horizontal,
-            children: widget.imagesProvider.listImage
-                .map((e) => Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 12),
-                      decoration: BoxDecoration(
-                          image: DecorationImage(
-                        image: FileImage(
-                          e,
-                        ),
-                        fit: BoxFit.cover,
-                      )),
-                      height: 240,
+          child: imagesProvider.listImage[widget.pageName]!.entries.isEmpty
+              ? Center(
+                  child: Text(
+                    "Foto",
+                    style: buttonText.copyWith(color: textDarkColor),
+                  ),
+                )
+              : ListView(
+                  scrollDirection: Axis.horizontal,
+                  children: imagesProvider.listImage[widget.pageName]!.entries
+                      .map((e) {
+                    return Container(
                       width: 240,
-                    ))
-                .toList(),
-          ),
+                      margin: const EdgeInsets.symmetric(horizontal: 12),
+                      child: Column(
+                        children: [
+                          Image.file(
+                            File(e.key),
+                            height: 240,
+                            width: 240,
+                            fit: BoxFit.cover,
+                          ),
+                          Text(
+                            e.value,
+                            style: buttonText.copyWith(color: textDarkColor),
+                            overflow: TextOverflow.clip,
+                          )
+                        ],
+                      ),
+                    );
+                  }).toList()),
         ),
         GestureDetector(
           onTap: () async {
@@ -80,7 +100,14 @@ class _InputDokumentasiState extends State<InputDokumentasi> {
               builder: (context) => CustomPopUp(
                 title: "Deskripsi",
                 controller: widget.controller,
-                add: () async {},
+                add: () {
+                  print(widget.controller.text);
+                  imagesProvider.addDeskripsi(
+                      key: widget.pageName,
+                      path: contentPath,
+                      deskripsi: widget.controller.text);
+                  widget.controller.clear();
+                },
               ),
             );
           },
@@ -95,11 +122,11 @@ class _InputDokumentasiState extends State<InputDokumentasi> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  "Dokumentasi",
+                  widget.title.isEmpty ? "Tambah Foto" : widget.title,
                   style: buttonText,
                 ),
                 Icon(
-                  Icons.arrow_right_outlined,
+                  Icons.photo_camera_outlined,
                   color: textLightColor,
                 )
               ],

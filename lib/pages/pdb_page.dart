@@ -1,77 +1,33 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:plnicon_mobile/pages/main_page.dart';
 import 'package:plnicon_mobile/theme/theme.dart';
 import 'package:plnicon_mobile/widgets/custom_appbar.dart';
 import 'package:plnicon_mobile/widgets/custom_button.dart';
+import 'package:plnicon_mobile/widgets/custom_dropdown.dart';
 import 'package:plnicon_mobile/widgets/input_dokumentasi.dart';
 import 'package:plnicon_mobile/widgets/text_input.dart';
 
-class RectiPage extends StatefulWidget {
-  const RectiPage({super.key});
-
-  @override
-  State<RectiPage> createState() => _RectiPageState();
-}
-
-String contentPath = '';
-File? contentFile;
-
-class _RectiPageState extends State<RectiPage> {
-  @override
-  void initState() {
-    super.initState();
-    contentPath = '';
-    contentFile = null;
-  }
+class PDBPage extends StatelessWidget {
+  const PDBPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    int phasa = 3;
-    TextEditingController loadrController = TextEditingController();
-    TextEditingController loadsController = TextEditingController();
-    TextEditingController loadtController = TextEditingController();
+    TextEditingController deskripsiController = TextEditingController();
     TextEditingController temuanController = TextEditingController();
     TextEditingController rekomendasiController = TextEditingController();
-    TextEditingController deskripsiController = TextEditingController();
-
     return Scaffold(
-      appBar: const CustomAppBar(isMainPage: false, title: "RECTIFIER"),
+      appBar: const CustomAppBar(isMainPage: false, title: "PDB"),
       body: ListView(
         padding: EdgeInsets.symmetric(horizontal: defaultMargin, vertical: 20),
         children: [
-          InputDokumentasi(
-              controller: deskripsiController, pageName: "rectifier"),
-          TextInput(
-            controller: loadrController,
-            label: "Load R",
-            placeholder: "Load R",
+          InputDokumentasi(controller: deskripsiController, pageName: "pdb"),
+          Text(
+            "Arester Warna",
+            style: buttonText.copyWith(color: textDarkColor),
           ),
+          const CustomDropDown(list: ["OK", "Not OK"]),
           const SizedBox(
             height: 20,
-          ),
-          Visibility(
-            visible: phasa == 3,
-            child: TextInput(
-              controller: loadsController,
-              label: "Load S",
-              placeholder: "Load S",
-            ),
-          ),
-          SizedBox(
-            height: phasa == 3 ? 20 : 0,
-          ),
-          Visibility(
-            visible: phasa == 3,
-            child: TextInput(
-              controller: loadtController,
-              label: "Load T",
-              placeholder: "Load T",
-            ),
-          ),
-          SizedBox(
-            height: phasa == 3 ? 20 : 0,
           ),
           TextInput(
             controller: temuanController,

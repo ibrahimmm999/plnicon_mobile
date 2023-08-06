@@ -4,6 +4,7 @@ import 'package:plnicon_mobile/theme/theme.dart';
 import 'package:plnicon_mobile/widgets/custom_appbar.dart';
 import 'package:plnicon_mobile/widgets/custom_button.dart';
 import 'package:plnicon_mobile/widgets/custom_dropdown.dart';
+import 'package:plnicon_mobile/widgets/input_dokumentasi.dart';
 import 'package:plnicon_mobile/widgets/text_input.dart';
 
 class EnvironmentPage extends StatelessWidget {
@@ -18,11 +19,14 @@ class EnvironmentPage extends StatelessWidget {
     TextEditingController kesehatanBangunanController = TextEditingController();
     TextEditingController temuanController = TextEditingController();
     TextEditingController rekomendasiController = TextEditingController();
+    TextEditingController deskripsiController = TextEditingController();
     return Scaffold(
       appBar: const CustomAppBar(isMainPage: false, title: 'ENVIRONMENT'),
       body: ListView(
         padding: EdgeInsets.symmetric(horizontal: defaultMargin, vertical: 20),
         children: [
+          InputDokumentasi(
+              controller: deskripsiController, pageName: "environment"),
           TextInput(
             controller: exhaustController,
             label: "Exhaust",

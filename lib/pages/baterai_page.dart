@@ -3,7 +3,7 @@ import 'package:plnicon_mobile/pages/main_page.dart';
 import 'package:plnicon_mobile/theme/theme.dart';
 import 'package:plnicon_mobile/widgets/custom_appbar.dart';
 import 'package:plnicon_mobile/widgets/custom_button.dart';
-import 'package:plnicon_mobile/widgets/custom_dropdown.dart';
+import 'package:plnicon_mobile/widgets/input_dokumentasi.dart';
 import 'package:plnicon_mobile/widgets/text_input.dart';
 
 class BateraiPage extends StatelessWidget {
@@ -11,14 +11,23 @@ class BateraiPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    TextEditingController namaController = TextEditingController();
-    TextEditingController merkController = TextEditingController();
-    TextEditingController snController = TextEditingController();
-    TextEditingController kapasitasController = TextEditingController();
-    TextEditingController persentaseController = TextEditingController();
-    TextEditingController vController = TextEditingController();
+    TextEditingController loadController = TextEditingController();
+    TextEditingController groupVBankController = TextEditingController();
+    TextEditingController cellv1Controller = TextEditingController();
+    TextEditingController cellv2Controller = TextEditingController();
+    TextEditingController cellv3Controller = TextEditingController();
+    TextEditingController cellv4Controller = TextEditingController();
+    TextEditingController timeDischargeController = TextEditingController();
+    TextEditingController stopUjiBateraiController = TextEditingController();
+    TextEditingController performanceController = TextEditingController();
+    TextEditingController sisaKapasitasController = TextEditingController();
+    TextEditingController kemampuanBackUpTimeController =
+        TextEditingController();
+    TextEditingController jumlahBateraiRusakController =
+        TextEditingController();
     TextEditingController temuanController = TextEditingController();
     TextEditingController rekomendasiController = TextEditingController();
+    TextEditingController deskripsiController = TextEditingController();
     return Scaffold(
       appBar: const CustomAppBar(
         isMainPage: false,
@@ -27,58 +36,100 @@ class BateraiPage extends StatelessWidget {
       body: ListView(
         padding: EdgeInsets.symmetric(horizontal: defaultMargin, vertical: 20),
         children: [
+          InputDokumentasi(
+              controller: deskripsiController, pageName: "baterai"),
           TextInput(
-            controller: namaController,
-            label: "Nama Baterai",
-            placeholder: "Nama Baterai",
+            controller: loadController,
+            label: "Load",
+            placeholder: "Load",
           ),
           const SizedBox(
             height: 20,
           ),
           TextInput(
-            controller: merkController,
-            label: "Merk Baterai",
-            placeholder: "Merk Baterai",
-          ),
-          const SizedBox(
-            height: 20,
-          ),
-          Text(
-            "Tipe Baterai",
-            style: buttonText.copyWith(color: textDarkColor),
-          ),
-          const CustomDropDown(list: ["LITHIUM", "VRLA"]),
-          const SizedBox(
-            height: 20,
-          ),
-          TextInput(
-            controller: snController,
-            label: "Serial Number Baterai",
-            placeholder: "Serial Number Baterai",
+            controller: groupVBankController,
+            label: "Group V bank",
+            placeholder: "Group V bank",
           ),
           const SizedBox(
             height: 20,
           ),
           TextInput(
-            controller: kapasitasController,
-            label: "Kapasitas",
-            placeholder: "Kapasitas",
+            controller: cellv1Controller,
+            label: "Cell V1",
+            placeholder: "Cell V1",
           ),
           const SizedBox(
             height: 20,
           ),
           TextInput(
-            controller: persentaseController,
-            label: "Persentase",
-            placeholder: "Persentase",
+            controller: cellv2Controller,
+            label: "Cell V2",
+            placeholder: "Cell V2",
           ),
           const SizedBox(
             height: 20,
           ),
           TextInput(
-            controller: vController,
-            label: "Tegangan Baterai",
-            placeholder: "Tegangan Baterai",
+            controller: cellv3Controller,
+            label: "Cell V3",
+            placeholder: "Cell V3",
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          TextInput(
+            controller: cellv4Controller,
+            label: "Cell V4",
+            placeholder: "Cell V4",
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          TextInput(
+            controller: timeDischargeController,
+            label: "Time Discharge",
+            placeholder: "Time Discharge",
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          TextInput(
+            controller: stopUjiBateraiController,
+            label: "Stop Uji Baterai",
+            placeholder: "Stop Uji Baterai",
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          TextInput(
+            controller: performanceController,
+            label: "Performance",
+            placeholder: "Performance",
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          TextInput(
+            controller: sisaKapasitasController,
+            label: "Sisa Kapasitas",
+            placeholder: "Sisa Kapasitas",
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          TextInput(
+            controller: kemampuanBackUpTimeController,
+            label: "Kemampuan Backup Time",
+            placeholder: "Kemampuan Backup Time",
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          TextInput(
+            controller: jumlahBateraiRusakController,
+            label: "Jumlah Baterai Rusak",
+            placeholder: "Jumlah Baterai Rusak",
           ),
           const SizedBox(
             height: 20,
