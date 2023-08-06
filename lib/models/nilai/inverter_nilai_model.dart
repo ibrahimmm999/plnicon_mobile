@@ -48,8 +48,8 @@ class InverterNilaiModel extends Equatable {
       hasilUji: json['hasil_uji'],
       temuan: json['temuan'] ?? "",
       rekomendasi: json['rekomendasi'] ?? "",
-      createdAt: json['created_at'],
-      updatedAt: json['updated_at'],
+      createdAt: DateTime.parse(json['created_at']),
+      updatedAt: DateTime.parse(json['created_at']),
       foto: List<FotoModel>.from(
         json['foto'].map((x) => FotoModel.fromJson(x)),
       ),
