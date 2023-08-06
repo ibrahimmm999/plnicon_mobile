@@ -1,5 +1,7 @@
 import 'package:equatable/equatable.dart';
 
+import '../foto_model.dart';
+
 class GensetNilaiModel extends Equatable {
   final int id;
   final int gensetId;
@@ -22,6 +24,7 @@ class GensetNilaiModel extends Equatable {
   final String kartuGantungUrl;
   final DateTime createdAt;
   final DateTime updatedAt;
+  final List<FotoModel> foto;
 
   const GensetNilaiModel({
     required this.id,
@@ -45,6 +48,7 @@ class GensetNilaiModel extends Equatable {
     required this.kartuGantungUrl,
     required this.createdAt,
     required this.updatedAt,
+    required this.foto,
   });
 
   factory GensetNilaiModel.fromJson(Map<String, dynamic> json) {
@@ -70,6 +74,9 @@ class GensetNilaiModel extends Equatable {
       kartuGantungUrl: json['kartu_gantung_url'] ?? "",
       createdAt: DateTime.parse(json['created_at']),
       updatedAt: DateTime.parse(json['created_at']),
+      foto: List<FotoModel>.from(
+        json['foto'].map((x) => FotoModel.fromJson(x)),
+      ),
     );
   }
 
@@ -96,5 +103,6 @@ class GensetNilaiModel extends Equatable {
         kartuGantungUrl,
         createdAt,
         updatedAt,
+        foto,
       ];
 }

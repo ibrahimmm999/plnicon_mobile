@@ -1,5 +1,7 @@
 import 'package:equatable/equatable.dart';
 
+import '../foto_model.dart';
+
 class BateraiNilaiModel extends Equatable {
   final int id;
   final int bateraiId;
@@ -20,6 +22,7 @@ class BateraiNilaiModel extends Equatable {
   final String rekomendasi;
   final DateTime createdAt;
   final DateTime updatedAt;
+  final List<FotoModel> foto;
 
   const BateraiNilaiModel({
     required this.id,
@@ -41,6 +44,7 @@ class BateraiNilaiModel extends Equatable {
     required this.rekomendasi,
     required this.createdAt,
     required this.updatedAt,
+    required this.foto,
   });
 
   factory BateraiNilaiModel.fromJson(Map<String, dynamic> json) {
@@ -64,6 +68,9 @@ class BateraiNilaiModel extends Equatable {
       rekomendasi: json['rekomendasi'] ?? "",
       createdAt: DateTime.parse(json['created_at']),
       updatedAt: DateTime.parse(json['created_at']),
+      foto: List<FotoModel>.from(
+        json['foto'].map((x) => FotoModel.fromJson(x)),
+      ),
     );
   }
 
@@ -88,5 +95,6 @@ class BateraiNilaiModel extends Equatable {
         rekomendasi,
         createdAt,
         updatedAt,
+        foto,
       ];
 }
