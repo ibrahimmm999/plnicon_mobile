@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:plnicon_mobile/models/foto_model.dart';
 
 class KwhNilaiModel extends Equatable {
   final int id;
@@ -18,26 +19,27 @@ class KwhNilaiModel extends Equatable {
   final double rekomendasi;
   final DateTime createdAt;
   final DateTime updatedAt;
+  final List<FotoModel> foto;
 
-  const KwhNilaiModel({
-    required this.id,
-    required this.kwhId,
-    required this.pmId,
-    required this.loadR,
-    required this.loadS,
-    required this.loadT,
-    required this.vrn,
-    required this.vsn,
-    required this.vtn,
-    required this.vng,
-    required this.vrs,
-    required this.vrt,
-    required this.vst,
-    required this.temuan,
-    required this.rekomendasi,
-    required this.createdAt,
-    required this.updatedAt,
-  });
+  const KwhNilaiModel(
+      {required this.id,
+      required this.kwhId,
+      required this.pmId,
+      required this.loadR,
+      required this.loadS,
+      required this.loadT,
+      required this.vrn,
+      required this.vsn,
+      required this.vtn,
+      required this.vng,
+      required this.vrs,
+      required this.vrt,
+      required this.vst,
+      required this.temuan,
+      required this.rekomendasi,
+      required this.createdAt,
+      required this.updatedAt,
+      required this.foto});
 
   factory KwhNilaiModel.fromJson(Map<String, dynamic> json) {
     return KwhNilaiModel(
@@ -56,8 +58,11 @@ class KwhNilaiModel extends Equatable {
       vst: json['vst'],
       temuan: json['temuan'] ?? "",
       rekomendasi: json['rekomendasi'] ?? "",
-      createdAt: json['created_at'],
-      updatedAt: json['updated_at'],
+      createdAt: DateTime.parse(json['created_at']),
+      updatedAt: DateTime.parse(json['created_at']),
+      foto: List<FotoModel>.from(
+        json['foto'].map((x) => FotoModel.fromJson(x)),
+      ),
     );
   }
 
@@ -80,5 +85,6 @@ class KwhNilaiModel extends Equatable {
         rekomendasi,
         createdAt,
         updatedAt,
+        foto
       ];
 }
