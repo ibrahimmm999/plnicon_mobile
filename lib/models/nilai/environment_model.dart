@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:plnicon_mobile/models/foto_model.dart';
 
 class EnvironmentModel extends Equatable {
   final int id;
@@ -16,6 +17,7 @@ class EnvironmentModel extends Equatable {
   final String rekomendasi;
   final DateTime createdAt;
   final DateTime updatedAt;
+  final List<FotoModel> foto;
 
   const EnvironmentModel({
     required this.id,
@@ -33,6 +35,7 @@ class EnvironmentModel extends Equatable {
     required this.rekomendasi,
     required this.createdAt,
     required this.updatedAt,
+    required this.foto,
   });
 
   factory EnvironmentModel.fromJson(Map<String, dynamic> json) {
@@ -52,6 +55,9 @@ class EnvironmentModel extends Equatable {
       createdAt: DateTime.parse(json['created_at']),
       updatedAt: DateTime.parse(json['created_at']),
       tglInstalasi: DateTime.parse(json['tgl_instalasi']),
+      foto: List<FotoModel>.from(
+        json['foto'].map((x) => FotoModel.fromJson(x)),
+      ),
     );
   }
 
@@ -72,5 +78,6 @@ class EnvironmentModel extends Equatable {
         rekomendasi,
         createdAt,
         updatedAt,
+        foto,
       ];
 }
