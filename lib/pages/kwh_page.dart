@@ -11,28 +11,31 @@ class KWHPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List<String> inputFoto = [
-      "Foto panel keseluruhan",
-      "Load R",
-      "Load S",
-      "Load T",
-      "Tegangan R",
-      "Tegangan S",
-      "Tegangan T"
-    ];
+    // List<String> inputFoto = [
+    //   "Foto panel keseluruhan",
+    //   "Load R",
+    //   "Load S",
+    //   "Load T",
+    //   "Tegangan R",
+    //   "Tegangan S",
+    //   "Tegangan T"
+    // ];
     TextEditingController deskripsiController = TextEditingController();
 
-    TextEditingController loadR = TextEditingController();
+    TextEditingController rAmpereController = TextEditingController();
 
-    TextEditingController loadS = TextEditingController();
+    TextEditingController sAmpereController = TextEditingController();
 
-    TextEditingController loadT = TextEditingController();
+    TextEditingController tAmpereController = TextEditingController();
 
-    TextEditingController teganganR = TextEditingController();
+    TextEditingController rnVoltageController = TextEditingController();
 
-    TextEditingController teganganS = TextEditingController();
+    TextEditingController snVoltageController = TextEditingController();
 
-    TextEditingController teganganT = TextEditingController();
+    TextEditingController tnVoltageController = TextEditingController();
+    TextEditingController bebanAcRController = TextEditingController();
+    TextEditingController bebanAcSController = TextEditingController();
+    TextEditingController bebanAcTController = TextEditingController();
 
     TextEditingController temuanController = TextEditingController();
 
@@ -45,8 +48,8 @@ class KWHPage extends StatelessWidget {
             children: [
               Expanded(
                 child: TextInput(
-                  controller: loadR,
-                  label: "Load R",
+                  controller: rAmpereController,
+                  label: "R (ampere)",
                   suffixText: "A",
                 ),
               ),
@@ -55,8 +58,8 @@ class KWHPage extends StatelessWidget {
               ),
               Expanded(
                 child: TextInput(
-                  controller: loadS,
-                  label: "Load S",
+                  controller: sAmpereController,
+                  label: "S (ampere)",
                   suffixText: "A",
                 ),
               ),
@@ -65,8 +68,8 @@ class KWHPage extends StatelessWidget {
               ),
               Expanded(
                 child: TextInput(
-                  controller: loadT,
-                  label: "Load T",
+                  controller: tAmpereController,
+                  label: "T (ampere)",
                   suffixText: "A",
                 ),
               ),
@@ -82,8 +85,8 @@ class KWHPage extends StatelessWidget {
             children: [
               Expanded(
                 child: TextInput(
-                  controller: teganganR,
-                  label: "Tegangan R",
+                  controller: rnVoltageController,
+                  label: "R-N voltage",
                   suffixText: "V",
                 ),
               ),
@@ -92,8 +95,22 @@ class KWHPage extends StatelessWidget {
               ),
               Expanded(
                 child: TextInput(
-                  controller: teganganS,
-                  label: "Tegangan S",
+                  controller: snVoltageController,
+                  label: "S-N voltage",
+                  suffixText: "V",
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          Row(
+            children: [
+              Expanded(
+                child: TextInput(
+                  controller: tnVoltageController,
+                  label: "T-N voltage",
                   suffixText: "V",
                 ),
               ),
@@ -102,13 +119,44 @@ class KWHPage extends StatelessWidget {
               ),
               Expanded(
                 child: TextInput(
-                  controller: teganganT,
-                  label: "Load T",
+                  controller: snVoltageController,
+                  label: "N-G voltage",
                   suffixText: "V",
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          Row(
+            children: [
+              Expanded(
+                child: TextInput(
+                  controller: bebanAcRController,
+                  label: "R Ampere",
+                  suffixText: "A",
                 ),
               ),
               const SizedBox(
                 width: 8,
+              ),
+              Expanded(
+                child: TextInput(
+                  controller: bebanAcSController,
+                  label: "S Ampere",
+                  suffixText: "A",
+                ),
+              ),
+              const SizedBox(
+                width: 8,
+              ),
+              Expanded(
+                child: TextInput(
+                  controller: bebanAcTController,
+                  label: "T Ampere",
+                  suffixText: "A",
+                ),
               ),
             ],
           ),

@@ -2,12 +2,11 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:plnicon_mobile/pages/main_page.dart';
-import 'package:plnicon_mobile/providers/images_provider.dart';
 import 'package:plnicon_mobile/theme/theme.dart';
 import 'package:plnicon_mobile/widgets/custom_appbar.dart';
 import 'package:plnicon_mobile/widgets/custom_button.dart';
+import 'package:plnicon_mobile/widgets/input_dokumentasi.dart';
 import 'package:plnicon_mobile/widgets/text_input.dart';
-import 'package:provider/provider.dart';
 
 class RectiPage extends StatefulWidget {
   const RectiPage({super.key});
@@ -29,19 +28,21 @@ class _RectiPageState extends State<RectiPage> {
 
   @override
   Widget build(BuildContext context) {
-    int phasa = 1;
+    int phasa = 3;
     TextEditingController loadrController = TextEditingController();
     TextEditingController loadsController = TextEditingController();
     TextEditingController loadtController = TextEditingController();
     TextEditingController temuanController = TextEditingController();
     TextEditingController rekomendasiController = TextEditingController();
-    ImagesProvider imagesProvider = Provider.of<ImagesProvider>(context);
+    TextEditingController deskripsiController = TextEditingController();
 
     return Scaffold(
       appBar: const CustomAppBar(isMainPage: false, title: "RECTIFIER"),
       body: ListView(
         padding: EdgeInsets.symmetric(horizontal: defaultMargin, vertical: 20),
         children: [
+          InputDokumentasi(
+              controller: deskripsiController, pageName: "rectifier"),
           TextInput(
             controller: loadrController,
             label: "Load R",

@@ -21,7 +21,7 @@ class PMDetailPage extends StatelessWidget {
   Widget build(BuildContext context) {
     Map<String, Function()> nama = {
       "AC": () => Navigator.push(
-          context, MaterialPageRoute(builder: (context) => ACPage())),
+          context, MaterialPageRoute(builder: (context) => const ACPage())),
       "Baterai": () => Navigator.push(context,
           MaterialPageRoute(builder: (context) => const BateraiPage())),
       "Environment": () => Navigator.push(context,

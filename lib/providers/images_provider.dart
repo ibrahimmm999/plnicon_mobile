@@ -14,7 +14,14 @@ class ImagesProvider extends ChangeNotifier {
   Map<String, Map<String, String>> listImage = {
     "kwh": {},
     "ac": {},
-    "baterai": {}
+    "baterai": {},
+    "perangkat": {},
+    "environment": {},
+    "exalarm": {},
+    "genset": {},
+    "inverter": {},
+    "pdb": {},
+    "rectifier": {},
   };
 
   File? get imageFile => _imageFile;

@@ -57,7 +57,7 @@ class _InputDokumentasiState extends State<InputDokumentasi> {
                 width: 2,
                 color: neutral500,
               )),
-          height: 440,
+          height: 360,
           width: double.infinity,
           child: imagesProvider.listImage[widget.pageName]!.entries.isEmpty
               ? Center(
