@@ -11,9 +11,9 @@ class InputDokumentasi extends StatefulWidget {
       {super.key,
       required this.controller,
       required this.pageName,
-      this.title = "Tambah Foto"});
+      this.isKwhPage = false});
   final TextEditingController controller;
-  final String title;
+  final bool isKwhPage;
   final String pageName;
 
   @override
@@ -22,6 +22,20 @@ class InputDokumentasi extends StatefulWidget {
 
 String contentPath = '';
 File? contentFile;
+int inputCount = 11;
+List<String> inputFoto = [
+  "Foto panel keseluruhan",
+  "Foto R (ampere)",
+  "Foto S (ampere)",
+  "Foto T (ampere)",
+  "Foto R-N Voltage",
+  "Foto S-N Voltage",
+  "Foto T-N Voltage",
+  "Foto N-G Voltage",
+  "Foto R Ampere",
+  "Foto S Ampere",
+  "Foto T Ampere",
+];
 
 class _InputDokumentasiState extends State<InputDokumentasi> {
   @override
@@ -94,22 +108,44 @@ class _InputDokumentasiState extends State<InputDokumentasi> {
         GestureDetector(
           onTap: () async {
             await handlePicker();
-            // ignore: use_build_context_synchronously
-            showDialog(
-              context: context,
-              builder: (context) => CustomPopUp(
-                title: "Deskripsi",
-                controller: widget.controller,
-                add: () {
-                  print(widget.controller.text);
-                  imagesProvider.addDeskripsi(
-                      key: widget.pageName,
-                      path: contentPath,
-                      deskripsi: widget.controller.text);
-                  widget.controller.clear();
-                },
-              ),
-            );
+            if (imagesProvider.croppedImageFile != null) {
+              if (inputCount > 0 && widget.pageName == "kwh") {
+                // ignore: use_build_context_synchronously
+                showDialog(
+                  context: context,
+                  builder: (context) => CustomPopUp(
+                    title: "Deskripsi",
+                    controller: widget.controller,
+                    add: () {
+                      imagesProvider.addDeskripsi(
+                          key: "kwh",
+                          path: imagesProvider.croppedImageFile!.path,
+                          deskripsi:
+                              "${widget.controller.text} ( ${inputFoto[11 - inputCount]} )");
+                      widget.controller.clear();
+                    },
+                  ),
+                );
+                inputCount -= 1;
+                print(inputCount);
+              } else {
+                // ignore: use_build_context_synchronously
+                showDialog(
+                  context: context,
+                  builder: (context) => CustomPopUp(
+                    title: "Deskripsi",
+                    controller: widget.controller,
+                    add: () {
+                      imagesProvider.addDeskripsi(
+                          key: widget.pageName,
+                          path: contentPath,
+                          deskripsi: widget.controller.text);
+                      widget.controller.clear();
+                    },
+                  ),
+                );
+              }
+            }
           },
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -122,7 +158,11 @@ class _InputDokumentasiState extends State<InputDokumentasi> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  widget.title.isEmpty ? "Tambah Foto" : widget.title,
+                  !(widget.isKwhPage)
+                      ? "Tambah Foto"
+                      : inputCount > 0
+                          ? inputFoto[11 - inputCount]
+                          : "Tambah Foto",
                   style: buttonText,
                 ),
                 Icon(

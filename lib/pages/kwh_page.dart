@@ -11,15 +11,6 @@ class KWHPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // List<String> inputFoto = [
-    //   "Foto panel keseluruhan",
-    //   "Load R",
-    //   "Load S",
-    //   "Load T",
-    //   "Tegangan R",
-    //   "Tegangan S",
-    //   "Tegangan T"
-    // ];
     TextEditingController deskripsiController = TextEditingController();
 
     TextEditingController rAmpereController = TextEditingController();
@@ -205,9 +196,10 @@ class KWHPage extends StatelessWidget {
           children: [
             InputDokumentasi(
               controller: deskripsiController,
+              isKwhPage: true,
               pageName: "kwh",
             ),
-            input()
+            Visibility(visible: inputCount == 1, child: input())
           ]),
     );
   }
