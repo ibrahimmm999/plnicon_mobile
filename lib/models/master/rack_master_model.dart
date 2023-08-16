@@ -41,6 +41,7 @@ class RackMasterModel extends Equatable {
         popId,
         nomorRack,
         lokasi,
+        listPerangkat,
         createdAt,
         updatedAt,
       ];

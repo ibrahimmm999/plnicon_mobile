@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:plnicon_mobile/models/pm_model.dart';
 import 'package:plnicon_mobile/pages/ac_page.dart';
+import 'package:plnicon_mobile/pages/environment_page.dart';
+import 'package:plnicon_mobile/pages/ex_alarm_page.dart';
 import 'package:plnicon_mobile/pages/genset_page.dart';
 import 'package:plnicon_mobile/pages/inverter_page.dart';
+import 'package:plnicon_mobile/pages/kwh_page.dart';
 import 'package:plnicon_mobile/pages/main_page.dart';
+import 'package:plnicon_mobile/pages/pdb_page.dart';
+import 'package:plnicon_mobile/pages/rack_page.dart';
+import 'package:plnicon_mobile/pages/recti_page.dart';
 import 'package:plnicon_mobile/providers/pop_provider.dart';
 import 'package:plnicon_mobile/providers/user_provider.dart';
 import 'package:plnicon_mobile/services/user_service.dart';
@@ -49,7 +55,7 @@ class _PmDetailPageState extends State<PmDetailPage> {
       return Container(
         width: double.infinity,
         padding: EdgeInsets.all(defaultMargin),
-        margin: const EdgeInsets.symmetric(vertical: 4),
+        margin: const EdgeInsets.symmetric(vertical: 8),
         decoration: BoxDecoration(
             // border: Border.all(width: 2),
             color: primaryBlue,
@@ -89,8 +95,13 @@ class _PmDetailPageState extends State<PmDetailPage> {
             children: popProvider.listPop.isEmpty
                 ? [
                     Center(
-                      child: CircularProgressIndicator(
-                          backgroundColor: primaryBlue),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          CircularProgressIndicator(
+                              backgroundColor: primaryBlue),
+                        ],
+                      ),
                     )
                   ]
                 : [
@@ -174,6 +185,171 @@ class _PmDetailPageState extends State<PmDetailPage> {
                               );
                             },
                             child: card("Inverter $index  -  ${e.merk}"));
+                      }).toList(),
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Text(
+                      "Rack",
+                      style: header3,
+                    ),
+                    const SizedBox(
+                      height: 4,
+                    ),
+                    Column(
+                      children: popProvider.listPop.first.listRack.map((e) {
+                        var index =
+                            popProvider.listPop.first.listRack.indexOf(e) + 1;
+                        return GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => RackPage(
+                                          rack: e,
+                                          title: "Rack $index",
+                                        )),
+                              );
+                            },
+                            child: card("Rack $index"));
+                      }).toList(),
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Text(
+                      "Rectifier",
+                      style: header3,
+                    ),
+                    const SizedBox(
+                      height: 4,
+                    ),
+                    Column(
+                      children: popProvider.listPop.first.listRect.map((e) {
+                        var index =
+                            popProvider.listPop.first.listRect.indexOf(e) + 1;
+                        return GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => RectiPage(
+                                          rect: e,
+                                          title: "Rectifier $index",
+                                        )),
+                              );
+                            },
+                            child: card("Rectifier $index"));
+                      }).toList(),
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Text(
+                      "PDB",
+                      style: header3,
+                    ),
+                    const SizedBox(
+                      height: 4,
+                    ),
+                    Column(
+                      children: popProvider.listPop.first.listPdb.map((e) {
+                        var index =
+                            popProvider.listPop.first.listPdb.indexOf(e) + 1;
+                        return GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => PDBPage(
+                                          pdb: e,
+                                          title: "PDB $index",
+                                        )),
+                              );
+                            },
+                            child: card("PDB $index"));
+                      }).toList(),
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Text(
+                      "KWH",
+                      style: header3,
+                    ),
+                    const SizedBox(
+                      height: 4,
+                    ),
+                    Column(
+                      children: popProvider.listPop.first.listKwh.map((e) {
+                        var index =
+                            popProvider.listPop.first.listKwh.indexOf(e) + 1;
+                        return GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => KWHPage(
+                                          kwh: e,
+                                          title: "KWH $index",
+                                        )),
+                              );
+                            },
+                            child: card("KWH $index"));
+                      }).toList(),
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Text(
+                      "Ex Alarm",
+                      style: header3,
+                    ),
+                    const SizedBox(
+                      height: 4,
+                    ),
+                    Column(
+                      children: popProvider.listPop.first.listExAlarm.map((e) {
+                        return GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => ExAlarmPage(
+                                          exalarm: e,
+                                          title: "Ex Alarm",
+                                        )),
+                              );
+                            },
+                            child: card("Ex Alarm "));
+                      }).toList(),
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Text(
+                      "Environment",
+                      style: header3,
+                    ),
+                    const SizedBox(
+                      height: 4,
+                    ),
+                    Column(
+                      children:
+                          popProvider.listPop.first.listEnvironment.map((e) {
+                        return GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => EnvironmentPage(
+                                          environment: e,
+                                          title: "Environment",
+                                        )),
+                              );
+                            },
+                            child: card("Environment "));
                       }).toList(),
                     ),
                   ]));

@@ -3,14 +3,14 @@ import 'package:equatable/equatable.dart';
 class ExAlarmMasterModel extends Equatable {
   final int id;
   final int popId;
-  final int perangkatEa;
   final int pmId;
-  final String suhu;
+  // final int perangkatEa;
   final String ea;
+  final String suhu;
   final String pintu;
+  // final int plnOff;
   final String gensetRunFail;
   final String smokeAndFire;
-  final int plnOff;
   final String temuan;
   final String rekomendasi;
   final DateTime createdAt;
@@ -20,7 +20,7 @@ class ExAlarmMasterModel extends Equatable {
   const ExAlarmMasterModel({
     required this.id,
     required this.popId,
-    required this.perangkatEa,
+    // required this.perangkatEa,
     required this.createdAt,
     required this.updatedAt,
     required this.pmId,
@@ -30,7 +30,7 @@ class ExAlarmMasterModel extends Equatable {
     required this.smokeAndFire,
     required this.gensetRunFail,
     required this.temuan,
-    required this.plnOff,
+    // required this.plnOff,
     required this.rekomendasi,
     // required this.tanggalInstalasi
   });
@@ -39,19 +39,19 @@ class ExAlarmMasterModel extends Equatable {
     return ExAlarmMasterModel(
       id: json['id'],
       popId: json['pop_id'],
-      perangkatEa: json['perangkat_ea'],
-      // tanggalInstalasi: DateTime.parse(json['tgl_instalasi']),
+      // perangkatEa: json['perangkat_ea'],
       createdAt: DateTime.parse(json['created_at']),
       updatedAt: DateTime.parse(json['created_at']),
       pmId: json['pm_id'],
       suhu: json['suhu'],
       ea: json['ea'],
-      plnOff: json['pln_off'],
+      // plnOff: json['pln_off'],
       smokeAndFire: json['smokenfire'],
       gensetRunFail: json['genset_run_fail'],
       pintu: json['pintu'],
       temuan: json['temuan'] ?? "",
       rekomendasi: json['rekomendasi'] ?? "",
+      // tanggalInstalasi: DateTime.parse(json['tgl_instalasi']),
     );
   }
 
@@ -59,14 +59,14 @@ class ExAlarmMasterModel extends Equatable {
   List<Object?> get props => [
         id,
         popId,
-        perangkatEa,
+        // perangkatEa,
         // tanggalInstalasi,
         createdAt,
         updatedAt,
         pmId,
         suhu,
         ea,
-        plnOff,
+        // plnOff,
         smokeAndFire,
         gensetRunFail,
         pintu,

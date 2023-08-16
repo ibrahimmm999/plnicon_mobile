@@ -8,8 +8,8 @@ class McbMasterModel extends Equatable {
   final String phasa;
   final String tipe;
   final String peruntukan;
-  final int kapasitas;
-  final int aTerukur;
+  final String kapasitas;
+  final String aTerukur;
   // final DateTime tanggalInstalasi;
   final DateTime createdAt;
   final DateTime updatedAt;
@@ -35,7 +35,7 @@ class McbMasterModel extends Equatable {
       pdbId: json['pdb_id'],
       nama: json['nama'],
       kapasitas: json['kapasitas'],
-      phasa: json['phasa'],
+      phasa: json['jumlah_phasa'],
       merk: json['merk'],
       tipe: json['tipe'],
       peruntukan: json['peruntukan'] ?? "",

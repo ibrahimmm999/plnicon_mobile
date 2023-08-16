@@ -12,7 +12,7 @@ class RectMasterModel extends Equatable {
   final int slotModul;
   final int modulTerpasang;
   final int modulControl;
-  final DateTime tanggalInstalasi;
+  // final DateTime tanggalInstalasi;
   final List<BateraiMasterModel> listBaterai;
   final List<ModulMasterModel> listModul;
   final DateTime createdAt;
@@ -30,7 +30,7 @@ class RectMasterModel extends Equatable {
     required this.listBaterai,
     required this.listModul,
     required this.tipe,
-    required this.tanggalInstalasi,
+    // required this.tanggalInstalasi,
     required this.createdAt,
     required this.updatedAt,
   });
@@ -54,7 +54,7 @@ class RectMasterModel extends Equatable {
           : List<ModulMasterModel>.from(
               json['modul'].map((x) => ModulMasterModel.fromJson(x))),
       tipe: json['tipe'],
-      tanggalInstalasi: json['tgl_instalasi'],
+      // tanggalInstalasi: json['tgl_instalasi'],
       createdAt: DateTime.parse(json['created_at']),
       updatedAt: DateTime.parse(json['created_at']),
     );
@@ -73,7 +73,7 @@ class RectMasterModel extends Equatable {
         listBaterai,
         listModul,
         tipe,
-        tanggalInstalasi,
+        // tanggalInstalasi,
         createdAt,
         updatedAt,
       ];
