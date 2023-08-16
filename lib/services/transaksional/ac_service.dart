@@ -9,7 +9,7 @@ import 'package:plnicon_mobile/services/user_service.dart';
 
 class AcService {
   Future<List<AcNilaiModel>> getAc({required String token}) async {
-    var url = UrlService().api('ac');
+    var url = UrlService().api('air-conditioner-nilai');
     var headers = {
       'Content-Type': 'application/json',
       'Authorization': token,
@@ -39,19 +39,19 @@ class AcService {
       required String hasilPengujian,
       required String temuan,
       required String rekomendasi}) async {
-    late Uri url = UrlService().api('ac');
+    late Uri url = UrlService().api('air-conditioner-nilai');
     var headers = {
       'Content-Type': 'application/json',
       'Authorization': await UserService().getTokenPreference() ?? '',
     };
-
+    var request = http.MultipartRequest('POST', url);
     var body = {
       'ac_id': acId,
       'pm_id': pmId,
       'suhu_ac': suhuAc,
       'hasil_pengujian': hasilPengujian,
       'temuan': temuan,
-      'rekomendasi': rekomendasi
+      'rekomendasi': rekomendasi,
     };
 
     var response = await http.post(
@@ -59,6 +59,7 @@ class AcService {
       headers: headers,
       body: jsonEncode(body),
     );
+    print(response.request);
 
     if (response.statusCode == 200) {
       var data = jsonDecode(response.body)['data'];

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:plnicon_mobile/models/master/genset_master_model.dart';
 import 'package:plnicon_mobile/pages/main_page.dart';
 import 'package:plnicon_mobile/providers/page_provider.dart';
+import 'package:plnicon_mobile/services/transaksional/genset_service.dart';
 import 'package:plnicon_mobile/theme/theme.dart';
 import 'package:plnicon_mobile/widgets/custom_button.dart';
 import 'package:plnicon_mobile/widgets/input_dokumentasi.dart';
@@ -256,12 +257,8 @@ class GensetPage extends StatelessWidget {
                         horizontal: defaultMargin + 32, vertical: 40),
                     child: CustomButton(
                         text: "Save",
-                        onPressed: () {
-                          Navigator.pushAndRemoveUntil(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => const MainPage()),
-                              (route) => false);
+                        onPressed: () async {
+                          Navigator.pop(context);
                         },
                         color: primaryBlue,
                         clickColor: clickBlue),

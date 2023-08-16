@@ -12,20 +12,21 @@ class RectNilaiModel extends Equatable {
   final String rekomendasi;
   final DateTime createdAt;
   final DateTime updatedAt;
-  final List<FotoModel> foto;
+  // final List<FotoModel> foto;
 
-  const RectNilaiModel(
-      {required this.id,
-      required this.rectId,
-      required this.pmId,
-      required this.loadr,
-      required this.loads,
-      required this.loadt,
-      required this.temuan,
-      required this.rekomendasi,
-      required this.createdAt,
-      required this.updatedAt,
-      required this.foto});
+  const RectNilaiModel({
+    required this.id,
+    required this.rectId,
+    required this.pmId,
+    required this.loadr,
+    required this.loads,
+    required this.loadt,
+    required this.temuan,
+    required this.rekomendasi,
+    required this.createdAt,
+    required this.updatedAt,
+    // required this.foto
+  });
 
   factory RectNilaiModel.fromJson(Map<String, dynamic> json) {
     return RectNilaiModel(
@@ -39,9 +40,9 @@ class RectNilaiModel extends Equatable {
       rekomendasi: json['rekomendasi'] ?? "",
       createdAt: DateTime.parse(json['created_at']),
       updatedAt: DateTime.parse(json['created_at']),
-      foto: List<FotoModel>.from(
-        json['foto'].map((x) => FotoModel.fromJson(x)),
-      ),
+      // foto: List<FotoModel>.from(
+      //   json['foto'].map((x) => FotoModel.fromJson(x)),
+      // ),
     );
   }
 
@@ -57,6 +58,6 @@ class RectNilaiModel extends Equatable {
         rekomendasi,
         createdAt,
         updatedAt,
-        foto
+        // foto
       ];
 }

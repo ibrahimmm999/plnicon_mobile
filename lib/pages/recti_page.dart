@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:plnicon_mobile/pages/main_page.dart';
 import 'package:plnicon_mobile/providers/page_provider.dart';
+import 'package:plnicon_mobile/services/transaksional/rect_service.dart';
 import 'package:plnicon_mobile/theme/theme.dart';
 import 'package:plnicon_mobile/widgets/custom_button.dart';
 import 'package:plnicon_mobile/widgets/input_dokumentasi.dart';
@@ -189,12 +190,16 @@ class _RectiPageState extends State<RectiPage> {
                         horizontal: defaultMargin + 32, vertical: 40),
                     child: CustomButton(
                         text: "Save",
-                        onPressed: () {
-                          Navigator.pushAndRemoveUntil(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => const MainPage()),
-                              (route) => false);
+                        onPressed: () async {
+                          await RectService().postRect(
+                              rectId: widget.rect.id,
+                              pmId: 1,
+                              loadr: double.parse(loadrController.text),
+                              loads: double.parse(loadsController.text),
+                              loadt: double.parse(loadtController.text),
+                              temuan: temuanController.text,
+                              rekomendasi: rekomendasiController.text);
+                          Navigator.pop(context);
                         },
                         color: primaryBlue,
                         clickColor: clickBlue),

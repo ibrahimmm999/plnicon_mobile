@@ -9,7 +9,7 @@ import 'package:plnicon_mobile/services/user_service.dart';
 
 class RectService {
   Future<List<RectNilaiModel>> getRect({required String token}) async {
-    var url = UrlService().api('rect');
+    var url = UrlService().api('rect-nilai');
     var headers = {
       'Content-Type': 'application/json',
       'Authorization': token,
@@ -33,15 +33,14 @@ class RectService {
   }
 
   Future<RectNilaiModel> postRect(
-      {required String rectId,
-      required String pmId,
-      required int fuel,
+      {required int rectId,
+      required int pmId,
       required double loadr,
       required double loads,
       required double loadt,
       required String temuan,
       required String rekomendasi}) async {
-    late Uri url = UrlService().api('rect');
+    late Uri url = UrlService().api('rect-nilai');
     var headers = {
       'Content-Type': 'application/json',
       'Authorization': await UserService().getTokenPreference() ?? '',
@@ -50,7 +49,6 @@ class RectService {
     var body = {
       'rect_id': rectId,
       'pm_id': pmId,
-      'fuel': fuel,
       'loadr': loadr,
       'loads': loads,
       'loadt': loadt,
@@ -64,7 +62,7 @@ class RectService {
       body: jsonEncode(body),
       encoding: Encoding.getByName('utf-8'),
     );
-
+    print(response.request);
     if (response.statusCode == 200) {
       var data = jsonDecode(response.body)['data'];
       return RectNilaiModel.fromJson(data);

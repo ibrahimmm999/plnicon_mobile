@@ -2,22 +2,36 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:plnicon_mobile/models/master/ac_master_model.dart';
 import 'package:plnicon_mobile/providers/page_provider.dart';
+import 'package:plnicon_mobile/services/transaksional/ac_service.dart';
 import 'package:plnicon_mobile/theme/theme.dart';
 import 'package:plnicon_mobile/widgets/custom_button.dart';
-import 'package:plnicon_mobile/widgets/custom_dropdown.dart';
 import 'package:plnicon_mobile/widgets/input_dokumentasi.dart';
 import 'package:plnicon_mobile/widgets/text_input.dart';
 import 'package:provider/provider.dart';
 
-class ACPage extends StatelessWidget {
-  const ACPage({
-    super.key,
-    required this.acMaster,
-    required this.title,
-  });
+class ACPage extends StatefulWidget {
+  const ACPage(
+      {super.key,
+      required this.acMaster,
+      required this.title,
+      this.pengujian = '',
+      this.suhu = "0",
+      this.rekomendasi = "",
+      this.temuan = ""});
   final AcMasterModel acMaster;
   final String title;
+  final String pengujian;
+  final String suhu;
+  final String temuan;
+  final String rekomendasi;
 
+  @override
+  State<ACPage> createState() => _ACPageState();
+}
+
+String pengujian = "";
+
+class _ACPageState extends State<ACPage> {
   @override
   Widget build(BuildContext context) {
     TextEditingController suhuController = TextEditingController(text: '');
@@ -59,42 +73,42 @@ class ACPage extends StatelessWidget {
                 padding: EdgeInsets.all(defaultMargin),
                 children: [
                   Text(
-                    "Nama : ${acMaster.nama}",
+                    "Nama : ${widget.acMaster.nama}",
                     style: buttonText.copyWith(color: textDarkColor),
                   ),
                   const SizedBox(
                     height: 20,
                   ),
                   Text(
-                    "Kondisi : ${acMaster.kondisi}",
+                    "Kondisi : ${widget.acMaster.kondisi}",
                     style: buttonText.copyWith(color: textDarkColor),
                   ),
                   const SizedBox(
                     height: 20,
                   ),
                   Text(
-                    "Merk : ${acMaster.merk}",
+                    "Merk : ${widget.acMaster.merk}",
                     style: buttonText.copyWith(color: textDarkColor),
                   ),
                   const SizedBox(
                     height: 20,
                   ),
                   Text(
-                    "Kapasitas : ${acMaster.kapasitas}",
+                    "Kapasitas : ${widget.acMaster.kapasitas}",
                     style: buttonText.copyWith(color: textDarkColor),
                   ),
                   const SizedBox(
                     height: 20,
                   ),
                   Text(
-                    "Tekanan Freon : ${acMaster.tekananFreon}",
+                    "Tekanan Freon : ${widget.acMaster.tekananFreon}",
                     style: buttonText.copyWith(color: textDarkColor),
                   ),
                   const SizedBox(
                     height: 20,
                   ),
                   Text(
-                    "Mode Hidup : ${acMaster.modeHidup}",
+                    "Mode Hidup : ${widget.acMaster.modeHidup}",
                     style: buttonText.copyWith(color: textDarkColor),
                   ),
                   const SizedBox(
@@ -150,7 +164,38 @@ class ACPage extends StatelessWidget {
                   "Hasil Pengujian",
                   style: buttonText.copyWith(color: textDarkColor),
                 ),
-                CustomDropDown(list: listHasilPengujian),
+                DropdownButtonFormField(
+                  alignment: Alignment.centerLeft,
+                  style: buttonText.copyWith(color: textDarkColor),
+                  borderRadius: BorderRadius.circular(defaultRadius),
+                  decoration: InputDecoration(
+                    contentPadding: EdgeInsets.all(defaultRadius),
+                    hintText: "-",
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(defaultRadius),
+                      borderSide: BorderSide(width: 2, color: primaryBlue),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(defaultRadius),
+                      borderSide: BorderSide(width: 2, color: neutral500),
+                    ),
+                    hintStyle: buttonText.copyWith(color: textDarkColor),
+                  ),
+                  items: listHasilPengujian
+                      .map((e) => DropdownMenuItem(
+                            value: e,
+                            child: Text(
+                              e,
+                            ),
+                          ))
+                      .toList(),
+                  value: pengujian.isEmpty ? null : pengujian,
+                  onChanged: (value) {
+                    setState(() {
+                      pengujian = value.toString();
+                    });
+                  },
+                ),
                 const SizedBox(
                   height: 20,
                 ),
@@ -177,7 +222,14 @@ class ACPage extends StatelessWidget {
                       horizontal: defaultMargin + 32, vertical: 40),
                   child: CustomButton(
                       text: "Save",
-                      onPressed: () {
+                      onPressed: () async {
+                        await AcService().postAc(
+                            acId: widget.acMaster.id,
+                            pmId: 1,
+                            suhuAc: int.parse(suhuController.text),
+                            hasilPengujian: pengujian,
+                            temuan: temuanController.text,
+                            rekomendasi: rekomendasiController.text);
                         Navigator.pop(context);
                       },
                       color: primaryBlue,
@@ -200,7 +252,7 @@ class ACPage extends StatelessWidget {
             child: Container(
               margin: const EdgeInsets.only(right: 60),
               child: Text(
-                title,
+                widget.title,
                 style: header2.copyWith(color: textLightColor),
               ),
             ),

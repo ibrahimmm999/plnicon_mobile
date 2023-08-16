@@ -9,7 +9,7 @@ import 'package:plnicon_mobile/services/user_service.dart';
 
 class GensetService {
   Future<List<GensetNilaiModel>> getGenset({required String token}) async {
-    var url = UrlService().api('genset');
+    var url = UrlService().api('genset-nilai');
     var headers = {
       'Content-Type': 'application/json',
       'Authorization': token,
@@ -51,7 +51,7 @@ class GensetService {
       required String kartuGantungUrl,
       required String temuan,
       required String rekomendasi}) async {
-    late Uri url = UrlService().api('baterai');
+    late Uri url = UrlService().api('genset-nilai');
     var headers = {
       'Content-Type': 'application/json',
       'Authorization': await UserService().getTokenPreference() ?? '',
@@ -84,7 +84,7 @@ class GensetService {
       body: jsonEncode(body),
       encoding: Encoding.getByName('utf-8'),
     );
-
+    print(response.request);
     if (response.statusCode == 200) {
       var data = jsonDecode(response.body)['data'];
       return GensetNilaiModel.fromJson(data);
