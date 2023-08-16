@@ -10,7 +10,7 @@ class McbMasterModel extends Equatable {
   final String peruntukan;
   final int kapasitas;
   final int aTerukur;
-  final DateTime tanggalInstalasi;
+  // final DateTime tanggalInstalasi;
   final DateTime createdAt;
   final DateTime updatedAt;
 
@@ -25,7 +25,7 @@ class McbMasterModel extends Equatable {
     required this.peruntukan,
     required this.aTerukur,
     required this.createdAt,
-    required this.tanggalInstalasi,
+    // required this.tanggalInstalasi,
     required this.updatedAt,
   });
 
@@ -38,9 +38,9 @@ class McbMasterModel extends Equatable {
       phasa: json['phasa'],
       merk: json['merk'],
       tipe: json['tipe'],
-      peruntukan: json['peruntukan'],
+      peruntukan: json['peruntukan'] ?? "",
       aTerukur: json['a_terukur'],
-      tanggalInstalasi: DateTime.parse(json['tgl_instalasi']),
+      // tanggalInstalasi: DateTime.parse(json['tgl_instalasi']),
       createdAt: DateTime.parse(json['created_at']),
       updatedAt: DateTime.parse(json['created_at']),
     );
@@ -57,7 +57,7 @@ class McbMasterModel extends Equatable {
         aTerukur,
         tipe,
         peruntukan,
-        tanggalInstalasi,
+        // tanggalInstalasi,
         createdAt,
         updatedAt,
       ];

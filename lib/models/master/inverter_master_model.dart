@@ -8,9 +8,9 @@ class InverterMasterModel extends Equatable {
   final String merk;
   final String sn;
   final String tipe;
-  final DateTime tanggalInstalasi;
-  final DateTime createdAt;
-  final DateTime updatedAt;
+  // final DateTime tanggalInstalasi;
+  // final DateTime createdAt;
+  // final DateTime updatedAt;
 
   const InverterMasterModel({
     required this.id,
@@ -20,9 +20,9 @@ class InverterMasterModel extends Equatable {
     required this.merk,
     required this.sn,
     required this.tipe,
-    required this.tanggalInstalasi,
-    required this.createdAt,
-    required this.updatedAt,
+    // required this.tanggalInstalasi,
+    // required this.createdAt,
+    // required this.updatedAt,
   });
 
   factory InverterMasterModel.fromJson(Map<String, dynamic> json) {
@@ -34,9 +34,9 @@ class InverterMasterModel extends Equatable {
       merk: json['merk'],
       sn: json['sn'],
       tipe: json['tipe'],
-      tanggalInstalasi: json['tgl_instalasi'],
-      createdAt: DateTime.parse(json['created_at']),
-      updatedAt: DateTime.parse(json['created_at']),
+      // tanggalInstalasi: json['tgl_instalasi'],
+      // createdAt: DateTime.parse(json['created_at']),
+      // updatedAt: DateTime.parse(json['created_at']),
     );
   }
 
@@ -49,8 +49,8 @@ class InverterMasterModel extends Equatable {
         merk,
         sn,
         tipe,
-        tanggalInstalasi,
-        createdAt,
-        updatedAt,
+        // tanggalInstalasi,
+        // createdAt,
+        // updatedAt,
       ];
 }

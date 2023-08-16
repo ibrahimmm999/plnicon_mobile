@@ -12,19 +12,18 @@ class KwhMasterModel extends Equatable {
   final double luasKabelS;
   final double luasKabelT;
   final double luasKabelN;
-  final double luasKabelG;
   final String cos;
   final String arester;
   final String aresterType;
-  final String warnaKabelR;
-  final String warnaKabelS;
-  final String warnaKabelT;
-  final String warnaKabelN;
-  final String warnaKabelG;
+  // final String warnaKabelR;
+  // final String warnaKabelS;
+  // final String warnaKabelT;
+  // final String warnaKabelN;
+  // final String warnaKabelG;
   final String cosType;
-  final DateTime tanggalInstalasi;
-  final DateTime createdAt;
-  final DateTime updatedAt;
+  // final DateTime tanggalInstalasi;
+  // final DateTime createdAt;
+  // final DateTime updatedAt;
 
   const KwhMasterModel({
     required this.id,
@@ -38,19 +37,18 @@ class KwhMasterModel extends Equatable {
     required this.cosType,
     required this.arester,
     required this.aresterType,
-    required this.luasKabelG,
     required this.luasKabelN,
     required this.luasKabelT,
     required this.luasKabelS,
     required this.luasKabelR,
-    required this.warnaKabelG,
-    required this.warnaKabelT,
-    required this.warnaKabelS,
-    required this.warnaKabelN,
-    required this.warnaKabelR,
-    required this.tanggalInstalasi,
-    required this.createdAt,
-    required this.updatedAt,
+    // required this.warnaKabelG,
+    // required this.warnaKabelT,
+    // required this.warnaKabelS,
+    // required this.warnaKabelN,
+    // required this.warnaKabelR,
+    // required this.tanggalInstalasi,
+    // required this.createdAt,
+    // required this.updatedAt,
   });
 
   factory KwhMasterModel.fromJson(Map<String, dynamic> json) {
@@ -60,25 +58,24 @@ class KwhMasterModel extends Equatable {
       daya: json['daya'],
       cos: json['cos'],
       jumlahPhasa: json['jumlah_phasa'],
-      capmcbr: json['capmcbr'],
-      cosType: json['cos_type'],
-      capmcbs: json['capmcbs'],
+      capmcbr: json['capmcbr'] ?? "",
+      cosType: json['cos_type'] ?? "",
+      capmcbs: json['capmcbs'] ?? "",
       arester: json['arester'],
-      capmcbt: json['capmcbt'],
-      aresterType: json['arester_type'],
-      luasKabelG: json['luas_kabelg'],
-      luasKabelN: json['luas_kabeln'],
-      luasKabelS: json['luas_kabels'],
-      luasKabelT: json['luas_kabelt'],
-      luasKabelR: json['luas_kabelr'],
-      warnaKabelG: json['warna_kabelg'],
-      warnaKabelN: json['warna_kabeln'],
-      warnaKabelS: json['warna_kabelS'],
-      warnaKabelR: json['warna_kabelr'],
-      warnaKabelT: json['warna_kabelt'],
-      tanggalInstalasi: DateTime.parse(json['tgl_instalasi']),
-      createdAt: DateTime.parse(json['created_at']),
-      updatedAt: DateTime.parse(json['created_at']),
+      capmcbt: json['capmcbt'] ?? "",
+      aresterType: json['arester_type'] ?? "",
+      luasKabelN: json['luas_kabeln'] ?? "",
+      luasKabelS: json['luas_kabels'] ?? "",
+      luasKabelT: json['luas_kabelt'] ?? "",
+      luasKabelR: json['luas_kabelr'] ?? "",
+      // warnaKabelG: json['warna_kabelg'] ?? "",
+      // warnaKabelN: json['warna_kabeln'] ?? "",
+      // warnaKabelS: json['warna_kabels'] ?? "",
+      // warnaKabelR: json['warna_kabelr'] ?? "",
+      // warnaKabelT: json['warna_kabelt'] ?? "",
+      // tanggalInstalasi: DateTime.parse(json['tgl_instalasi']),
+      // createdAt: DateTime.parse(json['created_at']),
+      // updatedAt: DateTime.parse(json['created_at']),
     );
   }
 
@@ -93,20 +90,19 @@ class KwhMasterModel extends Equatable {
         cosType,
         arester,
         aresterType,
-        luasKabelG,
         luasKabelN,
         luasKabelR,
         luasKabelT,
         luasKabelS,
-        warnaKabelG,
-        warnaKabelN,
-        warnaKabelR,
-        warnaKabelS,
-        warnaKabelT,
+        // warnaKabelG,
+        // warnaKabelN,
+        // warnaKabelR,
+        // warnaKabelS,
+        // warnaKabelT,
         capmcbs,
         capmcbt,
-        tanggalInstalasi,
-        createdAt,
-        updatedAt,
+        // tanggalInstalasi,
+        // createdAt,
+        // updatedAt,
       ];
 }

@@ -2,13 +2,14 @@
 
 import 'dart:convert';
 
-import 'package:plnicon_mobile/models/pm_model.dart';
+import 'package:plnicon_mobile/models/pop_model.dart';
 import 'package:plnicon_mobile/services/url_service.dart';
 import 'package:http/http.dart' as http;
 
-class PmService {
-  Future<List<PmModel>> getPm({required String token}) async {
-    var url = UrlService().api('jadwalpm-user');
+class PopService {
+  Future<List<PopModel>> getPop(
+      {required String token, required int id}) async {
+    var url = UrlService().api('pop?id=$id');
     var headers = {
       'Content-Type': 'application/json',
       'Authorization': token,
@@ -21,14 +22,15 @@ class PmService {
 
     if (response.statusCode == 200) {
       var data = jsonDecode(response.body)['data'] as List;
-      // print(data);
-      List<PmModel> pm = List<PmModel>.from(
-        data.map((e) => PmModel.fromJson(e)),
+      print("DATA");
+      print(data);
+      List<PopModel> pop = List<PopModel>.from(
+        data.map((e) => PopModel.fromJson(e)),
       );
-      print(pm);
-      return pm;
+      print("XXX");
+      return pop;
     } else {
-      throw "Get data pm failed";
+      throw "Get data pop failed";
     }
   }
 }

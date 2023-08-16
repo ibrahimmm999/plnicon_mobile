@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:plnicon_mobile/models/foto_model.dart';
 
-class EnvironmentModel extends Equatable {
+class EnvironmentMasterModel extends Equatable {
   final int id;
   final int popId;
   final int pmId;
@@ -12,14 +12,14 @@ class EnvironmentModel extends Equatable {
   final double suhuRuangan;
   final String bangunan;
   final String kebersihanBangunan;
-  final DateTime tglInstalasi;
+  // final DateTime tglInstalasi;
   final String temuan;
   final String rekomendasi;
   final DateTime createdAt;
   final DateTime updatedAt;
-  final List<FotoModel> foto;
+  // final List<FotoModel> foto;
 
-  const EnvironmentModel({
+  const EnvironmentMasterModel({
     required this.id,
     required this.popId,
     required this.pmId,
@@ -30,16 +30,16 @@ class EnvironmentModel extends Equatable {
     required this.suhuRuangan,
     required this.bangunan,
     required this.kebersihanBangunan,
-    required this.tglInstalasi,
+    // required this.tglInstalasi,
     required this.temuan,
     required this.rekomendasi,
     required this.createdAt,
     required this.updatedAt,
-    required this.foto,
+    // required this.foto,
   });
 
-  factory EnvironmentModel.fromJson(Map<String, dynamic> json) {
-    return EnvironmentModel(
+  factory EnvironmentMasterModel.fromJson(Map<String, dynamic> json) {
+    return EnvironmentMasterModel(
       id: json['id'],
       popId: json['pop_id'],
       pmId: json['pm_id'],
@@ -54,10 +54,10 @@ class EnvironmentModel extends Equatable {
       rekomendasi: json['rekomendasi'] ?? "",
       createdAt: DateTime.parse(json['created_at']),
       updatedAt: DateTime.parse(json['created_at']),
-      tglInstalasi: DateTime.parse(json['tgl_instalasi']),
-      foto: List<FotoModel>.from(
-        json['foto'].map((x) => FotoModel.fromJson(x)),
-      ),
+      // tglInstalasi: DateTime.parse(json['tgl_instalasi']),
+      // foto:  List<FotoModel>.from(
+      //   json['foto'].map((x) => FotoModel.fromJson(x)),
+      // ),
     );
   }
 
@@ -73,11 +73,11 @@ class EnvironmentModel extends Equatable {
         suhuRuangan,
         bangunan,
         kebersihanBangunan,
-        tglInstalasi,
+        // tglInstalasi,
         temuan,
         rekomendasi,
         createdAt,
         updatedAt,
-        foto,
+        // foto,
       ];
 }

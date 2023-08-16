@@ -47,7 +47,9 @@ class WorkPage extends StatelessWidget {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => const PMDetailPage()));
+                            builder: (context) => PmDetailPage(
+                                  pm: pm,
+                                )));
                   },
                   nama: pm.pop.nama,
                   popKode: pm.pop.popKode,
@@ -64,12 +66,7 @@ class WorkPage extends StatelessWidget {
                   .where((element) => element.status == "REALISASI")
                   .map((pm) {
                 return WorkOrderCard(
-                  onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const PMDetailPage()));
-                  },
+                  onTap: () {},
                   nama: pm.pop.nama,
                   popKode: pm.pop.popKode,
                   tanggal: pm.plan.toString(),

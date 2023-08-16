@@ -18,6 +18,7 @@ class PmProvider extends ChangeNotifier {
   Future<bool> getDataPm({required String token}) async {
     try {
       _listPm = await PmService().getPm(token: token);
+
       notifyListeners();
       return true;
     } catch (e) {

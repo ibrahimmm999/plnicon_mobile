@@ -1,4 +1,6 @@
 import 'package:equatable/equatable.dart';
+import 'package:plnicon_mobile/models/master/baterai_master_model.dart';
+import 'package:plnicon_mobile/models/master/modul_master_model.dart';
 
 class RectMasterModel extends Equatable {
   final int id;
@@ -11,6 +13,8 @@ class RectMasterModel extends Equatable {
   final int modulTerpasang;
   final int modulControl;
   final DateTime tanggalInstalasi;
+  final List<BateraiMasterModel> listBaterai;
+  final List<ModulMasterModel> listModul;
   final DateTime createdAt;
   final DateTime updatedAt;
 
@@ -23,6 +27,8 @@ class RectMasterModel extends Equatable {
     required this.modulControl,
     required this.merk,
     required this.sn,
+    required this.listBaterai,
+    required this.listModul,
     required this.tipe,
     required this.tanggalInstalasi,
     required this.createdAt,
@@ -39,6 +45,14 @@ class RectMasterModel extends Equatable {
       modulControl: json['modul_control'],
       merk: json['merk'],
       sn: json['sn'],
+      listBaterai: json['baterai'] == null
+          ? []
+          : List<BateraiMasterModel>.from(
+              json['baterai'].map((x) => BateraiMasterModel.fromJson(x))),
+      listModul: json['modul'] == null
+          ? []
+          : List<ModulMasterModel>.from(
+              json['modul'].map((x) => ModulMasterModel.fromJson(x))),
       tipe: json['tipe'],
       tanggalInstalasi: json['tgl_instalasi'],
       createdAt: DateTime.parse(json['created_at']),
@@ -56,6 +70,8 @@ class RectMasterModel extends Equatable {
         modulTerpasang,
         merk,
         sn,
+        listBaterai,
+        listModul,
         tipe,
         tanggalInstalasi,
         createdAt,

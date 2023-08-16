@@ -1,10 +1,12 @@
 import 'package:equatable/equatable.dart';
+import 'package:plnicon_mobile/models/master/perangkat_master_model.dart';
 
 class RackMasterModel extends Equatable {
   final int id;
   final int popId;
   final int nomorRack;
   final String lokasi;
+  final List<PerangkatMasterModel> listPerangkat;
   final DateTime createdAt;
   final DateTime updatedAt;
 
@@ -13,6 +15,7 @@ class RackMasterModel extends Equatable {
     required this.popId,
     required this.nomorRack,
     required this.lokasi,
+    required this.listPerangkat,
     required this.createdAt,
     required this.updatedAt,
   });
@@ -23,6 +26,10 @@ class RackMasterModel extends Equatable {
       popId: json['pop_id'],
       nomorRack: json['nomor_rack'],
       lokasi: json['lokasi'],
+      listPerangkat: json['perangkat'] == null
+          ? []
+          : List<PerangkatMasterModel>.from(
+              json['perangkat'].map((x) => PerangkatMasterModel.fromJson(x))),
       createdAt: DateTime.parse(json['created_at']),
       updatedAt: DateTime.parse(json['created_at']),
     );

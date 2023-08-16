@@ -4,14 +4,14 @@ class AcMasterModel extends Equatable {
   final int id;
   final int popId;
   final String merk;
-  final int kapasitas;
+  final String kapasitas;
   final String nama;
   final String kondisi;
   final String tekananFreon;
   final String modeHidup;
-  final DateTime tanggalInstalasi;
-  final DateTime createdAt;
-  final DateTime updatedAt;
+  // final DateTime tanggalInstalasi;
+  // final DateTime createdAt;
+  // final DateTime updatedAt;
 
   const AcMasterModel({
     required this.id,
@@ -22,9 +22,9 @@ class AcMasterModel extends Equatable {
     required this.nama,
     required this.modeHidup,
     required this.kondisi,
-    required this.tanggalInstalasi,
-    required this.createdAt,
-    required this.updatedAt,
+    // required this.tanggalInstalasi,
+    // required this.createdAt,
+    // required this.updatedAt,
   });
 
   factory AcMasterModel.fromJson(Map<String, dynamic> json) {
@@ -37,9 +37,9 @@ class AcMasterModel extends Equatable {
       nama: json['nama'],
       modeHidup: json['mode_hidup'],
       kondisi: json['kondisi'],
-      tanggalInstalasi: DateTime.parse(json['tgl_instalasi']),
-      createdAt: DateTime.parse(json['created_at']),
-      updatedAt: DateTime.parse(json['created_at']),
+      // tanggalInstalasi: DateTime.parse(json['tgl_instalasi']),
+      // createdAt: DateTime.parse(json['created_at']),
+      // updatedAt: DateTime.parse(json['created_at']),
     );
   }
 
@@ -53,8 +53,8 @@ class AcMasterModel extends Equatable {
         nama,
         modeHidup,
         kondisi,
-        tanggalInstalasi,
-        createdAt,
-        updatedAt,
+        // tanggalInstalasi,
+        // createdAt,
+        // updatedAt,
       ];
 }
