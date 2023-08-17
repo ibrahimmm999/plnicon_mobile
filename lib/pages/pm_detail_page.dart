@@ -113,24 +113,27 @@ class _PmDetailPageState extends State<PmDetailPage> {
                     const SizedBox(
                       height: 4,
                     ),
-                    Column(
-                      children: popProvider.listPop.first.listAc.map((e) {
-                        var index =
-                            popProvider.listPop.first.listAc.indexOf(e) + 1;
-                        return GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => ACPage(
-                                          pm: widget.pm,
-                                          acMaster: e,
-                                          title: "AC $index",
-                                        )),
-                              );
-                            },
-                            child: card("AC $index  -  ${e.merk}"));
-                      }).toList(),
+                    Visibility(
+                      visible: popProvider.listPop.first.listAc.isNotEmpty,
+                      child: Column(
+                        children: popProvider.listPop.first.listAc.map((e) {
+                          var index =
+                              popProvider.listPop.first.listAc.indexOf(e) + 1;
+                          return GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => ACPage(
+                                            pm: widget.pm,
+                                            acMaster: e,
+                                            title: "AC $index",
+                                          )),
+                                );
+                              },
+                              child: card("AC $index  -  ${e.merk}"));
+                        }).toList(),
+                      ),
                     ),
                     const SizedBox(
                       height: 20,
@@ -142,23 +145,27 @@ class _PmDetailPageState extends State<PmDetailPage> {
                     const SizedBox(
                       height: 4,
                     ),
-                    Column(
-                      children: popProvider.listPop.first.listGenset.map((e) {
-                        var index =
-                            popProvider.listPop.first.listGenset.indexOf(e) + 1;
-                        return GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => GensetPage(
-                                          gensetMasterModel: e,
-                                          title: "Genset $index",
-                                        )),
-                              );
-                            },
-                            child: card("Genset $index  -  ${e.merk}"));
-                      }).toList(),
+                    Visibility(
+                      visible: popProvider.listPop.first.listGenset.isNotEmpty,
+                      child: Column(
+                        children: popProvider.listPop.first.listGenset.map((e) {
+                          var index =
+                              popProvider.listPop.first.listGenset.indexOf(e) +
+                                  1;
+                          return GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => GensetPage(
+                                            gensetMasterModel: e,
+                                            title: "Genset $index",
+                                          )),
+                                );
+                              },
+                              child: card("Genset $index  -  ${e.merk}"));
+                        }).toList(),
+                      ),
                     ),
                     const SizedBox(
                       height: 20,
@@ -170,24 +177,29 @@ class _PmDetailPageState extends State<PmDetailPage> {
                     const SizedBox(
                       height: 4,
                     ),
-                    Column(
-                      children: popProvider.listPop.first.listInverter.map((e) {
-                        var index =
-                            popProvider.listPop.first.listInverter.indexOf(e) +
-                                1;
-                        return GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => InverterPage(
-                                          inverter: e,
-                                          title: "Inverter $index",
-                                        )),
-                              );
-                            },
-                            child: card("Inverter $index  -  ${e.merk}"));
-                      }).toList(),
+                    Visibility(
+                      visible:
+                          popProvider.listPop.first.listInverter.isNotEmpty,
+                      child: Column(
+                        children:
+                            popProvider.listPop.first.listInverter.map((e) {
+                          var index = popProvider.listPop.first.listInverter
+                                  .indexOf(e) +
+                              1;
+                          return GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => InverterPage(
+                                            inverter: e,
+                                            title: "Inverter $index",
+                                          )),
+                                );
+                              },
+                              child: card("Inverter $index  -  ${e.merk}"));
+                        }).toList(),
+                      ),
                     ),
                     const SizedBox(
                       height: 20,
@@ -199,23 +211,26 @@ class _PmDetailPageState extends State<PmDetailPage> {
                     const SizedBox(
                       height: 4,
                     ),
-                    Column(
-                      children: popProvider.listPop.first.listRack.map((e) {
-                        var index =
-                            popProvider.listPop.first.listRack.indexOf(e) + 1;
-                        return GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => RackPage(
-                                          rack: e,
-                                          title: "Rack $index",
-                                        )),
-                              );
-                            },
-                            child: card("Rack $index"));
-                      }).toList(),
+                    Visibility(
+                      visible: popProvider.listPop.first.listRack.isNotEmpty,
+                      child: Column(
+                        children: popProvider.listPop.first.listRack.map((e) {
+                          var index =
+                              popProvider.listPop.first.listRack.indexOf(e) + 1;
+                          return GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => RackPage(
+                                            rack: e,
+                                            title: "Rack $index",
+                                          )),
+                                );
+                              },
+                              child: card("Rack $index"));
+                        }).toList(),
+                      ),
                     ),
                     const SizedBox(
                       height: 20,
@@ -227,23 +242,26 @@ class _PmDetailPageState extends State<PmDetailPage> {
                     const SizedBox(
                       height: 4,
                     ),
-                    Column(
-                      children: popProvider.listPop.first.listRect.map((e) {
-                        var index =
-                            popProvider.listPop.first.listRect.indexOf(e) + 1;
-                        return GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => RectiPage(
-                                          rect: e,
-                                          title: "Rectifier $index",
-                                        )),
-                              );
-                            },
-                            child: card("Rectifier $index"));
-                      }).toList(),
+                    Visibility(
+                      visible: popProvider.listPop.first.listRect.isNotEmpty,
+                      child: Column(
+                        children: popProvider.listPop.first.listRect.map((e) {
+                          var index =
+                              popProvider.listPop.first.listRect.indexOf(e) + 1;
+                          return GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => RectiPage(
+                                            rect: e,
+                                            title: "Rectifier $index",
+                                          )),
+                                );
+                              },
+                              child: card("Rectifier $index"));
+                        }).toList(),
+                      ),
                     ),
                     const SizedBox(
                       height: 20,
@@ -255,23 +273,26 @@ class _PmDetailPageState extends State<PmDetailPage> {
                     const SizedBox(
                       height: 4,
                     ),
-                    Column(
-                      children: popProvider.listPop.first.listPdb.map((e) {
-                        var index =
-                            popProvider.listPop.first.listPdb.indexOf(e) + 1;
-                        return GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => PDBPage(
-                                          pdb: e,
-                                          title: "PDB $index",
-                                        )),
-                              );
-                            },
-                            child: card("PDB $index"));
-                      }).toList(),
+                    Visibility(
+                      visible: popProvider.listPop.first.listPdb.isNotEmpty,
+                      child: Column(
+                        children: popProvider.listPop.first.listPdb.map((e) {
+                          var index =
+                              popProvider.listPop.first.listPdb.indexOf(e) + 1;
+                          return GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => PDBPage(
+                                            pdb: e,
+                                            title: "PDB $index",
+                                          )),
+                                );
+                              },
+                              child: card("PDB $index"));
+                        }).toList(),
+                      ),
                     ),
                     const SizedBox(
                       height: 20,
@@ -283,23 +304,26 @@ class _PmDetailPageState extends State<PmDetailPage> {
                     const SizedBox(
                       height: 4,
                     ),
-                    Column(
-                      children: popProvider.listPop.first.listKwh.map((e) {
-                        var index =
-                            popProvider.listPop.first.listKwh.indexOf(e) + 1;
-                        return GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => KWHPage(
-                                          kwh: e,
-                                          title: "KWH $index",
-                                        )),
-                              );
-                            },
-                            child: card("KWH $index"));
-                      }).toList(),
+                    Visibility(
+                      visible: popProvider.listPop.first.listKwh.isNotEmpty,
+                      child: Column(
+                        children: popProvider.listPop.first.listKwh.map((e) {
+                          var index =
+                              popProvider.listPop.first.listKwh.indexOf(e) + 1;
+                          return GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => KWHPage(
+                                            kwh: e,
+                                            title: "KWH $index",
+                                          )),
+                                );
+                              },
+                              child: card("KWH $index"));
+                        }).toList(),
+                      ),
                     ),
                     const SizedBox(
                       height: 20,
@@ -311,21 +335,25 @@ class _PmDetailPageState extends State<PmDetailPage> {
                     const SizedBox(
                       height: 4,
                     ),
-                    Column(
-                      children: popProvider.listPop.first.listExAlarm.map((e) {
-                        return GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => ExAlarmPage(
-                                          exalarm: e,
-                                          title: "Ex Alarm",
-                                        )),
-                              );
-                            },
-                            child: card("Ex Alarm "));
-                      }).toList(),
+                    Visibility(
+                      visible: popProvider.listPop.first.listExAlarm.isNotEmpty,
+                      child: Column(
+                        children:
+                            popProvider.listPop.first.listExAlarm.map((e) {
+                          return GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => ExAlarmPage(
+                                            exalarm: e,
+                                            title: "Ex Alarm",
+                                          )),
+                                );
+                              },
+                              child: card("Ex Alarm "));
+                        }).toList(),
+                      ),
                     ),
                     const SizedBox(
                       height: 20,
@@ -337,22 +365,26 @@ class _PmDetailPageState extends State<PmDetailPage> {
                     const SizedBox(
                       height: 4,
                     ),
-                    Column(
-                      children:
-                          popProvider.listPop.first.listEnvironment.map((e) {
-                        return GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => EnvironmentPage(
-                                          environment: e,
-                                          title: "Environment",
-                                        )),
-                              );
-                            },
-                            child: card("Environment "));
-                      }).toList(),
+                    Visibility(
+                      visible:
+                          popProvider.listPop.first.listEnvironment.isNotEmpty,
+                      child: Column(
+                        children:
+                            popProvider.listPop.first.listEnvironment.map((e) {
+                          return GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => EnvironmentPage(
+                                            environment: e,
+                                            title: "Environment",
+                                          )),
+                                );
+                              },
+                              child: card("Environment "));
+                        }).toList(),
+                      ),
                     ),
                     const SizedBox(
                       height: 20,
@@ -364,26 +396,31 @@ class _PmDetailPageState extends State<PmDetailPage> {
                     const SizedBox(
                       height: 4,
                     ),
-                    Column(
-                      children: popProvider.listPop.first.listPdb.first.listMcb
-                          .map((e) {
-                        var index = popProvider
-                                .listPop.first.listPdb.first.listMcb
-                                .indexOf(e) +
-                            1;
-                        return GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => McbPage(
-                                          mcb: e,
-                                          title: "MCB $index",
-                                        )),
-                              );
-                            },
-                            child: card("MCB $index"));
-                      }).toList(),
+                    Visibility(
+                      visible: popProvider
+                          .listPop.first.listPdb.first.listMcb.isNotEmpty,
+                      child: Column(
+                        children: popProvider
+                            .listPop.first.listPdb.first.listMcb
+                            .map((e) {
+                          var index = popProvider
+                                  .listPop.first.listPdb.first.listMcb
+                                  .indexOf(e) +
+                              1;
+                          return GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => McbPage(
+                                            mcb: e,
+                                            title: "MCB $index",
+                                          )),
+                                );
+                              },
+                              child: card("MCB $index"));
+                        }).toList(),
+                      ),
                     ),
                   ]));
   }
