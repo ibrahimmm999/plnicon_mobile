@@ -9,12 +9,17 @@ import 'package:plnicon_mobile/widgets/input_dokumentasi.dart';
 import 'package:plnicon_mobile/widgets/text_input.dart';
 import 'package:provider/provider.dart';
 
-class GensetPage extends StatelessWidget {
+class GensetPage extends StatefulWidget {
   const GensetPage(
       {super.key, required this.gensetMasterModel, required this.title});
   final GensetMasterModel gensetMasterModel;
   final String title;
 
+  @override
+  State<GensetPage> createState() => _GensetPageState();
+}
+
+class _GensetPageState extends State<GensetPage> {
   @override
   Widget build(BuildContext context) {
     PageProvider pageProvider = Provider.of<PageProvider>(context);
@@ -61,77 +66,77 @@ class GensetPage extends StatelessWidget {
                 padding: EdgeInsets.all(defaultMargin),
                 children: [
                   Text(
-                    "Merk : ${gensetMasterModel.merk}",
+                    "Merk : ${widget.gensetMasterModel.merk}",
                     style: buttonText.copyWith(color: textDarkColor),
                   ),
                   const SizedBox(
                     height: 20,
                   ),
                   Text(
-                    "SN : ${gensetMasterModel.sn}",
+                    "SN : ${widget.gensetMasterModel.sn}",
                     style: buttonText.copyWith(color: textDarkColor),
                   ),
                   const SizedBox(
                     height: 20,
                   ),
                   Text(
-                    "Accu : ${gensetMasterModel.accu}",
+                    "Accu : ${widget.gensetMasterModel.accu}",
                     style: buttonText.copyWith(color: textDarkColor),
                   ),
                   const SizedBox(
                     height: 20,
                   ),
                   Text(
-                    "Bahan Bakar : ${gensetMasterModel.bahanBakar}",
+                    "Bahan Bakar : ${widget.gensetMasterModel.bahanBakar}",
                     style: buttonText.copyWith(color: textDarkColor),
                   ),
                   const SizedBox(
                     height: 20,
                   ),
                   Text(
-                    "Kapasitas : ${gensetMasterModel.kapasitas}",
+                    "Kapasitas : ${widget.gensetMasterModel.kapasitas}",
                     style: buttonText.copyWith(color: textDarkColor),
                   ),
                   const SizedBox(
                     height: 20,
                   ),
                   Text(
-                    "Max Fuel : ${gensetMasterModel.maxFuel}",
+                    "Max Fuel : ${widget.gensetMasterModel.maxFuel}",
                     style: buttonText.copyWith(color: textDarkColor),
                   ),
                   const SizedBox(
                     height: 20,
                   ),
                   Text(
-                    "Merk Accu : ${gensetMasterModel.merkAccu}",
+                    "Merk Accu : ${widget.gensetMasterModel.merkAccu}",
                     style: buttonText.copyWith(color: textDarkColor),
                   ),
                   const SizedBox(
                     height: 20,
                   ),
                   Text(
-                    "Merk Engine : ${gensetMasterModel.merkEngine}",
+                    "Merk Engine : ${widget.gensetMasterModel.merkEngine}",
                     style: buttonText.copyWith(color: textDarkColor),
                   ),
                   const SizedBox(
                     height: 20,
                   ),
                   Text(
-                    "Merk Genset : ${gensetMasterModel.merkGen}",
+                    "Merk Genset : ${widget.gensetMasterModel.merkGen}",
                     style: buttonText.copyWith(color: textDarkColor),
                   ),
                   const SizedBox(
                     height: 20,
                   ),
                   Text(
-                    "Switch : ${gensetMasterModel.switchGenset}",
+                    "Switch : ${widget.gensetMasterModel.switchGenset}",
                     style: buttonText.copyWith(color: textDarkColor),
                   ),
                   const SizedBox(
                     height: 20,
                   ),
                   Text(
-                    "Tipe Batt Charger : ${gensetMasterModel.tipeBattCharger}",
+                    "Tipe Batt Charger : ${widget.gensetMasterModel.tipeBattCharger}",
                     style: buttonText.copyWith(color: textDarkColor),
                   ),
                   const SizedBox(
@@ -281,7 +286,7 @@ class GensetPage extends StatelessWidget {
             child: Container(
               margin: const EdgeInsets.only(right: 60),
               child: Text(
-                title,
+                widget.title,
                 style: header2.copyWith(color: textLightColor),
               ),
             ),

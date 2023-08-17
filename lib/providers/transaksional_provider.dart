@@ -7,8 +7,10 @@ import 'package:plnicon_mobile/models/nilai/kwh_nilai_model.dart';
 import 'package:plnicon_mobile/models/nilai/pdb_nilai_model.dart';
 import 'package:plnicon_mobile/models/nilai/perangkat_nilai_model.dart';
 import 'package:plnicon_mobile/models/nilai/rect_nilai_model.dart';
+import 'package:plnicon_mobile/services/transaksional/ac_service.dart';
 
 class TransaksionalProvider extends ChangeNotifier {
+  bool found = false;
   List<AcNilaiModel> _listAc = [];
   List<KwhNilaiModel> _listKwh = [];
   List<RectNilaiModel> _listRect = [];
@@ -27,9 +29,43 @@ class TransaksionalProvider extends ChangeNotifier {
   List<GensetNilaiModel> get listGenset => _listGenset;
   List<PerangkatNilaiModel> get listPerangkat => _listPerangkat;
 
-  set setListAc(List<AcNilaiModel> ac) {
-    _listAc = ac;
+  late AcNilaiModel currentAc;
+
+  void setAc(AcNilaiModel ac) {
+    for (var i = 0; i < _listAc.length; i++) {
+      if (_listAc[i].pmId == ac.pmId && _listAc[i].acId == ac.acId) {
+        _listAc[i] = ac;
+        found = true;
+        notifyListeners();
+        break;
+      }
+    }
+    if (!found) {
+      _listAc.add(ac);
+      found = false;
+    }
+    print(_listAc);
     notifyListeners();
+  }
+
+  bool getAc(int pmId, int acId) {
+    notifyListeners();
+    print(_listAc.length);
+    for (var i = 0; i < _listAc.length; i++) {
+      print("LIST AC: ${_listAc[i].pmId}");
+      print("LIST AC: ${_listAc[i].pmId}");
+      print("AC: $pmId");
+      print("AC: $acId");
+      if (_listAc[i].pmId == pmId && _listAc[i].acId == acId) {
+        currentAc = _listAc[i];
+        print(currentAc);
+        notifyListeners();
+        return true;
+      }
+    }
+    print("QQQ");
+    notifyListeners();
+    return false;
   }
 
   set setListKwh(List<KwhNilaiModel> kwh) {
@@ -72,9 +108,27 @@ class TransaksionalProvider extends ChangeNotifier {
   //   notifyListeners();
   // }
 
-  void addAc(AcNilaiModel ac) {
-    _listAc.add(ac);
-    notifyListeners();
+  Future<bool> addAc(AcNilaiModel ac) async {
+    try {
+      await AcService().postAc(
+          acId: ac.acId,
+          pmId: ac.pmId,
+          suhuAc: ac.suhuAc,
+          hasilPengujian: ac.hasilPengujian,
+          temuan: ac.temuan,
+          rekomendasi: ac.rekomendasi);
+      for (var i = 0; i < _listAc.length; i++) {
+        if (_listAc[i].pmId == ac.pmId && _listAc[i].acId == ac.acId) {
+          _listAc.removeAt(i);
+          break;
+        }
+      }
+      notifyListeners();
+      return true;
+    } catch (e) {
+      print("ERROR ADD AC: $e");
+      return false;
+    }
   }
 
   void addKwh(KwhNilaiModel kwh) {

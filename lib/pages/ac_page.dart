@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:plnicon_mobile/models/master/ac_master_model.dart';
+import 'package:plnicon_mobile/models/nilai/ac_nilai_model.dart';
+import 'package:plnicon_mobile/models/pm_model.dart';
 import 'package:plnicon_mobile/providers/page_provider.dart';
+import 'package:plnicon_mobile/providers/transaksional_provider.dart';
 import 'package:plnicon_mobile/services/transaksional/ac_service.dart';
 import 'package:plnicon_mobile/theme/theme.dart';
 import 'package:plnicon_mobile/widgets/custom_button.dart';
@@ -10,36 +13,53 @@ import 'package:plnicon_mobile/widgets/text_input.dart';
 import 'package:provider/provider.dart';
 
 class ACPage extends StatefulWidget {
-  const ACPage(
-      {super.key,
-      required this.acMaster,
-      required this.title,
-      this.pengujian = '',
-      this.suhu = "0",
-      this.rekomendasi = "",
-      this.temuan = ""});
+  const ACPage({
+    super.key,
+    required this.acMaster,
+    required this.pm,
+    required this.title,
+  });
   final AcMasterModel acMaster;
+  final PmModel pm;
   final String title;
-  final String pengujian;
-  final String suhu;
-  final String temuan;
-  final String rekomendasi;
 
   @override
   State<ACPage> createState() => _ACPageState();
 }
 
 String pengujian = "";
+int suhu = 0;
+String temuan = '';
+String rekomendasi = '';
 
 class _ACPageState extends State<ACPage> {
   @override
-  Widget build(BuildContext context) {
-    TextEditingController suhuController = TextEditingController(text: '');
+  void initState() {
+    getinit();
+    super.initState();
+  }
 
-    TextEditingController temuanController = TextEditingController(text: '');
+  getinit() async {
+    if (await TransaksionalProvider().getAc(widget.pm.id, widget.acMaster.id)) {
+      suhu = TransaksionalProvider().currentAc.suhuAc;
+      pengujian = TransaksionalProvider().currentAc.hasilPengujian;
+      temuan = TransaksionalProvider().currentAc.temuan;
+      rekomendasi = TransaksionalProvider().currentAc.rekomendasi;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    TransaksionalProvider transaksionalProvider =
+        Provider.of<TransaksionalProvider>(context);
+    TextEditingController suhuController =
+        TextEditingController(text: suhu.toString());
+
+    TextEditingController temuanController =
+        TextEditingController(text: temuan);
 
     TextEditingController rekomendasiController =
-        TextEditingController(text: '');
+        TextEditingController(text: rekomendasi);
     TextEditingController deskripsiController = TextEditingController(text: "");
     List<String> listHasilPengujian = ["Ok", "B aja", "Buruk"];
     PageProvider pageProvider = Provider.of<PageProvider>(context);
@@ -170,7 +190,6 @@ class _ACPageState extends State<ACPage> {
                   borderRadius: BorderRadius.circular(defaultRadius),
                   decoration: InputDecoration(
                     contentPadding: EdgeInsets.all(defaultRadius),
-                    hintText: "-",
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(defaultRadius),
                       borderSide: BorderSide(width: 2, color: primaryBlue),
@@ -248,6 +267,21 @@ class _ACPageState extends State<ACPage> {
     return Scaffold(
         appBar: AppBar(
           backgroundColor: primaryBlue,
+          leading: GestureDetector(
+              onTap: () {
+                TransaksionalProvider().setAc(AcNilaiModel(
+                    id: 0,
+                    acId: widget.acMaster.id,
+                    pmId: widget.pm.id,
+                    suhuAc: int.parse(suhuController.text),
+                    hasilPengujian: pengujian,
+                    temuan: temuanController.text,
+                    rekomendasi: rekomendasiController.text,
+                    createdAt: DateTime.now(),
+                    updatedAt: DateTime.now()));
+                Navigator.pop(context);
+              },
+              child: Icon(Icons.arrow_back)),
           title: Center(
             child: Container(
               margin: const EdgeInsets.only(right: 60),

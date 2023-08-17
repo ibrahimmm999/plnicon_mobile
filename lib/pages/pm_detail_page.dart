@@ -7,6 +7,7 @@ import 'package:plnicon_mobile/pages/genset_page.dart';
 import 'package:plnicon_mobile/pages/inverter_page.dart';
 import 'package:plnicon_mobile/pages/kwh_page.dart';
 import 'package:plnicon_mobile/pages/main_page.dart';
+import 'package:plnicon_mobile/pages/mcb_page.dart';
 import 'package:plnicon_mobile/pages/pdb_page.dart';
 import 'package:plnicon_mobile/pages/rack_page.dart';
 import 'package:plnicon_mobile/pages/recti_page.dart';
@@ -122,6 +123,7 @@ class _PmDetailPageState extends State<PmDetailPage> {
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) => ACPage(
+                                          pm: widget.pm,
                                           acMaster: e,
                                           title: "AC $index",
                                         )),
@@ -350,6 +352,37 @@ class _PmDetailPageState extends State<PmDetailPage> {
                               );
                             },
                             child: card("Environment "));
+                      }).toList(),
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Text(
+                      "MCB",
+                      style: header3,
+                    ),
+                    const SizedBox(
+                      height: 4,
+                    ),
+                    Column(
+                      children: popProvider.listPop.first.listPdb.first.listMcb
+                          .map((e) {
+                        var index = popProvider
+                                .listPop.first.listPdb.first.listMcb
+                                .indexOf(e) +
+                            1;
+                        return GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => McbPage(
+                                          mcb: e,
+                                          title: "MCB $index",
+                                        )),
+                              );
+                            },
+                            child: card("MCB $index"));
                       }).toList(),
                     ),
                   ]));
