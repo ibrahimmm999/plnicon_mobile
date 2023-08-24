@@ -22,12 +22,9 @@ class PopService {
 
     if (response.statusCode == 200) {
       var data = jsonDecode(response.body)['data'] as List;
-      print("DATA");
-      print(data[0]['pdb']);
       List<PopModel> pop = List<PopModel>.from(
         data.map((e) => PopModel.fromJson(e)),
       );
-      print("XXX");
       return pop;
     } else {
       throw "Get data pop failed";

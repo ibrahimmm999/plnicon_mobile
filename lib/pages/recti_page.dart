@@ -1,7 +1,9 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:plnicon_mobile/models/pm_model.dart';
 import 'package:plnicon_mobile/pages/main_page.dart';
+import 'package:plnicon_mobile/providers/images_provider.dart';
 import 'package:plnicon_mobile/providers/page_provider.dart';
 import 'package:plnicon_mobile/services/transaksional/rect_service.dart';
 import 'package:plnicon_mobile/theme/theme.dart';
@@ -13,9 +15,11 @@ import 'package:provider/provider.dart';
 import '../models/master/rect_master_model.dart';
 
 class RectiPage extends StatefulWidget {
-  const RectiPage({super.key, required this.rect, required this.title});
+  const RectiPage(
+      {super.key, required this.rect, required this.title, required this.pm});
   final RectMasterModel rect;
   final String title;
+  final PmModel pm;
 
   @override
   State<RectiPage> createState() => _RectiPageState();
@@ -42,6 +46,7 @@ class _RectiPageState extends State<RectiPage> {
     TextEditingController rekomendasiController = TextEditingController();
     TextEditingController deskripsiController = TextEditingController();
     PageProvider pageProvider = Provider.of<PageProvider>(context);
+    ImagesProvider imagesProvider = Provider.of<ImagesProvider>(context);
     Widget switchContent() {
       return SizedBox(
         width: MediaQuery.sizeOf(context).width,
@@ -139,7 +144,9 @@ class _RectiPageState extends State<RectiPage> {
                     horizontal: defaultMargin, vertical: 20),
                 children: [
                   InputDokumentasi(
-                      controller: deskripsiController, pageName: "rectifier"),
+                      imagesProvider: imagesProvider,
+                      controller: deskripsiController,
+                      pageName: "rectifier"),
                   TextInput(
                     controller: loadrController,
                     label: "Load R",
@@ -193,7 +200,7 @@ class _RectiPageState extends State<RectiPage> {
                         onPressed: () async {
                           await RectService().postRect(
                               rectId: widget.rect.id,
-                              pmId: 1,
+                              pmId: widget.pm.id,
                               loadr: double.parse(loadrController.text),
                               loads: double.parse(loadsController.text),
                               loadt: double.parse(loadtController.text),

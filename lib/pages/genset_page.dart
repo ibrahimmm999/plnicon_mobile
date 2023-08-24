@@ -1,19 +1,28 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:plnicon_mobile/models/master/genset_master_model.dart';
+import 'package:plnicon_mobile/models/pm_model.dart';
 import 'package:plnicon_mobile/pages/main_page.dart';
+import 'package:plnicon_mobile/providers/images_provider.dart';
 import 'package:plnicon_mobile/providers/page_provider.dart';
 import 'package:plnicon_mobile/services/transaksional/genset_service.dart';
 import 'package:plnicon_mobile/theme/theme.dart';
 import 'package:plnicon_mobile/widgets/custom_button.dart';
+import 'package:plnicon_mobile/widgets/custom_popup.dart';
 import 'package:plnicon_mobile/widgets/input_dokumentasi.dart';
 import 'package:plnicon_mobile/widgets/text_input.dart';
 import 'package:provider/provider.dart';
 
 class GensetPage extends StatefulWidget {
   const GensetPage(
-      {super.key, required this.gensetMasterModel, required this.title});
+      {super.key,
+      required this.gensetMasterModel,
+      required this.title,
+      required this.pm});
   final GensetMasterModel gensetMasterModel;
   final String title;
+  final PmModel pm;
 
   @override
   State<GensetPage> createState() => _GensetPageState();
@@ -22,6 +31,20 @@ class GensetPage extends StatefulWidget {
 class _GensetPageState extends State<GensetPage> {
   @override
   Widget build(BuildContext context) {
+    ImagesProvider imagesProvider = Provider.of<ImagesProvider>(context);
+    Future<void> handlePicker() async {
+      imagesProvider.setCroppedImageFile = null;
+      await imagesProvider.pickImage();
+      await imagesProvider.cropImage(
+          imageFile: imagesProvider.imageFile, key: "");
+      setState(() {
+        if (imagesProvider.croppedImagePath.isNotEmpty) {
+          contentPath = imagesProvider.croppedImagePath;
+          contentFile = imagesProvider.croppedImageFile;
+        }
+      });
+    }
+
     PageProvider pageProvider = Provider.of<PageProvider>(context);
     TextEditingController deskripsiController = TextEditingController();
     TextEditingController fuelController = TextEditingController();
@@ -34,6 +57,10 @@ class _GensetPageState extends State<GensetPage> {
     TextEditingController ujiBebanArusController = TextEditingController();
     TextEditingController ujiTanpaBebanArusController = TextEditingController();
     TextEditingController ujiTanpaBebanVoltController = TextEditingController();
+    TextEditingController failOverTestController = TextEditingController();
+    TextEditingController indoorCleanController = TextEditingController();
+    TextEditingController outdoorCleanController = TextEditingController();
+    TextEditingController kartuGantungUrlController = TextEditingController();
     TextEditingController temuanController = TextEditingController();
     TextEditingController rekomendasiController = TextEditingController();
     Widget switchContent() {
@@ -53,6 +80,96 @@ class _GensetPageState extends State<GensetPage> {
                 width: MediaQuery.sizeOf(context).width * 0.5),
           ],
         ),
+      );
+    }
+
+    Widget dokumentasi() {
+      return Column(
+        children: [
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(defaultRadius),
+                border: Border.all(
+                  width: 2,
+                  color: neutral500,
+                )),
+            height: 360,
+            width: double.infinity,
+            child: imagesProvider.foto.isEmpty
+                ? Center(
+                    child: Text(
+                      "Foto",
+                      style: buttonText.copyWith(color: textDarkColor),
+                    ),
+                  )
+                : ListView(
+                    scrollDirection: Axis.horizontal,
+                    children: imagesProvider.foto.entries.map((e) {
+                      return Container(
+                        width: 240,
+                        margin: const EdgeInsets.symmetric(horizontal: 12),
+                        child: Column(
+                          children: [
+                            Image.file(
+                              File(e.key),
+                              height: 240,
+                              width: 240,
+                              fit: BoxFit.cover,
+                            ),
+                            Text(
+                              e.value,
+                              style: buttonText.copyWith(color: textDarkColor),
+                              overflow: TextOverflow.clip,
+                            )
+                          ],
+                        ),
+                      );
+                    }).toList()),
+          ),
+          GestureDetector(
+            onTap: () async {
+              await handlePicker();
+              if (imagesProvider.croppedImageFile != null) {
+                // ignore: use_build_context_synchronously
+                showDialog(
+                  context: context,
+                  builder: (context) => CustomPopUp(
+                    title: "Deskripsi",
+                    controller: deskripsiController,
+                    add: () {
+                      imagesProvider.addDeskripsi(
+                          path: contentPath,
+                          deskripsi: deskripsiController.text);
+                      deskripsiController.clear();
+                    },
+                  ),
+                );
+              }
+            },
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              margin: const EdgeInsets.symmetric(vertical: 20),
+              decoration: BoxDecoration(
+                  color: primaryBlue,
+                  borderRadius: BorderRadius.circular(defaultRadius)),
+              width: double.infinity,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    "Tambah Foto",
+                    style: buttonText,
+                  ),
+                  Icon(
+                    Icons.photo_camera_outlined,
+                    color: textLightColor,
+                  )
+                ],
+              ),
+            ),
+          ),
+        ],
       );
     }
 
@@ -160,8 +277,7 @@ class _GensetPageState extends State<GensetPage> {
                 padding: EdgeInsets.symmetric(
                     horizontal: defaultMargin, vertical: 20),
                 children: [
-                  InputDokumentasi(
-                      controller: deskripsiController, pageName: "genset"),
+                  dokumentasi(),
                   TextInput(
                     controller: fuelController,
                     label: "Fuel",
@@ -243,6 +359,38 @@ class _GensetPageState extends State<GensetPage> {
                     height: 20,
                   ),
                   TextInput(
+                    controller: indoorCleanController,
+                    label: "Indoor Clean",
+                    placeholder: "Indoor Clean",
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  TextInput(
+                    controller: outdoorCleanController,
+                    label: "Outdoor Clean",
+                    placeholder: "Outdoor Clean",
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  TextInput(
+                    controller: failOverTestController,
+                    label: "Fail Over Test",
+                    placeholder: "Fail Over Test",
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  TextInput(
+                    controller: kartuGantungUrlController,
+                    label: "Kartu Gantung Url",
+                    placeholder: "Kartu Gantung Url",
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  TextInput(
                     controller: temuanController,
                     label: "Temuan",
                     placeholder: "Temuan",
@@ -263,6 +411,32 @@ class _GensetPageState extends State<GensetPage> {
                     child: CustomButton(
                         text: "Save",
                         onPressed: () async {
+                          GensetService().postGenset(
+                              gensetId: widget.gensetMasterModel.id,
+                              pmId: widget.pm.id,
+                              fuel: int.parse(fuelController.text),
+                              hourMeter: double.parse(hourMeterController.text),
+                              teganganAccu:
+                                  double.parse(teganganAccuController.text),
+                              teganganCharger:
+                                  double.parse(teganganChargerController.text),
+                              arusCharger:
+                                  double.parse(arusChargerController.text),
+                              failOverTest: failOverTestController.text,
+                              tempOn: double.parse(tempOnController.text),
+                              ujiBebanVolt:
+                                  double.parse(ujiBebanVoltController.text),
+                              ujiBebanArus:
+                                  double.parse(ujiBebanArusController.text),
+                              ujiTanpaBebanVolt: double.parse(
+                                  ujiTanpaBebanVoltController.text),
+                              ujiTanpaBebanArus: double.parse(
+                                  ujiTanpaBebanArusController.text),
+                              indoorClean: indoorCleanController.text,
+                              outdoorClean: outdoorCleanController.text,
+                              kartuGantungUrl: kartuGantungUrlController.text,
+                              temuan: temuanController.text,
+                              rekomendasi: rekomendasiController.text);
                           Navigator.pop(context);
                         },
                         color: primaryBlue,

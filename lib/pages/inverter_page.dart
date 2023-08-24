@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:plnicon_mobile/models/master/inverter_master_model.dart';
+import 'package:plnicon_mobile/models/pm_model.dart';
+import 'package:plnicon_mobile/pages/ac_page.dart';
 import 'package:plnicon_mobile/pages/main_page.dart';
+import 'package:plnicon_mobile/providers/images_provider.dart';
 import 'package:plnicon_mobile/providers/page_provider.dart';
+import 'package:plnicon_mobile/services/transaksional/inverter_service.dart';
 import 'package:plnicon_mobile/theme/theme.dart';
 import 'package:plnicon_mobile/widgets/custom_button.dart';
 import 'package:plnicon_mobile/widgets/custom_dropdown.dart';
@@ -9,11 +13,21 @@ import 'package:plnicon_mobile/widgets/input_dokumentasi.dart';
 import 'package:plnicon_mobile/widgets/text_input.dart';
 import 'package:provider/provider.dart';
 
-class InverterPage extends StatelessWidget {
-  const InverterPage({super.key, required this.title, required this.inverter});
+class InverterPage extends StatefulWidget {
+  const InverterPage(
+      {super.key,
+      required this.title,
+      required this.inverter,
+      required this.pm});
   final InverterMasterModel inverter;
   final String title;
+  final PmModel pm;
 
+  @override
+  State<InverterPage> createState() => _InverterPageState();
+}
+
+class _InverterPageState extends State<InverterPage> {
   @override
   Widget build(BuildContext context) {
     TextEditingController loadController = TextEditingController();
@@ -24,7 +38,10 @@ class InverterPage extends StatelessWidget {
     TextEditingController deskripsiController = TextEditingController();
     TextEditingController temuanController = TextEditingController();
     TextEditingController rekomendasiController = TextEditingController();
+    ImagesProvider imagesProvider = Provider.of<ImagesProvider>(context);
     PageProvider pageProvider = Provider.of<PageProvider>(context);
+    String hasilUji = "";
+    List<String> listHasilPengujian = ["OK", "Not OK"];
     Widget switchContent() {
       return SizedBox(
         width: MediaQuery.sizeOf(context).width,
@@ -55,35 +72,35 @@ class InverterPage extends StatelessWidget {
                 padding: EdgeInsets.all(defaultMargin),
                 children: [
                   Text(
-                    "Merk : ${inverter.merk}",
+                    "Merk : ${widget.inverter.merk}",
                     style: buttonText.copyWith(color: textDarkColor),
                   ),
                   const SizedBox(
                     height: 20,
                   ),
                   Text(
-                    "Kondisi : ${inverter.kondisi}",
+                    "Kondisi : ${widget.inverter.kondisi}",
                     style: buttonText.copyWith(color: textDarkColor),
                   ),
                   const SizedBox(
                     height: 20,
                   ),
                   Text(
-                    "Tipe : ${inverter.tipe}",
+                    "Tipe : ${widget.inverter.tipe}",
                     style: buttonText.copyWith(color: textDarkColor),
                   ),
                   const SizedBox(
                     height: 20,
                   ),
                   Text(
-                    "Kapasitas : ${inverter.kapasitas}",
+                    "Kapasitas : ${widget.inverter.kapasitas}",
                     style: buttonText.copyWith(color: textDarkColor),
                   ),
                   const SizedBox(
                     height: 20,
                   ),
                   Text(
-                    "SN : ${inverter.sn}",
+                    "SN : ${widget.inverter.sn}",
                     style: buttonText.copyWith(color: textDarkColor),
                   ),
                   const SizedBox(
@@ -108,7 +125,9 @@ class InverterPage extends StatelessWidget {
                     horizontal: defaultMargin, vertical: 20),
                 children: [
                   InputDokumentasi(
-                      controller: deskripsiController, pageName: "inverter"),
+                      imagesProvider: imagesProvider,
+                      controller: deskripsiController,
+                      pageName: "inverter"),
                   TextInput(
                     controller: loadController,
                     label: "Load",
@@ -142,14 +161,6 @@ class InverterPage extends StatelessWidget {
                     height: 20,
                   ),
                   TextInput(
-                    controller: inputDCController,
-                    label: "Input DC",
-                    placeholder: "Input DC",
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  TextInput(
                     controller: mainfallController,
                     label: "Mainfall",
                     placeholder: "Mainfall",
@@ -161,7 +172,35 @@ class InverterPage extends StatelessWidget {
                     "Hasil Uji",
                     style: buttonText.copyWith(color: textDarkColor),
                   ),
-                  const CustomDropDown(list: ["OK", "Not OK"]),
+                  DropdownButtonFormField(
+                    alignment: Alignment.centerLeft,
+                    style: buttonText.copyWith(color: textDarkColor),
+                    borderRadius: BorderRadius.circular(defaultRadius),
+                    decoration: InputDecoration(
+                      contentPadding: EdgeInsets.all(defaultRadius),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(defaultRadius),
+                        borderSide: BorderSide(width: 2, color: primaryBlue),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(defaultRadius),
+                        borderSide: BorderSide(width: 2, color: neutral500),
+                      ),
+                      hintStyle: buttonText.copyWith(color: textDarkColor),
+                    ),
+                    items: listHasilPengujian
+                        .map((e) => DropdownMenuItem(
+                              value: e,
+                              child: Text(
+                                e,
+                              ),
+                            ))
+                        .toList(),
+                    value: hasilUji.isEmpty ? null : hasilUji,
+                    onChanged: (value) {
+                      hasilUji = value.toString();
+                    },
+                  ),
                   const SizedBox(
                     height: 20,
                   ),
@@ -185,7 +224,19 @@ class InverterPage extends StatelessWidget {
                         horizontal: defaultMargin + 32, vertical: 40),
                     child: CustomButton(
                         text: "Save",
-                        onPressed: () {
+                        onPressed: () async {
+                          await InverterService().postInverter(
+                              inverterId: widget.inverter.id,
+                              pmId: widget.pm.id,
+                              load: loadController.text,
+                              inputAc: inputACController.text,
+                              inputDc: inputDCController.text,
+                              outputDc: outputDCController.text,
+                              mainfall: mainfallController.text,
+                              hasilUji: hasilUji,
+                              temuan: temuanController.text,
+                              rekomendasi: rekomendasiController.text);
+                          // ignore: use_build_context_synchronously
                           Navigator.pushAndRemoveUntil(
                               context,
                               MaterialPageRoute(
@@ -213,7 +264,7 @@ class InverterPage extends StatelessWidget {
             child: Container(
               margin: const EdgeInsets.only(right: 60),
               child: Text(
-                title,
+                widget.title,
                 style: header2.copyWith(color: textLightColor),
               ),
             ),

@@ -21,11 +21,11 @@ class PmService {
 
     if (response.statusCode == 200) {
       var data = jsonDecode(response.body)['data'] as List;
-      // print(data);
+
       List<PmModel> pm = List<PmModel>.from(
         data.map((e) => PmModel.fromJson(e)),
       );
-      print(pm);
+
       return pm;
     } else {
       throw "Get data pm failed";

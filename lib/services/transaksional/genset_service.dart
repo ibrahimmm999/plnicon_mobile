@@ -2,6 +2,7 @@
 
 import 'dart:convert';
 
+import 'package:plnicon_mobile/models/foto_model.dart';
 import 'package:plnicon_mobile/models/nilai/genset_nilai_model.dart';
 import 'package:plnicon_mobile/services/url_service.dart';
 import 'package:http/http.dart' as http;
@@ -33,8 +34,8 @@ class GensetService {
   }
 
   Future<GensetNilaiModel> postGenset(
-      {required String gensetId,
-      required String pmId,
+      {required int gensetId,
+      required int pmId,
       required int fuel,
       required double hourMeter,
       required double teganganAccu,
@@ -90,6 +91,36 @@ class GensetService {
       return GensetNilaiModel.fromJson(data);
     } else {
       throw "Post data genset failed";
+    }
+  }
+
+  Future<bool> postFotoGenset(
+      {required int gensetNilaiId, required FotoModel foto}) async {
+    late Uri url = UrlService().api('genset-foto');
+
+    var headers = {
+      'Content-Type': 'application/json',
+      'Authorization': await UserService().getTokenPreference() ?? '',
+    };
+    var request = http.MultipartRequest('POST', url);
+    var body = {
+      'genset_nilai_id': gensetNilaiId,
+      'fotoFile': foto.url,
+      'description': foto.deskripsi
+    };
+
+    var response = await http.post(
+      url,
+      headers: headers,
+      body: jsonEncode(body),
+    );
+    print(response.request);
+
+    if (response.statusCode == 200) {
+      var data = jsonDecode(response.body)['data'];
+      return true;
+    } else {
+      throw "Post data ac failed";
     }
   }
 }

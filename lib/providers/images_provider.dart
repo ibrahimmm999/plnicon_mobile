@@ -11,18 +11,20 @@ class ImagesProvider extends ChangeNotifier {
   /*
   ex : {"AC 1": {"path1": "Deskripsi foto"}}
   */
-  Map<String, Map<String, String>> listImage = {
-    "kwh": {},
-    "ac": {},
-    "baterai": {},
-    "perangkat": {},
-    "environment": {},
-    "exalarm": {},
-    "genset": {},
-    "inverter": {},
-    "pdb": {},
-    "rectifier": {},
-  };
+  // Map<String, Map<String, String>> listImage = {
+  //   "kwh": {},
+  //   "ac": {},
+  //   "baterai": {},
+  //   "perangkat": {},
+  //   "environment": {},
+  //   "exalarm": {},
+  //   "genset": {},
+  //   "inverter": {},
+  //   "pdb": {},
+  //   "rectifier": {},
+  // };
+
+  Map<String, String> foto = {};
 
   File? get imageFile => _imageFile;
   File? get croppedImageFile => _croppedImageFile;
@@ -31,6 +33,10 @@ class ImagesProvider extends ChangeNotifier {
   set setCroppedImageFile(File? file) {
     _croppedImageFile = file;
     notifyListeners();
+  }
+
+  void clearList() {
+    foto.clear();
   }
 
   Future<bool> pickImage() async {
@@ -52,10 +58,14 @@ class ImagesProvider extends ChangeNotifier {
           await ImageCropper().cropImage(sourcePath: imageFile!.path);
       _croppedImagePath = cropedImage != null ? cropedImage.path : '';
       _croppedImageFile = cropedImage != null ? File(cropedImage.path) : null;
+
       if (cropedImage != null) {
-        listImage[key]!
-            .addEntries(<String, String>{cropedImage.path: ""}.entries);
+        foto.addEntries(<String, String>{croppedImagePath: ""}.entries);
       }
+      // if (cropedImage != null) {
+      //   listImage[key]!
+      //       .addEntries(<String, String>{cropedImage.path: ""}.entries);
+      // }
       notifyListeners();
       return true;
     } catch (e) {
@@ -63,9 +73,11 @@ class ImagesProvider extends ChangeNotifier {
     }
   }
 
-  void addDeskripsi(
-      {String? deskripsi, required String key, required String path}) {
-    listImage[key]?.update(path, (value) => deskripsi ?? "");
+  void addDeskripsi({required String deskripsi, required String path}) {
+    // listImage[key]?.update(path, (value) => deskripsi ?? "");
+    print(deskripsi);
+    foto.update(path, (value) => deskripsi);
     notifyListeners();
+    print(foto);
   }
 }

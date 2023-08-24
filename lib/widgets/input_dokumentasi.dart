@@ -11,10 +11,12 @@ class InputDokumentasi extends StatefulWidget {
       {super.key,
       required this.controller,
       required this.pageName,
+      required this.imagesProvider,
       this.isKwhPage = false});
   final TextEditingController controller;
   final bool isKwhPage;
   final String pageName;
+  final ImagesProvider imagesProvider;
 
   @override
   State<InputDokumentasi> createState() => _InputDokumentasiState();
@@ -47,16 +49,15 @@ class _InputDokumentasiState extends State<InputDokumentasi> {
 
   @override
   Widget build(BuildContext context) {
-    ImagesProvider imagesProvider = Provider.of<ImagesProvider>(context);
     Future<void> handlePicker() async {
-      imagesProvider.setCroppedImageFile = null;
-      await imagesProvider.pickImage();
-      await imagesProvider.cropImage(
-          imageFile: imagesProvider.imageFile, key: widget.pageName);
+      widget.imagesProvider.setCroppedImageFile = null;
+      await widget.imagesProvider.pickImage();
+      await widget.imagesProvider.cropImage(
+          imageFile: widget.imagesProvider.imageFile, key: widget.pageName);
       setState(() {
-        if (imagesProvider.croppedImagePath.isNotEmpty) {
-          contentPath = imagesProvider.croppedImagePath;
-          contentFile = imagesProvider.croppedImageFile;
+        if (widget.imagesProvider.croppedImagePath.isNotEmpty) {
+          contentPath = widget.imagesProvider.croppedImagePath;
+          contentFile = widget.imagesProvider.croppedImageFile;
         }
       });
     }
@@ -73,7 +74,7 @@ class _InputDokumentasiState extends State<InputDokumentasi> {
               )),
           height: 360,
           width: double.infinity,
-          child: imagesProvider.listImage[widget.pageName]!.entries.isEmpty
+          child: widget.imagesProvider.foto.isEmpty
               ? Center(
                   child: Text(
                     "Foto",
@@ -82,8 +83,7 @@ class _InputDokumentasiState extends State<InputDokumentasi> {
                 )
               : ListView(
                   scrollDirection: Axis.horizontal,
-                  children: imagesProvider.listImage[widget.pageName]!.entries
-                      .map((e) {
+                  children: widget.imagesProvider.foto.entries.map((e) {
                     return Container(
                       width: 240,
                       margin: const EdgeInsets.symmetric(horizontal: 12),
@@ -108,7 +108,7 @@ class _InputDokumentasiState extends State<InputDokumentasi> {
         GestureDetector(
           onTap: () async {
             await handlePicker();
-            if (imagesProvider.croppedImageFile != null) {
+            if (widget.imagesProvider.croppedImageFile != null) {
               if (inputCount > 0 && widget.pageName == "kwh") {
                 // ignore: use_build_context_synchronously
                 showDialog(
@@ -117,9 +117,9 @@ class _InputDokumentasiState extends State<InputDokumentasi> {
                     title: "Deskripsi",
                     controller: widget.controller,
                     add: () {
-                      imagesProvider.addDeskripsi(
-                          key: "kwh",
-                          path: imagesProvider.croppedImageFile!.path,
+                      widget.imagesProvider.addDeskripsi(
+                          // key: "kwh",
+                          path: widget.imagesProvider.croppedImageFile!.path,
                           deskripsi:
                               "${widget.controller.text} ( ${inputFoto[11 - inputCount]} )");
                       widget.controller.clear();
@@ -127,7 +127,6 @@ class _InputDokumentasiState extends State<InputDokumentasi> {
                   ),
                 );
                 inputCount -= 1;
-                print(inputCount);
               } else {
                 // ignore: use_build_context_synchronously
                 showDialog(
@@ -136,8 +135,8 @@ class _InputDokumentasiState extends State<InputDokumentasi> {
                     title: "Deskripsi",
                     controller: widget.controller,
                     add: () {
-                      imagesProvider.addDeskripsi(
-                          key: widget.pageName,
+                      widget.imagesProvider.addDeskripsi(
+                          // key: widget.pageName,
                           path: contentPath,
                           deskripsi: widget.controller.text);
                       widget.controller.clear();

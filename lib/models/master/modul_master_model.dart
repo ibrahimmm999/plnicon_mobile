@@ -21,7 +21,7 @@ class ModulMasterModel extends Equatable {
     return ModulMasterModel(
       id: json['id'],
       rectId: json['rect_id'],
-      kapasitas: json['kapasitas'],
+      kapasitas: int.parse(json['kapasitas'].toString()),
       sn: json['sn'],
       createdAt: DateTime.parse(json['created_at']),
       updatedAt: DateTime.parse(json['created_at']),

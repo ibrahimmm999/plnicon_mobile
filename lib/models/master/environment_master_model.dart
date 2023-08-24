@@ -9,7 +9,7 @@ class EnvironmentMasterModel extends Equatable {
   final String kebersihanExhaust;
   final String lampu;
   final String jumlahLampu;
-  // final double suhuRuangan;
+  final double suhuRuangan;
   final String bangunan;
   final String kebersihanBangunan;
   // final DateTime tglInstalasi;
@@ -27,7 +27,7 @@ class EnvironmentMasterModel extends Equatable {
     required this.kebersihanExhaust,
     required this.lampu,
     required this.jumlahLampu,
-    // required this.suhuRuangan,
+    required this.suhuRuangan,
     required this.bangunan,
     required this.kebersihanBangunan,
     // required this.tglInstalasi,
@@ -47,7 +47,7 @@ class EnvironmentMasterModel extends Equatable {
       kebersihanExhaust: json['kebersihan_exhaust'],
       lampu: json['lampu'],
       jumlahLampu: json['jumlah_lampu'],
-      // suhuRuangan: json['suhu_ruangan'],
+      suhuRuangan: double.parse(json['suhu_ruangan'].toString()),
       bangunan: json['bangunan'],
       kebersihanBangunan: json['kebersihan_bangunan'],
       temuan: json['temuan'] ?? "",
@@ -70,7 +70,7 @@ class EnvironmentMasterModel extends Equatable {
         kebersihanExhaust,
         lampu,
         jumlahLampu,
-        // suhuRuangan,
+        suhuRuangan,
         bangunan,
         kebersihanBangunan,
         // tglInstalasi,

@@ -31,7 +31,7 @@ class AcNilaiModel extends Equatable {
       id: json['id'],
       acId: json['ac_id'],
       pmId: json['pm_id'],
-      suhuAc: json['suhu_ac'],
+      suhuAc: int.parse(json['suhu_ac'].toString()),
       hasilPengujian: json['hasil_pengujian'],
       temuan: json['temuan'] ?? "",
       rekomendasi: json['rekomendasi'] ?? "",

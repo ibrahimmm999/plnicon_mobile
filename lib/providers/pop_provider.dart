@@ -19,7 +19,6 @@ class PopProvider extends ChangeNotifier {
   Future<bool> getDataPop({required String token, required int id}) async {
     try {
       _listPop = await PopService().getPop(token: token, id: id);
-      print("POP PROVIDER");
       notifyListeners();
       return true;
     } catch (e) {

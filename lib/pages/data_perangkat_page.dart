@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:plnicon_mobile/pages/main_page.dart';
+import 'package:plnicon_mobile/providers/images_provider.dart';
 import 'package:plnicon_mobile/theme/theme.dart';
 import 'package:plnicon_mobile/widgets/custom_appbar.dart';
 import 'package:plnicon_mobile/widgets/custom_button.dart';
 import 'package:plnicon_mobile/widgets/input_dokumentasi.dart';
 import 'package:plnicon_mobile/widgets/text_input.dart';
+import 'package:provider/provider.dart';
 
 class DataPerangkatPage extends StatelessWidget {
   const DataPerangkatPage({super.key});
@@ -14,6 +16,7 @@ class DataPerangkatPage extends StatelessWidget {
     TextEditingController deskripsiController = TextEditingController();
     TextEditingController temuanController = TextEditingController();
     TextEditingController rekomendasiController = TextEditingController();
+    ImagesProvider imagesProvider = Provider.of<ImagesProvider>(context);
     return Scaffold(
       appBar: const CustomAppBar(isMainPage: false, title: "DATA PERANGKAT"),
       body: ListView(
@@ -21,7 +24,9 @@ class DataPerangkatPage extends StatelessWidget {
               EdgeInsets.symmetric(horizontal: defaultMargin, vertical: 20),
           children: [
             InputDokumentasi(
-                controller: deskripsiController, pageName: "perangkat"),
+                imagesProvider: imagesProvider,
+                controller: deskripsiController,
+                pageName: "perangkat"),
             TextInput(
               controller: temuanController,
               label: "Temuan",

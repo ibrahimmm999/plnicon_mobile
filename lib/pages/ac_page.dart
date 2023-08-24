@@ -1,13 +1,20 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:plnicon_mobile/models/master/ac_master_model.dart';
 import 'package:plnicon_mobile/models/nilai/ac_nilai_model.dart';
 import 'package:plnicon_mobile/models/pm_model.dart';
+import 'package:plnicon_mobile/providers/images_provider.dart';
 import 'package:plnicon_mobile/providers/page_provider.dart';
 import 'package:plnicon_mobile/providers/transaksional_provider.dart';
+import 'package:plnicon_mobile/providers/user_provider.dart';
 import 'package:plnicon_mobile/services/transaksional/ac_service.dart';
+import 'package:plnicon_mobile/services/user_service.dart';
 import 'package:plnicon_mobile/theme/theme.dart';
+import 'package:plnicon_mobile/widgets/custom_appbar.dart';
 import 'package:plnicon_mobile/widgets/custom_button.dart';
+import 'package:plnicon_mobile/widgets/custom_popup.dart';
 import 'package:plnicon_mobile/widgets/input_dokumentasi.dart';
 import 'package:plnicon_mobile/widgets/text_input.dart';
 import 'package:provider/provider.dart';
@@ -27,10 +34,8 @@ class ACPage extends StatefulWidget {
   State<ACPage> createState() => _ACPageState();
 }
 
-String pengujian = "";
-int suhu = 0;
-String temuan = '';
-String rekomendasi = '';
+String tokenUser = "";
+List<AcNilaiModel>? currentAc;
 
 class _ACPageState extends State<ACPage> {
   @override
@@ -40,27 +45,55 @@ class _ACPageState extends State<ACPage> {
   }
 
   getinit() async {
-    if (await TransaksionalProvider().getAc(widget.pm.id, widget.acMaster.id)) {
-      suhu = TransaksionalProvider().currentAc.suhuAc;
-      pengujian = TransaksionalProvider().currentAc.hasilPengujian;
-      temuan = TransaksionalProvider().currentAc.temuan;
-      rekomendasi = TransaksionalProvider().currentAc.rekomendasi;
+    // if (await TransaksionalProvider().getAc(widget.pm.id, widget.acMaster.id)) {
+    //   suhu = TransaksionalProvider().currentAc.suhuAc;
+    //   pengujian = TransaksionalProvider().currentAc.hasilPengujian;
+    //   temuan = TransaksionalProvider().currentAc.temuan;
+    //   rekomendasi = TransaksionalProvider().currentAc.rekomendasi;
+    // }
+    final String? token = await UserService().getTokenPreference();
+    if (token == null) {
+    } else {
+      Future<List<AcNilaiModel>> ac = AcService().getAcByPmAndMaster(
+          token: token, pmId: widget.pm.id, acId: widget.acMaster.id);
+      tokenUser = token;
+      if (ac == null) {
+        currentAc = null;
+      } else {
+        ac.then((value) {
+          if (value.isNotEmpty) {
+            for (var element in value) {
+              currentAc?.add(element);
+            }
+          }
+        });
+      }
     }
   }
 
+  String pengujian = "";
+
   @override
   Widget build(BuildContext context) {
-    TransaksionalProvider transaksionalProvider =
-        Provider.of<TransaksionalProvider>(context);
-    TextEditingController suhuController =
-        TextEditingController(text: suhu.toString());
+    ImagesProvider imagesProvider = Provider.of<ImagesProvider>(context);
+    Future<void> handlePicker() async {
+      imagesProvider.setCroppedImageFile = null;
+      await imagesProvider.pickImage();
+      await imagesProvider.cropImage(
+          imageFile: imagesProvider.imageFile, key: "");
+      setState(() {
+        if (imagesProvider.croppedImagePath.isNotEmpty) {
+          contentPath = imagesProvider.croppedImagePath;
+          contentFile = imagesProvider.croppedImageFile;
+        }
+      });
+    }
 
-    TextEditingController temuanController =
-        TextEditingController(text: temuan);
+    TextEditingController suhuController = TextEditingController();
+    TextEditingController temuanController = TextEditingController();
+    TextEditingController rekomendasiController = TextEditingController();
+    TextEditingController deskripsiController = TextEditingController();
 
-    TextEditingController rekomendasiController =
-        TextEditingController(text: rekomendasi);
-    TextEditingController deskripsiController = TextEditingController(text: "");
     List<String> listHasilPengujian = ["Ok", "B aja", "Buruk"];
     PageProvider pageProvider = Provider.of<PageProvider>(context);
     Widget switchContent() {
@@ -151,10 +184,97 @@ class _ACPageState extends State<ACPage> {
                 body: ListView(
               padding: EdgeInsets.all(defaultMargin),
               children: [
-                InputDokumentasi(
-                    controller: deskripsiController, pageName: "ac"),
-                const SizedBox(
-                  height: 20,
+                Column(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 4, vertical: 8),
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(defaultRadius),
+                          border: Border.all(
+                            width: 2,
+                            color: neutral500,
+                          )),
+                      height: 360,
+                      width: double.infinity,
+                      child: imagesProvider.foto.isEmpty
+                          ? Center(
+                              child: Text(
+                                "Foto",
+                                style:
+                                    buttonText.copyWith(color: textDarkColor),
+                              ),
+                            )
+                          : ListView(
+                              scrollDirection: Axis.horizontal,
+                              children: imagesProvider.foto.entries.map((e) {
+                                return Container(
+                                  width: 240,
+                                  margin: const EdgeInsets.symmetric(
+                                      horizontal: 12),
+                                  child: Column(
+                                    children: [
+                                      Image.file(
+                                        File(e.key),
+                                        height: 240,
+                                        width: 240,
+                                        fit: BoxFit.cover,
+                                      ),
+                                      Text(
+                                        e.value,
+                                        style: buttonText.copyWith(
+                                            color: textDarkColor),
+                                        overflow: TextOverflow.clip,
+                                      )
+                                    ],
+                                  ),
+                                );
+                              }).toList()),
+                    ),
+                    GestureDetector(
+                      onTap: () async {
+                        await handlePicker();
+                        if (imagesProvider.croppedImageFile != null) {
+                          // ignore: use_build_context_synchronously
+                          showDialog(
+                            context: context,
+                            builder: (context) => CustomPopUp(
+                              title: "Deskripsi",
+                              controller: deskripsiController,
+                              add: () {
+                                imagesProvider.addDeskripsi(
+                                    path: contentPath,
+                                    deskripsi: deskripsiController.text);
+                                deskripsiController.clear();
+                              },
+                            ),
+                          );
+                        }
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 12),
+                        margin: const EdgeInsets.symmetric(vertical: 20),
+                        decoration: BoxDecoration(
+                            color: primaryBlue,
+                            borderRadius: BorderRadius.circular(defaultRadius)),
+                        width: double.infinity,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              "Tambah Foto",
+                              style: buttonText,
+                            ),
+                            Icon(
+                              Icons.photo_camera_outlined,
+                              color: textLightColor,
+                            )
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
                 Padding(
                   padding: const EdgeInsets.only(right: 120, bottom: 20),
@@ -210,13 +330,9 @@ class _ACPageState extends State<ACPage> {
                       .toList(),
                   value: pengujian.isEmpty ? null : pengujian,
                   onChanged: (value) {
-                    setState(() {
-                      pengujian = value.toString();
-                    });
+                    pengujian = value.toString();
+                    // setState(() {});
                   },
-                ),
-                const SizedBox(
-                  height: 20,
                 ),
                 const SizedBox(
                   height: 20,
@@ -244,11 +360,29 @@ class _ACPageState extends State<ACPage> {
                       onPressed: () async {
                         await AcService().postAc(
                             acId: widget.acMaster.id,
-                            pmId: 1,
+                            pmId: widget.pm.id,
                             suhuAc: int.parse(suhuController.text),
                             hasilPengujian: pengujian,
                             temuan: temuanController.text,
                             rekomendasi: rekomendasiController.text);
+                        Future<List<AcNilaiModel>> ac = AcService()
+                            .getAcByPmAndMaster(
+                                token: tokenUser,
+                                pmId: widget.pm.id,
+                                acId: widget.acMaster.id);
+                        ac.then((value) {
+                          if (value.isNotEmpty) {
+                            for (var element in value) {
+                              currentAc!.add(element);
+                            }
+                          }
+                        });
+                        imagesProvider.foto.forEach((key, value) async {
+                          await AcService().postFotoAc(
+                              acNilaiId: currentAc!.first.id,
+                              urlFoto: key,
+                              description: value);
+                        });
                         Navigator.pop(context);
                       },
                       color: primaryBlue,
@@ -265,33 +399,7 @@ class _ACPageState extends State<ACPage> {
     }
 
     return Scaffold(
-        appBar: AppBar(
-          backgroundColor: primaryBlue,
-          leading: GestureDetector(
-              onTap: () {
-                TransaksionalProvider().setAc(AcNilaiModel(
-                    id: 0,
-                    acId: widget.acMaster.id,
-                    pmId: widget.pm.id,
-                    suhuAc: int.parse(suhuController.text),
-                    hasilPengujian: pengujian,
-                    temuan: temuanController.text,
-                    rekomendasi: rekomendasiController.text,
-                    createdAt: DateTime.now(),
-                    updatedAt: DateTime.now()));
-                Navigator.pop(context);
-              },
-              child: Icon(Icons.arrow_back)),
-          title: Center(
-            child: Container(
-              margin: const EdgeInsets.only(right: 60),
-              child: Text(
-                widget.title,
-                style: header2.copyWith(color: textLightColor),
-              ),
-            ),
-          ),
-        ),
+        appBar: CustomAppBar(isMainPage: false, title: widget.title),
         body: Column(
           children: [
             switchContent(),

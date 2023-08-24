@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:plnicon_mobile/models/pm_model.dart';
 import 'package:plnicon_mobile/pages/ac_page.dart';
+import 'package:plnicon_mobile/pages/baterai_page.dart';
 import 'package:plnicon_mobile/pages/environment_page.dart';
 import 'package:plnicon_mobile/pages/ex_alarm_page.dart';
 import 'package:plnicon_mobile/pages/genset_page.dart';
@@ -8,9 +9,11 @@ import 'package:plnicon_mobile/pages/inverter_page.dart';
 import 'package:plnicon_mobile/pages/kwh_page.dart';
 import 'package:plnicon_mobile/pages/main_page.dart';
 import 'package:plnicon_mobile/pages/mcb_page.dart';
+import 'package:plnicon_mobile/pages/modul_page.dart';
 import 'package:plnicon_mobile/pages/pdb_page.dart';
 import 'package:plnicon_mobile/pages/rack_page.dart';
 import 'package:plnicon_mobile/pages/recti_page.dart';
+import 'package:plnicon_mobile/providers/images_provider.dart';
 import 'package:plnicon_mobile/providers/pop_provider.dart';
 import 'package:plnicon_mobile/providers/user_provider.dart';
 import 'package:plnicon_mobile/services/user_service.dart';
@@ -50,7 +53,7 @@ class _PmDetailPageState extends State<PmDetailPage> {
   @override
   Widget build(BuildContext context) {
     PopProvider popProvider = Provider.of<PopProvider>(context);
-    print("list: " + popProvider.listPop.toString());
+    ImagesProvider imagesProvider = Provider.of<ImagesProvider>(context);
 
     Widget card(String title) {
       return Container(
@@ -113,27 +116,28 @@ class _PmDetailPageState extends State<PmDetailPage> {
                     const SizedBox(
                       height: 4,
                     ),
-                    Visibility(
-                      visible: popProvider.listPop.first.listAc.isNotEmpty,
-                      child: Column(
-                        children: popProvider.listPop.first.listAc.map((e) {
-                          var index =
-                              popProvider.listPop.first.listAc.indexOf(e) + 1;
-                          return GestureDetector(
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => ACPage(
-                                            pm: widget.pm,
-                                            acMaster: e,
-                                            title: "AC $index",
-                                          )),
-                                );
-                              },
-                              child: card("AC $index  -  ${e.merk}"));
-                        }).toList(),
-                      ),
+                    Column(
+                      children: popProvider.listPop.first.listAc.isNotEmpty
+                          ? popProvider.listPop.first.listAc.map((e) {
+                              var index =
+                                  popProvider.listPop.first.listAc.indexOf(e) +
+                                      1;
+                              return GestureDetector(
+                                  onTap: () {
+                                    imagesProvider.clearList();
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => ACPage(
+                                                pm: widget.pm,
+                                                acMaster: e,
+                                                title: "AC $index",
+                                              )),
+                                    );
+                                  },
+                                  child: card("AC $index  -  ${e.merk}"));
+                            }).toList()
+                          : [],
                     ),
                     const SizedBox(
                       height: 20,
@@ -154,10 +158,12 @@ class _PmDetailPageState extends State<PmDetailPage> {
                                   1;
                           return GestureDetector(
                               onTap: () {
+                                imagesProvider.clearList();
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
                                       builder: (context) => GensetPage(
+                                            pm: widget.pm,
                                             gensetMasterModel: e,
                                             title: "Genset $index",
                                           )),
@@ -188,10 +194,12 @@ class _PmDetailPageState extends State<PmDetailPage> {
                               1;
                           return GestureDetector(
                               onTap: () {
+                                imagesProvider.clearList();
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
                                       builder: (context) => InverterPage(
+                                            pm: widget.pm,
                                             inverter: e,
                                             title: "Inverter $index",
                                           )),
@@ -219,6 +227,7 @@ class _PmDetailPageState extends State<PmDetailPage> {
                               popProvider.listPop.first.listRack.indexOf(e) + 1;
                           return GestureDetector(
                               onTap: () {
+                                imagesProvider.clearList();
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
@@ -250,11 +259,13 @@ class _PmDetailPageState extends State<PmDetailPage> {
                               popProvider.listPop.first.listRect.indexOf(e) + 1;
                           return GestureDetector(
                               onTap: () {
+                                imagesProvider.clearList();
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
                                       builder: (context) => RectiPage(
                                             rect: e,
+                                            pm: widget.pm,
                                             title: "Rectifier $index",
                                           )),
                                 );
@@ -281,6 +292,7 @@ class _PmDetailPageState extends State<PmDetailPage> {
                               popProvider.listPop.first.listPdb.indexOf(e) + 1;
                           return GestureDetector(
                               onTap: () {
+                                imagesProvider.clearList();
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
@@ -312,6 +324,7 @@ class _PmDetailPageState extends State<PmDetailPage> {
                               popProvider.listPop.first.listKwh.indexOf(e) + 1;
                           return GestureDetector(
                               onTap: () {
+                                imagesProvider.clearList();
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
@@ -342,6 +355,7 @@ class _PmDetailPageState extends State<PmDetailPage> {
                             popProvider.listPop.first.listExAlarm.map((e) {
                           return GestureDetector(
                               onTap: () {
+                                imagesProvider.clearList();
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
@@ -373,6 +387,7 @@ class _PmDetailPageState extends State<PmDetailPage> {
                             popProvider.listPop.first.listEnvironment.map((e) {
                           return GestureDetector(
                               onTap: () {
+                                imagesProvider.clearList();
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
@@ -396,31 +411,104 @@ class _PmDetailPageState extends State<PmDetailPage> {
                     const SizedBox(
                       height: 4,
                     ),
-                    Visibility(
-                      visible: popProvider
-                          .listPop.first.listPdb.first.listMcb.isNotEmpty,
-                      child: Column(
+                    Column(
                         children: popProvider
-                            .listPop.first.listPdb.first.listMcb
-                            .map((e) {
-                          var index = popProvider
-                                  .listPop.first.listPdb.first.listMcb
-                                  .indexOf(e) +
-                              1;
-                          return GestureDetector(
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => McbPage(
-                                            mcb: e,
-                                            title: "MCB $index",
-                                          )),
-                                );
-                              },
-                              child: card("MCB $index"));
-                        }).toList(),
-                      ),
+                                    .listPop.first.listPdb.isNotEmpty &&
+                                popProvider.listPop.first.listPdb.first.listMcb
+                                    .isNotEmpty
+                            ? popProvider.listPop.first.listPdb.first.listMcb
+                                .map((e) {
+                                var index = popProvider
+                                        .listPop.first.listPdb.first.listMcb
+                                        .indexOf(e) +
+                                    1;
+                                return GestureDetector(
+                                    onTap: () {
+                                      imagesProvider.clearList();
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => McbPage(
+                                                  mcb: e,
+                                                  title: "MCB $index",
+                                                )),
+                                      );
+                                    },
+                                    child: card("MCB $index"));
+                              }).toList()
+                            : []),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Text(
+                      "Modul",
+                      style: header3,
+                    ),
+                    const SizedBox(
+                      height: 4,
+                    ),
+                    Column(
+                      children: popProvider.listPop.first.listRect.isNotEmpty &&
+                              popProvider.listPop.first.listRect.first.listModul
+                                  .isNotEmpty
+                          ? popProvider.listPop.first.listRect.first.listModul
+                              .map((e) {
+                              var index = popProvider
+                                      .listPop.first.listRect.first.listModul
+                                      .indexOf(e) +
+                                  1;
+                              return GestureDetector(
+                                  onTap: () {
+                                    imagesProvider.clearList();
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => ModulPage(
+                                                modul: e,
+                                                title: "Modul $index",
+                                              )),
+                                    );
+                                  },
+                                  child: card("Modul $index"));
+                            }).toList()
+                          : [],
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Text(
+                      "Baterai",
+                      style: header3,
+                    ),
+                    const SizedBox(
+                      height: 4,
+                    ),
+                    Column(
+                      children: popProvider.listPop.first.listRect.isNotEmpty &&
+                              popProvider.listPop.first.listRect.first
+                                  .listBaterai.isNotEmpty
+                          ? popProvider.listPop.first.listRect.first.listBaterai
+                              .map((e) {
+                              var index = popProvider
+                                      .listPop.first.listRect.first.listBaterai
+                                      .indexOf(e) +
+                                  1;
+                              return GestureDetector(
+                                  onTap: () {
+                                    imagesProvider.clearList();
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => BateraiPage(
+                                                pm: widget.pm,
+                                                bateraiMaster: e,
+                                                title: "Baterai $index",
+                                              )),
+                                    );
+                                  },
+                                  child: card("Baterai $index"));
+                            }).toList()
+                          : [],
                     ),
                   ]));
   }

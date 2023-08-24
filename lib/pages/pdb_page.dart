@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:plnicon_mobile/models/master/pdb_master_model.dart';
 import 'package:plnicon_mobile/pages/main_page.dart';
+import 'package:plnicon_mobile/providers/images_provider.dart';
 import 'package:plnicon_mobile/providers/page_provider.dart';
 import 'package:plnicon_mobile/theme/theme.dart';
 import 'package:plnicon_mobile/widgets/custom_button.dart';
@@ -23,6 +24,7 @@ class PDBPage extends StatelessWidget {
     TextEditingController temuanController = TextEditingController();
     TextEditingController rekomendasiController = TextEditingController();
     PageProvider pageProvider = Provider.of<PageProvider>(context);
+    ImagesProvider imagesProvider = Provider.of<ImagesProvider>(context);
     Widget switchContent() {
       return SizedBox(
         width: MediaQuery.sizeOf(context).width,
@@ -99,7 +101,9 @@ class PDBPage extends StatelessWidget {
                     horizontal: defaultMargin, vertical: 20),
                 children: [
                   InputDokumentasi(
-                      controller: deskripsiController, pageName: "pdb"),
+                      imagesProvider: imagesProvider,
+                      controller: deskripsiController,
+                      pageName: "pdb"),
                   Text(
                     "Arester Warna",
                     style: buttonText.copyWith(color: textDarkColor),

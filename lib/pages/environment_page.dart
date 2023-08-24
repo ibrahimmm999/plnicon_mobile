@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:plnicon_mobile/models/master/environment_master_model.dart';
 import 'package:plnicon_mobile/pages/main_page.dart';
+import 'package:plnicon_mobile/providers/images_provider.dart';
 import 'package:plnicon_mobile/providers/page_provider.dart';
 import 'package:plnicon_mobile/theme/theme.dart';
 import 'package:plnicon_mobile/widgets/custom_button.dart';
@@ -28,6 +29,7 @@ class EnvironmentPage extends StatelessWidget {
     TextEditingController rekomendasiController = TextEditingController();
     TextEditingController deskripsiController = TextEditingController();
     PageProvider pageProvider = Provider.of<PageProvider>(context);
+    ImagesProvider imagesProvider = Provider.of<ImagesProvider>(context);
     Widget switchContent() {
       return SizedBox(
         width: MediaQuery.sizeOf(context).width,
@@ -79,7 +81,14 @@ class EnvironmentPage extends StatelessWidget {
                     height: 20,
                   ),
                   Text(
-                    "Lampu Menyala : ${environment.lampu}",
+                    "Jumlah Lampu Menyala : ${environment.lampu}",
+                    style: buttonText.copyWith(color: textDarkColor),
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  Text(
+                    "Suhu Ruangan : ${environment.suhuRuangan} °C",
                     style: buttonText.copyWith(color: textDarkColor),
                   ),
                   const SizedBox(
@@ -132,7 +141,9 @@ class EnvironmentPage extends StatelessWidget {
                     horizontal: defaultMargin, vertical: 20),
                 children: [
                   InputDokumentasi(
-                      controller: deskripsiController, pageName: "environment"),
+                      imagesProvider: imagesProvider,
+                      controller: deskripsiController,
+                      pageName: "environment"),
                   TextInput(
                     controller: exhaustController,
                     label: "Exhaust",

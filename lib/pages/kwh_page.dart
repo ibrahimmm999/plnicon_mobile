@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:plnicon_mobile/models/master/kwh_master_model.dart';
 import 'package:plnicon_mobile/pages/main_page.dart';
+import 'package:plnicon_mobile/providers/images_provider.dart';
 import 'package:plnicon_mobile/providers/page_provider.dart';
 import 'package:plnicon_mobile/theme/theme.dart';
 import 'package:plnicon_mobile/widgets/custom_button.dart';
@@ -39,6 +40,7 @@ class KWHPage extends StatelessWidget {
 
     TextEditingController rekomendasiController = TextEditingController();
     PageProvider pageProvider = Provider.of<PageProvider>(context);
+    ImagesProvider imagesProvider = Provider.of<ImagesProvider>(context);
     Widget input() {
       return Column(
         children: [
@@ -313,6 +315,7 @@ class KWHPage extends StatelessWidget {
                       horizontal: defaultMargin, vertical: 20),
                   children: [
                     InputDokumentasi(
+                      imagesProvider: imagesProvider,
                       controller: deskripsiController,
                       isKwhPage: true,
                       pageName: "kwh",

@@ -11,7 +11,7 @@ class BateraiMasterModel extends Equatable {
   final int kapasitas;
   final double persentase;
   final double vBatt;
-  final DateTime tanggalInstalasi;
+  // final DateTime tanggalInstalasi;
   final DateTime tanggalUji;
   final DateTime createdAt;
   final DateTime updatedAt;
@@ -27,7 +27,7 @@ class BateraiMasterModel extends Equatable {
     required this.sn,
     required this.tipe,
     required this.vBatt,
-    required this.tanggalInstalasi,
+    // required this.tanggalInstalasi,
     required this.tanggalUji,
     required this.createdAt,
     required this.updatedAt,
@@ -45,7 +45,7 @@ class BateraiMasterModel extends Equatable {
       sn: json['sn'],
       tipe: json['tipe'],
       vBatt: json['vbatt'],
-      tanggalInstalasi: DateTime.parse(json['tgl_instalasi']),
+      // tanggalInstalasi: DateTime.parse(json['tgl_instalasi']),
       tanggalUji: DateTime.parse(json['tgl_uji']),
       createdAt: DateTime.parse(json['created_at']),
       updatedAt: DateTime.parse(json['created_at']),
@@ -64,7 +64,7 @@ class BateraiMasterModel extends Equatable {
         sn,
         tipe,
         vBatt,
-        tanggalInstalasi,
+        // tanggalInstalasi,
         tanggalUji,
         createdAt,
         updatedAt,
