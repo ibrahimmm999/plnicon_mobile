@@ -29,8 +29,8 @@ class AcMasterModel extends Equatable {
 
   factory AcMasterModel.fromJson(Map<String, dynamic> json) {
     return AcMasterModel(
-      id: json['id'],
-      popId: json['pop_id'],
+      id: int.parse(json['id'].toString()),
+      popId: int.parse(json['pop_id'].toString()),
       kapasitas: json['kapasitas'],
       tekananFreon: json['tekanan_freon'],
       merk: json['merk'],

@@ -7,16 +7,16 @@ class GensetNilaiModel extends Equatable {
   final int gensetId;
   final int pmId;
   final int fuel;
-  final int hourMeter;
-  final int teganganAccu;
-  final int teganganCharger;
-  final int arusCharger;
+  final double hourMeter;
+  final double teganganAccu;
+  final double teganganCharger;
+  final double arusCharger;
   final String failOverTest;
-  final int tempOn;
-  final int ujiBebanVolt;
-  final int ujiBebanArus;
-  final int ujiTanpaBebanVolt;
-  final int ujiTanpaBebanArus;
+  final double tempOn;
+  final double ujiBebanVolt;
+  final double ujiBebanArus;
+  final double ujiTanpaBebanVolt;
+  final double ujiTanpaBebanArus;
   final String indoorClean;
   final String outdoorClean;
   final String temuan;
@@ -57,16 +57,16 @@ class GensetNilaiModel extends Equatable {
       gensetId: json['genset_id'],
       pmId: json['pm_id'],
       fuel: json['fuel'],
-      hourMeter: json['hour_meter'],
-      teganganAccu: json['tegangan_accu'],
-      teganganCharger: json['tegangan_charger'],
-      arusCharger: json['arus_charger'],
+      hourMeter: double.parse(json['hour_meter'].toString()),
+      teganganAccu: double.parse(json['tegangan_accu'].toString()),
+      teganganCharger: double.parse(json['tegangan_charger'].toString()),
+      arusCharger: double.parse(json['arus_charger'].toString()),
       failOverTest: json['fail_over_test'],
-      tempOn: json['temp_on'],
-      ujiBebanVolt: json['uji_beban_volt'],
-      ujiBebanArus: json['uji_beban_arus'],
-      ujiTanpaBebanVolt: json['uji_tanpa_beban_volt'],
-      ujiTanpaBebanArus: json['uji_tanpa_beban_arus'],
+      tempOn: double.parse(json['temp_on'].toString()),
+      ujiBebanVolt: double.parse(json['uji_beban_volt'].toString()),
+      ujiBebanArus: double.parse(json['uji_beban_arus'].toString()),
+      ujiTanpaBebanVolt: double.parse(json['uji_tanpa_beban_volt'].toString()),
+      ujiTanpaBebanArus: double.parse(json['uji_tanpa_beban_arus'].toString()),
       indoorClean: json['indoor_clean'],
       outdoorClean: json['outdoor_clean'],
       temuan: json['temuan'] ?? "",

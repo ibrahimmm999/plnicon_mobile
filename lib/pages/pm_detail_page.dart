@@ -46,6 +46,7 @@ class _PmDetailPageState extends State<PmDetailPage> {
     } else {
       if (await userProvider.getUser(token: token)) {
         await popProvider.getDataPop(token: token, id: widget.pm.popId);
+        print(popProvider.listPop);
       }
     }
   }

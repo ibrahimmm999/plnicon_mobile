@@ -23,7 +23,8 @@ class PopProvider extends ChangeNotifier {
       return true;
     } catch (e) {
       _errorMessage = e.toString();
-      return false;
+
+      rethrow;
     }
   }
 }

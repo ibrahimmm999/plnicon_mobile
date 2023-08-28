@@ -153,10 +153,6 @@ class _BateraiPageState extends State<BateraiPage> {
         case 1:
           {
             return Scaffold(
-              appBar: const CustomAppBar(
-                isMainPage: false,
-                title: "BATERAI",
-              ),
               body: ListView(
                 padding: EdgeInsets.symmetric(
                     horizontal: defaultMargin, vertical: 20),

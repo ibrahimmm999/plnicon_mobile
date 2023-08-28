@@ -39,6 +39,7 @@ class WorkPage extends StatelessWidget {
         case 0:
           return Expanded(
             child: ListView(
+              padding: const EdgeInsets.only(bottom: 200),
               children: pmProvider.listPm
                   .where((element) => element.status == "PLAN")
                   .map((pm) {

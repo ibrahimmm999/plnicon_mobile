@@ -34,9 +34,6 @@ class ACPage extends StatefulWidget {
   State<ACPage> createState() => _ACPageState();
 }
 
-String tokenUser = "";
-List<AcNilaiModel>? currentAc;
-
 class _ACPageState extends State<ACPage> {
   @override
   void initState() {
@@ -51,24 +48,6 @@ class _ACPageState extends State<ACPage> {
     //   temuan = TransaksionalProvider().currentAc.temuan;
     //   rekomendasi = TransaksionalProvider().currentAc.rekomendasi;
     // }
-    final String? token = await UserService().getTokenPreference();
-    if (token == null) {
-    } else {
-      Future<List<AcNilaiModel>> ac = AcService().getAcByPmAndMaster(
-          token: token, pmId: widget.pm.id, acId: widget.acMaster.id);
-      tokenUser = token;
-      if (ac == null) {
-        currentAc = null;
-      } else {
-        ac.then((value) {
-          if (value.isNotEmpty) {
-            for (var element in value) {
-              currentAc?.add(element);
-            }
-          }
-        });
-      }
-    }
   }
 
   String pengujian = "";
@@ -365,23 +344,10 @@ class _ACPageState extends State<ACPage> {
                             hasilPengujian: pengujian,
                             temuan: temuanController.text,
                             rekomendasi: rekomendasiController.text);
-                        Future<List<AcNilaiModel>> ac = AcService()
-                            .getAcByPmAndMaster(
-                                token: tokenUser,
-                                pmId: widget.pm.id,
-                                acId: widget.acMaster.id);
-                        ac.then((value) {
-                          if (value.isNotEmpty) {
-                            for (var element in value) {
-                              currentAc!.add(element);
-                            }
-                          }
-                        });
+
                         imagesProvider.foto.forEach((key, value) async {
                           await AcService().postFotoAc(
-                              acNilaiId: currentAc!.first.id,
-                              urlFoto: key,
-                              description: value);
+                              acNilaiId: 1, urlFoto: key, description: value);
                         });
                         Navigator.pop(context);
                       },
