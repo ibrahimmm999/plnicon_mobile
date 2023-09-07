@@ -16,14 +16,13 @@ class PopProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<bool> getDataPop({required String token, required int id}) async {
+  Future<bool> getDataPop({required int id}) async {
     try {
-      _listPop = await PopService().getPop(token: token, id: id);
+      _listPop = await PopService().getPop(id: id);
       notifyListeners();
       return true;
     } catch (e) {
       _errorMessage = e.toString();
-
       rethrow;
     }
   }

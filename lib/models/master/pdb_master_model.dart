@@ -33,8 +33,10 @@ class PdbMasterModel extends Equatable {
       nama: json['nama'],
       arester: json['arester'],
       tipe: json['tipe'],
-      listMcb: List<McbMasterModel>.from(
-          json['mcb'].map((x) => McbMasterModel.fromJson(x))),
+      listMcb: json['mcb'] != null
+          ? List<McbMasterModel>.from(
+              json['mcb'].map((x) => McbMasterModel.fromJson(x)))
+          : [],
       aresterTipe: json['arester_tipe'],
       // tanggalInstalasi: DateTime.parse(json['tgl_instalasi']),
       createdAt: DateTime.parse(json['created_at']),

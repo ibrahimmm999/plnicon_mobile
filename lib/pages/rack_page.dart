@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:plnicon_mobile/models/master/rack_master_model.dart';
 import 'package:plnicon_mobile/providers/page_provider.dart';
+import 'package:plnicon_mobile/providers/pop_provider.dart';
+import 'package:plnicon_mobile/services/master/rack_master_service.dart';
 import 'package:plnicon_mobile/theme/theme.dart';
+import 'package:plnicon_mobile/widgets/custom_button.dart';
+import 'package:plnicon_mobile/widgets/text_input.dart';
 import 'package:provider/provider.dart';
 
 class RackPage extends StatelessWidget {
@@ -11,6 +15,11 @@ class RackPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    PopProvider popProvider = Provider.of<PopProvider>(context);
+    TextEditingController nomorRack =
+        TextEditingController(text: rack.nomorRack.toString());
+    TextEditingController lokasiController =
+        TextEditingController(text: rack.lokasi);
     return Scaffold(
       appBar: AppBar(
         backgroundColor: primaryBlue,
@@ -28,16 +37,18 @@ class RackPage extends StatelessWidget {
         padding: EdgeInsets.all(defaultMargin),
         children: [
           Text(
-            "Nomor Rack : ${rack.nomorRack}",
+            "Nomor Rack",
             style: buttonText.copyWith(color: textDarkColor),
           ),
+          TextInput(controller: nomorRack),
           const SizedBox(
             height: 20,
           ),
           Text(
-            "Lokasi : ${rack.lokasi}",
+            "Lokasi",
             style: buttonText.copyWith(color: textDarkColor),
           ),
+          TextInput(controller: lokasiController),
           const SizedBox(
             height: 20,
           ),
@@ -45,6 +56,22 @@ class RackPage extends StatelessWidget {
             "List Perangkat : ",
             style: buttonText.copyWith(color: textDarkColor),
           ),
+          const SizedBox(
+            height: 32,
+          ),
+          CustomButton(
+              text: "Save",
+              onPressed: () async {
+                await RackMasterService().editRackMaster(
+                    rackId: rack.id,
+                    popId: rack.popId,
+                    nomorRack: int.parse(nomorRack.text),
+                    lokasi: lokasiController.text);
+                popProvider.getDataPop(id: rack.popId);
+                Navigator.pop(context);
+              },
+              color: primaryGreen,
+              clickColor: clickGreen)
         ],
       ),
     );

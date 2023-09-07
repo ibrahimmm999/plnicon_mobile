@@ -5,6 +5,8 @@ import 'package:plnicon_mobile/models/pm_model.dart';
 import 'package:plnicon_mobile/pages/main_page.dart';
 import 'package:plnicon_mobile/providers/images_provider.dart';
 import 'package:plnicon_mobile/providers/page_provider.dart';
+import 'package:plnicon_mobile/providers/pop_provider.dart';
+import 'package:plnicon_mobile/services/master/rect_master_service.dart';
 import 'package:plnicon_mobile/services/transaksional/rect_service.dart';
 import 'package:plnicon_mobile/theme/theme.dart';
 import 'package:plnicon_mobile/widgets/custom_button.dart';
@@ -45,7 +47,22 @@ class _RectiPageState extends State<RectiPage> {
     TextEditingController temuanController = TextEditingController();
     TextEditingController rekomendasiController = TextEditingController();
     TextEditingController deskripsiController = TextEditingController();
+    TextEditingController merkController =
+        TextEditingController(text: widget.rect.merk);
+    TextEditingController snController =
+        TextEditingController(text: widget.rect.sn);
+    TextEditingController tipeController =
+        TextEditingController(text: widget.rect.tipe);
+    TextEditingController jumlahPhasaController =
+        TextEditingController(text: widget.rect.jumlahPhasa.toString());
+    TextEditingController modulControlController =
+        TextEditingController(text: widget.rect.modulControl.toString());
+    TextEditingController modulTerpasangController =
+        TextEditingController(text: widget.rect.modulTerpasang.toString());
+    TextEditingController slotModulController =
+        TextEditingController(text: widget.rect.slotModul.toString());
     PageProvider pageProvider = Provider.of<PageProvider>(context);
+    PopProvider popProvider = Provider.of<PopProvider>(context);
     ImagesProvider imagesProvider = Provider.of<ImagesProvider>(context);
     Widget switchContent() {
       return SizedBox(
@@ -77,51 +94,58 @@ class _RectiPageState extends State<RectiPage> {
                 padding: EdgeInsets.all(defaultMargin),
                 children: [
                   Text(
-                    "Merk : ${widget.rect.merk}",
+                    "Merk",
                     style: buttonText.copyWith(color: textDarkColor),
                   ),
+                  TextInput(controller: merkController),
                   const SizedBox(
                     height: 20,
                   ),
                   Text(
-                    "SN : ${widget.rect.sn}",
+                    "SN",
                     style: buttonText.copyWith(color: textDarkColor),
                   ),
+                  TextInput(controller: snController),
                   const SizedBox(
                     height: 20,
                   ),
                   Text(
-                    "Tipe : ${widget.rect.tipe}",
+                    "Tipe",
                     style: buttonText.copyWith(color: textDarkColor),
                   ),
+                  TextInput(controller: tipeController),
                   const SizedBox(
                     height: 20,
                   ),
                   Text(
-                    "Jumlah Phasa : ${widget.rect.jumlahPhasa}",
+                    "Jumlah Phasa",
                     style: buttonText.copyWith(color: textDarkColor),
                   ),
+                  TextInput(controller: jumlahPhasaController),
                   const SizedBox(
                     height: 20,
                   ),
                   Text(
-                    "Modul Control : ${widget.rect.modulControl}",
+                    "Modul Control",
                     style: buttonText.copyWith(color: textDarkColor),
                   ),
+                  TextInput(controller: modulControlController),
                   const SizedBox(
                     height: 20,
                   ),
                   Text(
-                    "Modul Terpasang : ${widget.rect.modulTerpasang}",
+                    "Modul Terpasang",
                     style: buttonText.copyWith(color: textDarkColor),
                   ),
+                  TextInput(controller: modulTerpasangController),
                   const SizedBox(
                     height: 20,
                   ),
                   Text(
-                    "Slot Modul : ${widget.rect.slotModul}",
+                    "Slot Modul",
                     style: buttonText.copyWith(color: textDarkColor),
                   ),
+                  TextInput(controller: slotModulController),
                   const SizedBox(
                     height: 20,
                   ),
@@ -132,6 +156,29 @@ class _RectiPageState extends State<RectiPage> {
                   const SizedBox(
                     height: 20,
                   ),
+                  CustomButton(
+                      text: "Save",
+                      onPressed: () async {
+                        await RectMasterService().editRectMaster(
+                            rectId: widget.rect.id,
+                            sn: snController.text,
+                            jumlahPhasa: int.parse(jumlahPhasaController.text),
+                            slotModul: int.parse(slotModulController.text),
+                            modulTerpasang:
+                                int.parse(modulTerpasangController.text),
+                            modulControl:
+                                int.parse(modulControlController.text),
+                            merk: merkController.text,
+                            tipe: tipeController.text,
+                            popId: widget.rect.popId);
+                        popProvider.getDataPop(id: widget.rect.popId);
+                        Navigator.pop(context);
+                      },
+                      color: primaryGreen,
+                      clickColor: clickGreen),
+                  const SizedBox(
+                    height: 32,
+                  )
                 ],
               ),
             );

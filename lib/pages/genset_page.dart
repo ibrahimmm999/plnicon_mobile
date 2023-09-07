@@ -3,9 +3,10 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:plnicon_mobile/models/master/genset_master_model.dart';
 import 'package:plnicon_mobile/models/pm_model.dart';
-import 'package:plnicon_mobile/pages/main_page.dart';
 import 'package:plnicon_mobile/providers/images_provider.dart';
 import 'package:plnicon_mobile/providers/page_provider.dart';
+import 'package:plnicon_mobile/providers/pop_provider.dart';
+import 'package:plnicon_mobile/services/master/genset_master_service.dart';
 import 'package:plnicon_mobile/services/transaksional/genset_service.dart';
 import 'package:plnicon_mobile/theme/theme.dart';
 import 'package:plnicon_mobile/widgets/custom_button.dart';
@@ -45,6 +46,7 @@ class _GensetPageState extends State<GensetPage> {
       });
     }
 
+    PopProvider popProvider = Provider.of<PopProvider>(context);
     PageProvider pageProvider = Provider.of<PageProvider>(context);
     TextEditingController deskripsiController = TextEditingController();
     TextEditingController fuelController = TextEditingController();
@@ -63,6 +65,28 @@ class _GensetPageState extends State<GensetPage> {
     TextEditingController kartuGantungUrlController = TextEditingController();
     TextEditingController temuanController = TextEditingController();
     TextEditingController rekomendasiController = TextEditingController();
+    TextEditingController merkController =
+        TextEditingController(text: widget.gensetMasterModel.merk);
+    TextEditingController snController =
+        TextEditingController(text: widget.gensetMasterModel.sn);
+    TextEditingController accuController =
+        TextEditingController(text: widget.gensetMasterModel.accu.toString());
+    TextEditingController bahanBakarController = TextEditingController(
+        text: widget.gensetMasterModel.bahanBakar.toString());
+    TextEditingController kapasitasController = TextEditingController(
+        text: widget.gensetMasterModel.kapasitas.toString());
+    TextEditingController maxFuelController = TextEditingController(
+        text: widget.gensetMasterModel.maxFuel.toString());
+    TextEditingController merkAccuController = TextEditingController(
+        text: widget.gensetMasterModel.merkAccu.toString());
+    TextEditingController merkEngineController = TextEditingController(
+        text: widget.gensetMasterModel.merkEngine.toString());
+    TextEditingController merkGensetController = TextEditingController(
+        text: widget.gensetMasterModel.merkGen.toString());
+    TextEditingController switchGensetController = TextEditingController(
+        text: widget.gensetMasterModel.switchGenset.toString());
+    TextEditingController tipeBattChargerController = TextEditingController(
+        text: widget.gensetMasterModel.tipeBattCharger.toString());
     Widget switchContent() {
       return SizedBox(
         width: MediaQuery.sizeOf(context).width,
@@ -183,79 +207,90 @@ class _GensetPageState extends State<GensetPage> {
                 padding: EdgeInsets.all(defaultMargin),
                 children: [
                   Text(
-                    "Merk : ${widget.gensetMasterModel.merk}",
+                    "Merk",
                     style: buttonText.copyWith(color: textDarkColor),
                   ),
+                  TextInput(controller: merkController),
                   const SizedBox(
                     height: 20,
                   ),
                   Text(
-                    "SN : ${widget.gensetMasterModel.sn}",
+                    "SN",
                     style: buttonText.copyWith(color: textDarkColor),
                   ),
+                  TextInput(controller: snController),
                   const SizedBox(
                     height: 20,
                   ),
                   Text(
-                    "Accu : ${widget.gensetMasterModel.accu}",
+                    "Accu",
                     style: buttonText.copyWith(color: textDarkColor),
                   ),
+                  TextInput(controller: accuController),
                   const SizedBox(
                     height: 20,
                   ),
                   Text(
-                    "Bahan Bakar : ${widget.gensetMasterModel.bahanBakar}",
+                    "Bahan Bakar",
                     style: buttonText.copyWith(color: textDarkColor),
                   ),
+                  TextInput(controller: bahanBakarController),
                   const SizedBox(
                     height: 20,
                   ),
                   Text(
-                    "Kapasitas : ${widget.gensetMasterModel.kapasitas}",
+                    "Kapasitas",
                     style: buttonText.copyWith(color: textDarkColor),
                   ),
+                  TextInput(controller: kapasitasController),
                   const SizedBox(
                     height: 20,
                   ),
                   Text(
-                    "Max Fuel : ${widget.gensetMasterModel.maxFuel}",
+                    "Max Fuel",
                     style: buttonText.copyWith(color: textDarkColor),
                   ),
+                  TextInput(controller: maxFuelController),
                   const SizedBox(
                     height: 20,
                   ),
                   Text(
-                    "Merk Accu : ${widget.gensetMasterModel.merkAccu}",
+                    "Merk Accu",
                     style: buttonText.copyWith(color: textDarkColor),
                   ),
+                  TextInput(controller: merkAccuController),
                   const SizedBox(
                     height: 20,
                   ),
                   Text(
-                    "Merk Engine : ${widget.gensetMasterModel.merkEngine}",
+                    "Merk Engine",
                     style: buttonText.copyWith(color: textDarkColor),
                   ),
+                  TextInput(controller: merkEngineController),
                   const SizedBox(
                     height: 20,
                   ),
                   Text(
-                    "Merk Genset : ${widget.gensetMasterModel.merkGen}",
+                    "Merk Genset",
                     style: buttonText.copyWith(color: textDarkColor),
                   ),
+                  TextInput(controller: merkGensetController),
                   const SizedBox(
                     height: 20,
                   ),
                   Text(
-                    "Switch : ${widget.gensetMasterModel.switchGenset}",
+                    "Switch",
                     style: buttonText.copyWith(color: textDarkColor),
                   ),
+                  TextInput(controller: switchGensetController),
                   const SizedBox(
                     height: 20,
                   ),
                   Text(
-                    "Tipe Batt Charger : ${widget.gensetMasterModel.tipeBattCharger}",
+                    "Tipe Batt Charger",
                     style: buttonText.copyWith(color: textDarkColor),
                   ),
+                  TextInput(controller: tipeBattChargerController),
                   const SizedBox(
                     height: 20,
                   ),
@@ -264,7 +299,33 @@ class _GensetPageState extends State<GensetPage> {
                     style: buttonText.copyWith(color: textDarkColor),
                   ),
                   const SizedBox(
-                    height: 20,
+                    height: 32,
+                  ),
+                  CustomButton(
+                      text: "Save",
+                      onPressed: () async {
+                        await GensetMasterService().editGensetMaster(
+                            popId: widget.gensetMasterModel.popId,
+                            gensetId: widget.gensetMasterModel.id,
+                            sn: snController.text,
+                            merkEngine: merkEngineController.text,
+                            merk: merkController.text,
+                            kapasitas: int.parse(kapasitasController.text),
+                            merkGen: merkGensetController.text,
+                            maxFuel: int.parse(maxFuelController.text),
+                            bahanBakar: bahanBakarController.text,
+                            accu: double.parse(accuController.text),
+                            merkAccu: merkAccuController.text,
+                            tipeBattCharger: tipeBattChargerController.text,
+                            switchGenset: switchGensetController.text);
+                        popProvider.getDataPop(
+                            id: widget.gensetMasterModel.popId);
+                        Navigator.pop(context);
+                      },
+                      color: primaryGreen,
+                      clickColor: clickGreen),
+                  const SizedBox(
+                    height: 32,
                   ),
                 ],
               ),
@@ -411,7 +472,7 @@ class _GensetPageState extends State<GensetPage> {
                     child: CustomButton(
                         text: "Save",
                         onPressed: () async {
-                          GensetService().postGenset(
+                          await GensetService().postGenset(
                               gensetId: widget.gensetMasterModel.id,
                               pmId: widget.pm.id,
                               fuel: int.parse(fuelController.text),
@@ -437,6 +498,7 @@ class _GensetPageState extends State<GensetPage> {
                               kartuGantungUrl: kartuGantungUrlController.text,
                               temuan: temuanController.text,
                               rekomendasi: rekomendasiController.text);
+
                           Navigator.pop(context);
                         },
                         color: primaryBlue,

@@ -10,14 +10,15 @@ import 'package:plnicon_mobile/services/user_service.dart';
 class GensetMasterService {
   Future<GensetMasterModel> postGensetMaster(
       {required int gensetId,
+      required int popId,
       required String sn,
       required String merkEngine,
       required String merk,
-      required String kapasitas,
+      required int kapasitas,
       required String merkGen,
-      required String maxFuel,
+      required int maxFuel,
       required String bahanBakar,
-      required String accu,
+      required double accu,
       required String merkAccu,
       required String tipeBattCharger,
       required String switchGenset,
@@ -30,6 +31,7 @@ class GensetMasterService {
     };
     var body = {
       'id': gensetId,
+      'pop_id': popId,
       'sn': sn,
       'merk_engine': merkEngine,
       'merk': merk,
@@ -60,14 +62,15 @@ class GensetMasterService {
 
   Future<GensetMasterModel> editGensetMaster({
     required int gensetId,
+    required int popId,
     required String sn,
     required String merkEngine,
     required String merk,
-    required String kapasitas,
+    required int kapasitas,
     required String merkGen,
-    required String maxFuel,
+    required int maxFuel,
     required String bahanBakar,
-    required String accu,
+    required double accu,
     required String merkAccu,
     required String tipeBattCharger,
     required String switchGenset,
@@ -80,6 +83,7 @@ class GensetMasterService {
     };
     var body = {
       'id': gensetId,
+      'pop_id': popId,
       'sn': sn,
       'merk_engine': merkEngine,
       'merk': merk,

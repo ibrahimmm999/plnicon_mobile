@@ -7,11 +7,9 @@ import 'package:plnicon_mobile/models/nilai/ac_nilai_model.dart';
 import 'package:plnicon_mobile/models/pm_model.dart';
 import 'package:plnicon_mobile/providers/images_provider.dart';
 import 'package:plnicon_mobile/providers/page_provider.dart';
-import 'package:plnicon_mobile/providers/transaksional_provider.dart';
-import 'package:plnicon_mobile/providers/user_provider.dart';
+import 'package:plnicon_mobile/providers/pop_provider.dart';
 import 'package:plnicon_mobile/services/master/ac_master_service.dart';
 import 'package:plnicon_mobile/services/transaksional/ac_service.dart';
-import 'package:plnicon_mobile/services/user_service.dart';
 import 'package:plnicon_mobile/theme/theme.dart';
 import 'package:plnicon_mobile/widgets/custom_appbar.dart';
 import 'package:plnicon_mobile/widgets/custom_button.dart';
@@ -42,14 +40,7 @@ class _ACPageState extends State<ACPage> {
     super.initState();
   }
 
-  getinit() async {
-    // if (await TransaksionalProvider().getAc(widget.pm.id, widget.acMaster.id)) {
-    //   suhu = TransaksionalProvider().currentAc.suhuAc;
-    //   pengujian = TransaksionalProvider().currentAc.hasilPengujian;
-    //   temuan = TransaksionalProvider().currentAc.temuan;
-    //   rekomendasi = TransaksionalProvider().currentAc.rekomendasi;
-    // }
-  }
+  getinit() async {}
 
   String pengujian = "";
 
@@ -85,10 +76,10 @@ class _ACPageState extends State<ACPage> {
         TextEditingController(text: widget.acMaster.tekananFreon);
     TextEditingController modeHidupController =
         TextEditingController(text: widget.acMaster.modeHidup);
-    TextEditingController tanggalInstalasiController = TextEditingController();
 
     List<String> listHasilPengujian = ["Ok", "Not OK"];
     PageProvider pageProvider = Provider.of<PageProvider>(context);
+    PopProvider popProvider = Provider.of<PopProvider>(context);
     Widget switchContent() {
       return SizedBox(
         width: MediaQuery.sizeOf(context).width,
@@ -186,9 +177,14 @@ class _ACPageState extends State<ACPage> {
                           tekananFreon: tekananFreonController.text,
                           modeHidup: modeHidupController.text,
                         );
+                        popProvider.getDataPop(id: widget.acMaster.popId);
+                        Navigator.pop(context);
                       },
                       color: primaryGreen,
-                      clickColor: clickGreen)
+                      clickColor: clickGreen),
+                  const SizedBox(
+                    height: 32,
+                  )
                 ],
               ),
             );
@@ -384,7 +380,9 @@ class _ACPageState extends State<ACPage> {
                         print("AC : $ac");
                         imagesProvider.foto.forEach((key, value) async {
                           await AcService().postFotoAc(
-                              acNilaiId: 199, urlFoto: key, description: value);
+                              acNilaiId: ac.id,
+                              urlFoto: key,
+                              description: value);
                         });
                         // ignore: use_build_context_synchronously
                         Navigator.pop(context);

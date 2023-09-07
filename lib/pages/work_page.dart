@@ -43,7 +43,6 @@ class WorkPage extends StatelessWidget {
               children: pmProvider.listPm
                   .where((element) => element.status == "PLAN")
                   .map((pm) {
-                print(pm);
                 return WorkOrderCard(
                   onTap: () {
                     Navigator.push(

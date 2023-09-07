@@ -3,6 +3,9 @@ import 'package:plnicon_mobile/models/master/pdb_master_model.dart';
 import 'package:plnicon_mobile/pages/main_page.dart';
 import 'package:plnicon_mobile/providers/images_provider.dart';
 import 'package:plnicon_mobile/providers/page_provider.dart';
+import 'package:plnicon_mobile/providers/pop_provider.dart';
+import 'package:plnicon_mobile/services/master/pdb_master_service.dart';
+import 'package:plnicon_mobile/services/transaksional/pdb_service.dart';
 import 'package:plnicon_mobile/theme/theme.dart';
 import 'package:plnicon_mobile/widgets/custom_button.dart';
 import 'package:plnicon_mobile/widgets/custom_dropdown.dart';
@@ -23,7 +26,16 @@ class PDBPage extends StatelessWidget {
     TextEditingController deskripsiController = TextEditingController();
     TextEditingController temuanController = TextEditingController();
     TextEditingController rekomendasiController = TextEditingController();
+    TextEditingController namaController =
+        TextEditingController(text: pdb.nama);
+    TextEditingController tipeController =
+        TextEditingController(text: pdb.tipe);
+    TextEditingController aresterController =
+        TextEditingController(text: pdb.arester);
+    TextEditingController aresterTipeController =
+        TextEditingController(text: pdb.aresterTipe);
     PageProvider pageProvider = Provider.of<PageProvider>(context);
+    PopProvider popProvider = Provider.of<PopProvider>(context);
     ImagesProvider imagesProvider = Provider.of<ImagesProvider>(context);
     Widget switchContent() {
       return SizedBox(
@@ -55,30 +67,34 @@ class PDBPage extends StatelessWidget {
                 padding: EdgeInsets.all(defaultMargin),
                 children: [
                   Text(
-                    "Nama : ${pdb.nama}",
+                    "Nama",
                     style: buttonText.copyWith(color: textDarkColor),
                   ),
+                  TextInput(controller: namaController),
                   const SizedBox(
                     height: 20,
                   ),
                   Text(
-                    "Arester : ${pdb.arester}",
+                    "Arester",
                     style: buttonText.copyWith(color: textDarkColor),
                   ),
+                  TextInput(controller: aresterController),
                   const SizedBox(
                     height: 20,
                   ),
                   Text(
-                    "Arester Tipe : ${pdb.aresterTipe}",
+                    "Arester Tipe",
                     style: buttonText.copyWith(color: textDarkColor),
                   ),
+                  TextInput(controller: aresterTipeController),
                   const SizedBox(
                     height: 20,
                   ),
                   Text(
-                    "Tipe : ${pdb.tipe}",
+                    "Tipe",
                     style: buttonText.copyWith(color: textDarkColor),
                   ),
+                  TextInput(controller: tipeController),
                   const SizedBox(
                     height: 20,
                   ),
@@ -89,6 +105,21 @@ class PDBPage extends StatelessWidget {
                   const SizedBox(
                     height: 20,
                   ),
+                  CustomButton(
+                      text: "Save",
+                      onPressed: () async {
+                        await PdbMasterService().editPdbMaster(
+                            pdbId: pdb.id,
+                            nama: namaController.text,
+                            tipe: tipeController.text,
+                            arester: aresterController.text,
+                            aresterTipe: aresterTipeController.text,
+                            popId: pdb.popId);
+                        popProvider.getDataPop(id: pdb.popId);
+                        Navigator.pop(context);
+                      },
+                      color: primaryGreen,
+                      clickColor: clickGreen)
                 ],
               ),
             );

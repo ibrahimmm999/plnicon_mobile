@@ -13,7 +13,7 @@ class InverterMasterService {
       required String sn,
       required String kondisi,
       required String merk,
-      required String kapasitas,
+      required int kapasitas,
       required String tipe,
       required int popId,
       required DateTime tglInstalasi}) async {
@@ -54,7 +54,7 @@ class InverterMasterService {
     required String sn,
     required String kondisi,
     required String merk,
-    required String kapasitas,
+    required int kapasitas,
     required String tipe,
   }) async {
     late Uri url = UrlService().api('edit-inverter');

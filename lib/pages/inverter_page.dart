@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:plnicon_mobile/models/master/inverter_master_model.dart';
 import 'package:plnicon_mobile/models/pm_model.dart';
-import 'package:plnicon_mobile/pages/ac_page.dart';
 import 'package:plnicon_mobile/pages/main_page.dart';
 import 'package:plnicon_mobile/providers/images_provider.dart';
 import 'package:plnicon_mobile/providers/page_provider.dart';
+import 'package:plnicon_mobile/providers/pop_provider.dart';
+import 'package:plnicon_mobile/services/master/inverter_master_service.dart';
 import 'package:plnicon_mobile/services/transaksional/inverter_service.dart';
 import 'package:plnicon_mobile/theme/theme.dart';
 import 'package:plnicon_mobile/widgets/custom_button.dart';
-import 'package:plnicon_mobile/widgets/custom_dropdown.dart';
 import 'package:plnicon_mobile/widgets/input_dokumentasi.dart';
 import 'package:plnicon_mobile/widgets/text_input.dart';
 import 'package:provider/provider.dart';
@@ -38,8 +38,19 @@ class _InverterPageState extends State<InverterPage> {
     TextEditingController deskripsiController = TextEditingController();
     TextEditingController temuanController = TextEditingController();
     TextEditingController rekomendasiController = TextEditingController();
+    TextEditingController merkController =
+        TextEditingController(text: widget.inverter.merk);
+    TextEditingController snController =
+        TextEditingController(text: widget.inverter.sn);
+    TextEditingController tipeController =
+        TextEditingController(text: widget.inverter.tipe);
+    TextEditingController kondisiController =
+        TextEditingController(text: widget.inverter.kondisi);
+    TextEditingController kapasitasController =
+        TextEditingController(text: widget.inverter.kapasitas.toString());
     ImagesProvider imagesProvider = Provider.of<ImagesProvider>(context);
     PageProvider pageProvider = Provider.of<PageProvider>(context);
+    PopProvider popProvider = Provider.of<PopProvider>(context);
     String hasilUji = "";
     List<String> listHasilPengujian = ["OK", "Not OK"];
     Widget switchContent() {
@@ -72,37 +83,42 @@ class _InverterPageState extends State<InverterPage> {
                 padding: EdgeInsets.all(defaultMargin),
                 children: [
                   Text(
-                    "Merk : ${widget.inverter.merk}",
+                    "Merk",
                     style: buttonText.copyWith(color: textDarkColor),
                   ),
+                  TextInput(controller: merkController),
                   const SizedBox(
                     height: 20,
                   ),
                   Text(
-                    "Kondisi : ${widget.inverter.kondisi}",
+                    "Kondisi",
                     style: buttonText.copyWith(color: textDarkColor),
                   ),
+                  TextInput(controller: kondisiController),
                   const SizedBox(
                     height: 20,
                   ),
                   Text(
-                    "Tipe : ${widget.inverter.tipe}",
+                    "Tipe",
                     style: buttonText.copyWith(color: textDarkColor),
                   ),
+                  TextInput(controller: tipeController),
                   const SizedBox(
                     height: 20,
                   ),
                   Text(
-                    "Kapasitas : ${widget.inverter.kapasitas}",
+                    "Kapasitas",
                     style: buttonText.copyWith(color: textDarkColor),
                   ),
+                  TextInput(controller: kapasitasController),
                   const SizedBox(
                     height: 20,
                   ),
                   Text(
-                    "SN : ${widget.inverter.sn}",
+                    "SN",
                     style: buttonText.copyWith(color: textDarkColor),
                   ),
+                  TextInput(controller: snController),
                   const SizedBox(
                     height: 20,
                   ),
@@ -113,6 +129,25 @@ class _InverterPageState extends State<InverterPage> {
                   const SizedBox(
                     height: 20,
                   ),
+                  CustomButton(
+                      text: "Save",
+                      onPressed: () async {
+                        await InverterMasterService().editInverterMaster(
+                            inverterId: widget.inverter.id,
+                            popId: widget.inverter.popId,
+                            sn: snController.text,
+                            kondisi: kondisiController.text,
+                            merk: merkController.text,
+                            kapasitas: int.parse(kapasitasController.text),
+                            tipe: tipeController.text);
+                        popProvider.getDataPop(id: widget.inverter.popId);
+                        Navigator.pop(context);
+                      },
+                      color: primaryGreen,
+                      clickColor: clickGreen),
+                  const SizedBox(
+                    height: 32,
+                  )
                 ],
               ),
             );

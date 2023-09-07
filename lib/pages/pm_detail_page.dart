@@ -48,8 +48,7 @@ class _PmDetailPageState extends State<PmDetailPage> {
     if (token == null) {
     } else {
       if (await userProvider.getUser(token: token)) {
-        await popProvider.getDataPop(token: token, id: widget.pm.popId);
-        print(popProvider.listPop);
+        await popProvider.getDataPop(id: widget.pm.popId);
       }
     }
   }
@@ -81,6 +80,7 @@ class _PmDetailPageState extends State<PmDetailPage> {
           backgroundColor: primaryBlue,
           leading: GestureDetector(
               onTap: () {
+                popProvider.listPop.clear();
                 Navigator.pushAndRemoveUntil(
                     context,
                     MaterialPageRoute(builder: (context) => MainPage()),
@@ -97,7 +97,6 @@ class _PmDetailPageState extends State<PmDetailPage> {
             ),
           ),
         ),
-        // appBar: CustomAppBar(isMainPage: false, title: widget.pm.pop.nama),
         body: ListView(
             padding:
                 EdgeInsets.symmetric(horizontal: defaultMargin, vertical: 20),

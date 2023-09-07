@@ -10,7 +10,7 @@ import 'package:plnicon_mobile/services/user_service.dart';
 class RackMasterService {
   Future<RackMasterModel> postRackMaster(
       {required int rackId,
-      required String nomorRack,
+      required int nomorRack,
       required String lokasi,
       required int popId,
       required DateTime tglInstalasi}) async {
@@ -45,7 +45,7 @@ class RackMasterService {
   Future<RackMasterModel> editRackMaster({
     required int rackId,
     required int popId,
-    required String nomorRack,
+    required int nomorRack,
     required String lokasi,
   }) async {
     late Uri url = UrlService().api('edit-data-rack');
