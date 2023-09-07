@@ -2,14 +2,14 @@
 
 import 'dart:convert';
 
-import 'package:plnicon_mobile/models/nilai/rect_nilai_model.dart';
+import 'package:plnicon_mobile/models/nilai/pdb_nilai_model.dart';
 import 'package:plnicon_mobile/services/url_service.dart';
 import 'package:http/http.dart' as http;
 import 'package:plnicon_mobile/services/user_service.dart';
 
-class RectService {
-  Future<List<RectNilaiModel>> getRect({required String token}) async {
-    var url = UrlService().api('rect-nilai');
+class PdbService {
+  Future<List<PdbNilaiModel>> getPdb({required String token}) async {
+    var url = UrlService().api('pdb-nilai');
     var headers = {
       'Content-Type': 'application/json',
       'Authorization': token,
@@ -23,35 +23,31 @@ class RectService {
     if (response.statusCode == 200) {
       var data = jsonDecode(response.body)['data'] as List;
       // print(data);
-      List<RectNilaiModel> rect = List<RectNilaiModel>.from(
-        data.map((e) => RectNilaiModel.fromJson(e)),
+      List<PdbNilaiModel> pdb = List<PdbNilaiModel>.from(
+        data.map((e) => PdbNilaiModel.fromJson(e)),
       );
-      return rect;
+      return pdb;
     } else {
-      throw "Get data rectifier failed";
+      throw "Get data pdb failed";
     }
   }
 
-  Future<RectNilaiModel> postRect(
-      {required int rectId,
+  Future<PdbNilaiModel> postPdb(
+      {required int pdbId,
       required int pmId,
-      required double loadr,
-      required double loads,
-      required double loadt,
+      required String aresterWarna,
       required String temuan,
       required String rekomendasi}) async {
-    late Uri url = UrlService().api('rect-nilai');
+    late Uri url = UrlService().api('pdb-nilai');
     var headers = {
       'Content-Type': 'application/json',
       'Authorization': await UserService().getTokenPreference() ?? '',
     };
 
     var body = {
-      'rect_id': rectId,
+      'pdb_id': pdbId,
       'pm_id': pmId,
-      'loadr': loadr,
-      'loads': loads,
-      'loadt': loadt,
+      'arester_warna': aresterWarna,
       'temuan': temuan,
       'rekomendasi': rekomendasi
     };
@@ -65,15 +61,15 @@ class RectService {
     print(response.request);
     if (response.statusCode == 200) {
       var data = jsonDecode(response.body)['data'];
-      return RectNilaiModel.fromJson(data);
+      return PdbNilaiModel.fromJson(data);
     } else {
-      throw "Post data rectifier failed";
+      throw "Post data pdb failed";
     }
   }
 
-  Future<bool> postFotoRect(
-      {required int rectNilaiId, required Map<String, String> foto}) async {
-    late Uri url = UrlService().api('rect-foto');
+  Future<bool> postFotoPdb(
+      {required int pdbNilaiId, required Map<String, String> foto}) async {
+    late Uri url = UrlService().api('pdb-foto');
 
     var headers = {
       'Content-Type': 'application/json',
@@ -81,7 +77,7 @@ class RectService {
     };
     foto.forEach((key, value) async {
       var body = {
-        'rect_nilai_id': rectNilaiId,
+        'pdb_nilai_id': pdbNilaiId,
         'fotoFile': key,
         'description': value
       };
@@ -93,7 +89,7 @@ class RectService {
       if (response.statusCode == 200) {
         print(response.request);
       } else {
-        throw "Post foto rect failed";
+        throw "Post foto pdb failed";
       }
     });
     return true;

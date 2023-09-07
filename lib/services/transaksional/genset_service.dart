@@ -120,7 +120,7 @@ class GensetService {
       var data = jsonDecode(response.body)['data'];
       return true;
     } else {
-      throw "Post data ac failed";
+      throw "Post foto genset failed";
     }
   }
 }

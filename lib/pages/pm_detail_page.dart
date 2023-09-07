@@ -13,11 +13,14 @@ import 'package:plnicon_mobile/pages/modul_page.dart';
 import 'package:plnicon_mobile/pages/pdb_page.dart';
 import 'package:plnicon_mobile/pages/rack_page.dart';
 import 'package:plnicon_mobile/pages/recti_page.dart';
+import 'package:plnicon_mobile/pages/work_page.dart';
 import 'package:plnicon_mobile/providers/images_provider.dart';
 import 'package:plnicon_mobile/providers/pop_provider.dart';
 import 'package:plnicon_mobile/providers/user_provider.dart';
 import 'package:plnicon_mobile/services/user_service.dart';
+import 'package:plnicon_mobile/services/pm_service.dart';
 import 'package:plnicon_mobile/theme/theme.dart';
+import 'package:plnicon_mobile/widgets/custom_button.dart';
 import 'package:provider/provider.dart';
 
 class PmDetailPage extends StatefulWidget {
@@ -55,6 +58,7 @@ class _PmDetailPageState extends State<PmDetailPage> {
   Widget build(BuildContext context) {
     PopProvider popProvider = Provider.of<PopProvider>(context);
     ImagesProvider imagesProvider = Provider.of<ImagesProvider>(context);
+    UserProvider userProvider = Provider.of<UserProvider>(context);
 
     Widget card(String title) {
       return Container(
@@ -366,7 +370,7 @@ class _PmDetailPageState extends State<PmDetailPage> {
                                           )),
                                 );
                               },
-                              child: card("Ex Alarm "));
+                              child: card("Ex Alarm"));
                         }).toList(),
                       ),
                     ),
@@ -511,6 +515,34 @@ class _PmDetailPageState extends State<PmDetailPage> {
                             }).toList()
                           : [],
                     ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 28),
+                      child: CustomButton(
+                          text: "SUBMIT",
+                          onPressed: () async {
+                            final String? tokenUser =
+                                await UserService().getTokenPreference();
+                            if (tokenUser == null) {
+                            } else {
+                              if (await userProvider.getUser(
+                                  token: tokenUser)) {
+                                await PmService().editPm(
+                                    token: tokenUser,
+                                    pmId: widget.pm.id,
+                                    status: "REALISASI");
+                              }
+                            }
+                            // ignore: use_build_context_synchronously
+                            Navigator.pushAndRemoveUntil(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const WorkPage()),
+                              (route) => false,
+                            );
+                          },
+                          color: primaryGreen,
+                          clickColor: clickGreen),
+                    )
                   ]));
   }
 }

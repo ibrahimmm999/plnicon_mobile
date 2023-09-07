@@ -9,6 +9,7 @@ import 'package:plnicon_mobile/providers/images_provider.dart';
 import 'package:plnicon_mobile/providers/page_provider.dart';
 import 'package:plnicon_mobile/providers/transaksional_provider.dart';
 import 'package:plnicon_mobile/providers/user_provider.dart';
+import 'package:plnicon_mobile/services/master/ac_master_service.dart';
 import 'package:plnicon_mobile/services/transaksional/ac_service.dart';
 import 'package:plnicon_mobile/services/user_service.dart';
 import 'package:plnicon_mobile/theme/theme.dart';
@@ -72,8 +73,21 @@ class _ACPageState extends State<ACPage> {
     TextEditingController temuanController = TextEditingController();
     TextEditingController rekomendasiController = TextEditingController();
     TextEditingController deskripsiController = TextEditingController();
+    TextEditingController namaAcController =
+        TextEditingController(text: widget.acMaster.nama);
+    TextEditingController kondisiController =
+        TextEditingController(text: widget.acMaster.kondisi);
+    TextEditingController merkController =
+        TextEditingController(text: widget.acMaster.merk);
+    TextEditingController kapasitasController =
+        TextEditingController(text: widget.acMaster.kapasitas);
+    TextEditingController tekananFreonController =
+        TextEditingController(text: widget.acMaster.tekananFreon);
+    TextEditingController modeHidupController =
+        TextEditingController(text: widget.acMaster.modeHidup);
+    TextEditingController tanggalInstalasiController = TextEditingController();
 
-    List<String> listHasilPengujian = ["Ok", "B aja", "Buruk"];
+    List<String> listHasilPengujian = ["Ok", "Not OK"];
     PageProvider pageProvider = Provider.of<PageProvider>(context);
     Widget switchContent() {
       return SizedBox(
@@ -105,44 +119,50 @@ class _ACPageState extends State<ACPage> {
                 padding: EdgeInsets.all(defaultMargin),
                 children: [
                   Text(
-                    "Nama : ${widget.acMaster.nama}",
+                    "Nama",
                     style: buttonText.copyWith(color: textDarkColor),
                   ),
+                  TextInput(controller: namaAcController),
                   const SizedBox(
                     height: 20,
                   ),
                   Text(
-                    "Kondisi : ${widget.acMaster.kondisi}",
+                    "Kondisi",
                     style: buttonText.copyWith(color: textDarkColor),
                   ),
+                  TextInput(controller: kondisiController),
                   const SizedBox(
                     height: 20,
                   ),
                   Text(
-                    "Merk : ${widget.acMaster.merk}",
+                    "Merk",
                     style: buttonText.copyWith(color: textDarkColor),
                   ),
+                  TextInput(controller: merkController),
                   const SizedBox(
                     height: 20,
                   ),
                   Text(
-                    "Kapasitas : ${widget.acMaster.kapasitas}",
+                    "Kapasitas",
                     style: buttonText.copyWith(color: textDarkColor),
                   ),
+                  TextInput(controller: kapasitasController),
                   const SizedBox(
                     height: 20,
                   ),
                   Text(
-                    "Tekanan Freon : ${widget.acMaster.tekananFreon}",
+                    "Tekanan Freon",
                     style: buttonText.copyWith(color: textDarkColor),
                   ),
+                  TextInput(controller: tekananFreonController),
                   const SizedBox(
                     height: 20,
                   ),
                   Text(
-                    "Mode Hidup : ${widget.acMaster.modeHidup}",
+                    "Mode Hidup",
                     style: buttonText.copyWith(color: textDarkColor),
                   ),
+                  TextInput(controller: modeHidupController),
                   const SizedBox(
                     height: 20,
                   ),
@@ -151,8 +171,24 @@ class _ACPageState extends State<ACPage> {
                     style: buttonText.copyWith(color: textDarkColor),
                   ),
                   const SizedBox(
-                    height: 20,
+                    height: 32,
                   ),
+                  CustomButton(
+                      text: "Save",
+                      onPressed: () async {
+                        await AcMasterService().editAcMaster(
+                          popId: widget.acMaster.popId,
+                          acId: widget.acMaster.id,
+                          nama: namaAcController.text,
+                          kondisi: kondisiController.text,
+                          merk: merkController.text,
+                          kapasitas: kapasitasController.text,
+                          tekananFreon: tekananFreonController.text,
+                          modeHidup: modeHidupController.text,
+                        );
+                      },
+                      color: primaryGreen,
+                      clickColor: clickGreen)
                 ],
               ),
             );
@@ -337,29 +373,31 @@ class _ACPageState extends State<ACPage> {
                   child: CustomButton(
                       text: "Save",
                       onPressed: () async {
-                        await AcService().postAc(
+                        AcNilaiModel ac = await AcService().postAc(
                             acId: widget.acMaster.id,
                             pmId: widget.pm.id,
                             suhuAc: int.parse(suhuController.text),
                             hasilPengujian: pengujian,
                             temuan: temuanController.text,
                             rekomendasi: rekomendasiController.text);
-
+                        // ignore: avoid_print
+                        print("AC : $ac");
                         imagesProvider.foto.forEach((key, value) async {
                           await AcService().postFotoAc(
-                              acNilaiId: 1, urlFoto: key, description: value);
+                              acNilaiId: 199, urlFoto: key, description: value);
                         });
+                        // ignore: use_build_context_synchronously
                         Navigator.pop(context);
                       },
-                      color: primaryBlue,
-                      clickColor: clickBlue),
+                      color: primaryGreen,
+                      clickColor: clickGreen),
                 )
               ],
             ));
           }
         default:
           {
-            return Scaffold();
+            return const Scaffold();
           }
       }
     }

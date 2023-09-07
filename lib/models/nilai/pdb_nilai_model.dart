@@ -10,7 +10,6 @@ class PdbNilaiModel extends Equatable {
   final String rekomendasi;
   final DateTime createdAt;
   final DateTime updatedAt;
-
   final List<FotoModel> foto;
 
   const PdbNilaiModel(

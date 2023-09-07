@@ -2,14 +2,14 @@
 
 import 'dart:convert';
 
-import 'package:plnicon_mobile/models/nilai/baterai_nilai_model.dart';
+import 'package:plnicon_mobile/models/nilai/exalarm_nilai_model.dart';
 import 'package:plnicon_mobile/services/url_service.dart';
 import 'package:http/http.dart' as http;
 import 'package:plnicon_mobile/services/user_service.dart';
 
-class BateraiService {
-  Future<List<BateraiNilaiModel>> getBaterai({required String token}) async {
-    var url = UrlService().api('baterai');
+class ExAlarmService {
+  Future<List<ExAlarmNilaiModel>> getExAlarm({required String token}) async {
+    var url = UrlService().api('ex-alarm-nilai');
     var headers = {
       'Content-Type': 'application/json',
       'Authorization': token,
@@ -23,53 +23,39 @@ class BateraiService {
     if (response.statusCode == 200) {
       var data = jsonDecode(response.body)['data'] as List;
       // print(data);
-      List<BateraiNilaiModel> baterai = List<BateraiNilaiModel>.from(
-        data.map((e) => BateraiNilaiModel.fromJson(e)),
+      List<ExAlarmNilaiModel> exalarm = List<ExAlarmNilaiModel>.from(
+        data.map((e) => ExAlarmNilaiModel.fromJson(e)),
       );
-      return baterai;
+      return exalarm;
     } else {
-      throw "Get data baterai failed";
+      throw "Get data exalarm failed";
     }
   }
 
-  Future<BateraiNilaiModel> postBaterai(
-      {required String bateraiId,
-      required String pmId,
-      required double load,
-      required double groupVBank,
-      required double cellV1,
-      required double cellV2,
-      required double cellV3,
-      required double cellV4,
-      required int timeDischarge,
-      required int stopUjiBaterai,
-      required double performance,
-      required double sisaKapasitas,
-      required double kemampuanBackUpTime,
-      required int jumlahBateraiRusak,
+  Future<ExAlarmNilaiModel> postExAlarm(
+      {required int pmId,
+      required int plnOff,
+      required String suhu,
+      required String ea,
+      required String pintu,
+      required String gensetRunFail,
+      required String smokeAndFire,
       required String temuan,
       required String rekomendasi}) async {
-    late Uri url = UrlService().api('baterai');
+    late Uri url = UrlService().api('ex-alarm-nilai');
     var headers = {
       'Content-Type': 'application/json',
       'Authorization': await UserService().getTokenPreference() ?? '',
     };
 
     var body = {
-      'baterai_id': bateraiId,
       'pm_id': pmId,
-      'load': load,
-      'group_vbank': groupVBank,
-      'cell_v1': cellV1,
-      'cell_v2': cellV2,
-      'cell_v3': cellV3,
-      'cell_v4': cellV4,
-      'time_discharge': timeDischarge,
-      'stop_uji_baterai': stopUjiBaterai,
-      'performance': performance,
-      'sisa_kapasitas': sisaKapasitas,
-      'kemampuan_backup_time': kemampuanBackUpTime,
-      'jumlah_baterai_rusak': jumlahBateraiRusak,
+      'pln_off': plnOff,
+      'suhu': suhu,
+      'ea': ea,
+      'pintu': pintu,
+      'genset_run_fail': gensetRunFail,
+      'smoke_and_fire': smokeAndFire,
       'temuan': temuan,
       'rekomendasi': rekomendasi
     };
@@ -80,20 +66,20 @@ class BateraiService {
       body: jsonEncode(body),
       encoding: Encoding.getByName('utf-8'),
     );
-
+    print(response.request);
     if (response.statusCode == 200) {
       var data = jsonDecode(response.body)['data'];
-      return BateraiNilaiModel.fromJson(data);
+      return ExAlarmNilaiModel.fromJson(data);
     } else {
-      throw "Post data baterai failed";
+      throw "Post data exalarm failed";
     }
   }
 
-  Future<bool> postFotoBaterai(
-      {required int bateraiNilaiId,
+  Future<bool> postFotoexalarm(
+      {required int exalarmNilaiId,
       required String urlFoto,
       required String description}) async {
-    late Uri url = UrlService().api('air-conditioner-foto');
+    late Uri url = UrlService().api('exalarm-foto');
 
     var headers = {
       'Content-Type': 'application/json',
@@ -104,7 +90,7 @@ class BateraiService {
     // add headers
     request.headers.addAll(headers);
 
-    request.fields['baterai_nilai_id'] = bateraiNilaiId.toString();
+    request.fields['exalarm_nilai_id'] = exalarmNilaiId.toString();
     request.fields['deskripsi'] = description;
     request.files.add(await http.MultipartFile.fromPath('fotoFile', urlFoto));
 
@@ -117,7 +103,7 @@ class BateraiService {
       print(data);
       return true;
     } else {
-      throw "Add foto baterai failed";
+      throw "Add foto exalarm failed";
     }
   }
 }

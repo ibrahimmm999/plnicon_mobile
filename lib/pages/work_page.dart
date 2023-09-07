@@ -43,6 +43,7 @@ class WorkPage extends StatelessWidget {
               children: pmProvider.listPm
                   .where((element) => element.status == "PLAN")
                   .map((pm) {
+                print(pm);
                 return WorkOrderCard(
                   onTap: () {
                     Navigator.push(
@@ -62,19 +63,94 @@ class WorkPage extends StatelessWidget {
           );
         case 1:
           return Expanded(
-            child: ListView(
-              children: pmProvider.listPm
-                  .where((element) => element.status == "REALISASI")
-                  .map((pm) {
-                return WorkOrderCard(
-                  onTap: () {},
-                  nama: pm.pop.nama,
-                  popKode: pm.pop.popKode,
-                  tanggal: pm.plan.toString(),
-                  detail: pm.detailPm,
-                );
-              }).toList(),
-            ),
+            child: ListView(padding: EdgeInsets.all(defaultMargin), children: [
+              Text(
+                "Rejected",
+                style: buttonText.copyWith(color: textDarkColor),
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              Column(
+                children: pmProvider.listPm
+                    .where((element) =>
+                        element.status == "REALISASI" &&
+                        element.statusApproval == "REJECTED")
+                    .map((pm) {
+                  return WorkOrderCard(
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => PmDetailPage(
+                                    pm: pm,
+                                  )));
+                    },
+                    nama: pm.pop.nama,
+                    popKode: pm.pop.popKode,
+                    tanggal: pm.plan.toString(),
+                    detail: pm.detailPm,
+                  );
+                }).toList(),
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              Text(
+                "Waiting",
+                style: buttonText.copyWith(color: textDarkColor),
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              Column(
+                children: pmProvider.listPm
+                    .where((element) =>
+                        element.status == "REALISASI" &&
+                        element.statusApproval == "WAITING")
+                    .map((pm) {
+                  return WorkOrderCard(
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => PmDetailPage(
+                                    pm: pm,
+                                  )));
+                    },
+                    nama: pm.pop.nama,
+                    popKode: pm.pop.popKode,
+                    tanggal: pm.plan.toString(),
+                    detail: pm.detailPm,
+                  );
+                }).toList(),
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              Text(
+                "Approved",
+                style: buttonText.copyWith(color: textDarkColor),
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              Column(
+                children: pmProvider.listPm
+                    .where((element) =>
+                        element.status == "REALISASI" &&
+                        element.statusApproval == "APPROVED")
+                    .map((pm) {
+                  return WorkOrderCard(
+                    onTap: () {},
+                    nama: pm.pop.nama,
+                    popKode: pm.pop.popKode,
+                    tanggal: pm.plan.toString(),
+                    detail: pm.detailPm,
+                  );
+                }).toList(),
+              )
+            ]),
           );
         default:
           return const SizedBox();

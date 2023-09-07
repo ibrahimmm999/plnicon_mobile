@@ -31,4 +31,34 @@ class PmService {
       throw "Get data pm failed";
     }
   }
+
+  Future<PmModel> editPm(
+      {required String token,
+      required int pmId,
+      required String status}) async {
+    late Uri url = UrlService().api('edit-jadwalpm');
+    var headers = {
+      'Content-Type': 'application/json',
+      'Authorization': token,
+    };
+
+    var body = {
+      'id': pmId,
+      'status': status,
+    };
+
+    var response = await http.post(
+      url,
+      headers: headers,
+      body: jsonEncode(body),
+      encoding: Encoding.getByName('utf-8'),
+    );
+
+    if (response.statusCode == 200) {
+      var data = jsonDecode(response.body)['data'];
+      return PmModel.fromJson(data);
+    } else {
+      throw "Edit PM failed";
+    }
+  }
 }

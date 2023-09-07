@@ -65,4 +65,33 @@ class PerangkatService {
       throw "Post data perangkat failed";
     }
   }
+
+  Future<bool> postFotoPerangkat(
+      {required int perangkatNilaiId,
+      required Map<String, String> foto}) async {
+    late Uri url = UrlService().api('perangkat-foto');
+
+    var headers = {
+      'Content-Type': 'application/json',
+      'Authorization': await UserService().getTokenPreference() ?? '',
+    };
+    foto.forEach((key, value) async {
+      var body = {
+        'perangkat_nilai_id': perangkatNilaiId,
+        'fotoFile': key,
+        'description': value
+      };
+      var response = await http.post(
+        url,
+        headers: headers,
+        body: jsonEncode(body),
+      );
+      if (response.statusCode == 200) {
+        print(response.request);
+      } else {
+        throw "Post foto perangkat failed";
+      }
+    });
+    return true;
+  }
 }
