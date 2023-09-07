@@ -9,7 +9,7 @@ import 'package:plnicon_mobile/services/user_service.dart';
 
 class ExAlarmService {
   Future<List<ExAlarmNilaiModel>> getExAlarm({required String token}) async {
-    var url = UrlService().api('ex-alarm-nilai');
+    var url = UrlService().api('ex-alarm');
     var headers = {
       'Content-Type': 'application/json',
       'Authorization': token,
@@ -42,7 +42,7 @@ class ExAlarmService {
       required String smokeAndFire,
       required String temuan,
       required String rekomendasi}) async {
-    late Uri url = UrlService().api('ex-alarm-nilai');
+    late Uri url = UrlService().api('ex-alarm');
     var headers = {
       'Content-Type': 'application/json',
       'Authorization': await UserService().getTokenPreference() ?? '',
@@ -79,7 +79,7 @@ class ExAlarmService {
       {required int exalarmNilaiId,
       required String urlFoto,
       required String description}) async {
-    late Uri url = UrlService().api('exalarm-foto');
+    late Uri url = UrlService().api('ex-alarm-foto');
 
     var headers = {
       'Content-Type': 'application/json',
