@@ -32,6 +32,32 @@ class BateraiService {
     }
   }
 
+  Future<List<BateraiNilaiModel>> getBateraiByPmAndMaster(
+      {required int pmId, required int bateraiId}) async {
+    var url =
+        UrlService().api('baterai-nilai?pm_id=$pmId&baterai_id=$bateraiId');
+    var headers = {
+      'Content-Type': 'application/json',
+      'Authorization': await UserService().getTokenPreference() ?? '',
+    };
+
+    var response = await http.get(
+      url,
+      headers: headers,
+    );
+
+    if (response.statusCode == 200) {
+      var data = jsonDecode(response.body)['data'] as List;
+      print(data);
+      List<BateraiNilaiModel> baterai = List<BateraiNilaiModel>.from(
+        data.map((e) => BateraiNilaiModel.fromJson(e)),
+      );
+      return baterai;
+    } else {
+      throw "Get data baterai failed";
+    }
+  }
+
   Future<BateraiNilaiModel> postBaterai(
       {required String bateraiId,
       required String pmId,
@@ -93,7 +119,7 @@ class BateraiService {
       {required int bateraiNilaiId,
       required String urlFoto,
       required String description}) async {
-    late Uri url = UrlService().api('air-conditioner-foto');
+    late Uri url = UrlService().api('baterai-foto');
 
     var headers = {
       'Content-Type': 'application/json',

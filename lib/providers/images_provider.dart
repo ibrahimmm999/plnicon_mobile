@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:plnicon_mobile/models/foto_model.dart';
 
 class ImagesProvider extends ChangeNotifier {
   File? _imageFile;
@@ -79,5 +80,12 @@ class ImagesProvider extends ChangeNotifier {
     foto.update(path, (value) => deskripsi);
     notifyListeners();
     print(foto);
+  }
+
+  void setListImage({required List<FotoModel> listFoto}) {
+    for (var element in listFoto) {
+      foto.addAll({element.url: element.deskripsi});
+    }
+    notifyListeners();
   }
 }

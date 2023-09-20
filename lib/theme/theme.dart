@@ -54,6 +54,11 @@ TextStyle buttonText = GoogleFonts.montserrat(
   fontSize: 16,
   fontWeight: semibold,
 );
+TextStyle linkText = GoogleFonts.montserrat(
+    color: textDarkColor,
+    fontSize: 12,
+    fontWeight: semibold,
+    decoration: TextDecoration.underline);
 
 FontWeight light = FontWeight.w300;
 FontWeight regular = FontWeight.w400;

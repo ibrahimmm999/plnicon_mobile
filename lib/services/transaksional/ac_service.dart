@@ -62,9 +62,6 @@ class AcService {
 
     if (response.statusCode == 200) {
       var data = jsonDecode(response.body)['data'];
-      print("==============================\n");
-      print(data);
-      print("\n==============================");
       return AcNilaiModel.fromJson(data);
     } else {
       throw "Post data ac failed";
@@ -72,11 +69,11 @@ class AcService {
   }
 
   Future<List<AcNilaiModel>> getAcByPmAndMaster(
-      {required String token, required int pmId, required int acId}) async {
+      {required int pmId, required int acId}) async {
     var url = UrlService().api('air-conditioner-nilai?pm_id=$pmId&ac_id=$acId');
     var headers = {
       'Content-Type': 'application/json',
-      'Authorization': token,
+      'Authorization': await UserService().getTokenPreference() ?? '',
     };
 
     var response = await http.get(
@@ -86,7 +83,7 @@ class AcService {
 
     if (response.statusCode == 200) {
       var data = jsonDecode(response.body)['data'] as List;
-      // print(data);
+      print(data);
       List<AcNilaiModel> ac = List<AcNilaiModel>.from(
         data.map((e) => AcNilaiModel.fromJson(e)),
       );
@@ -97,7 +94,8 @@ class AcService {
   }
 
   Future<AcNilaiModel> editAc(
-      {required int acId,
+      {required int id,
+      required int acId,
       required int pmId,
       required int suhuAc,
       required String hasilPengujian,
@@ -110,6 +108,7 @@ class AcService {
       'Authorization': await UserService().getTokenPreference() ?? '',
     };
     var body = {
+      'id': id,
       'ac_id': acId,
       'pm_id': pmId,
       'suhu_ac': suhuAc,
@@ -126,9 +125,6 @@ class AcService {
 
     if (response.statusCode == 200) {
       var data = jsonDecode(response.body)['data'];
-      print("==============================\n");
-      print(data);
-      print("\n==============================");
       return AcNilaiModel.fromJson(data);
     } else {
       throw "Edit data ac failed";
@@ -160,10 +156,33 @@ class AcService {
 
     if (response.statusCode == 200) {
       var data = jsonDecode(responsed.body)['data'];
-      print(data);
       return true;
     } else {
       throw "Add foto ac failed";
     }
+  }
+}
+
+Future<List<AcNilaiModel>> getFoto({required int acNilaiId}) async {
+  var url = UrlService().api('air-conditioner-foto');
+  var headers = {
+    'Content-Type': 'application/json',
+    'Authorization': await UserService().getTokenPreference() ?? '',
+  };
+
+  var response = await http.get(
+    url,
+    headers: headers,
+  );
+
+  if (response.statusCode == 200) {
+    var data = jsonDecode(response.body)['data'] as List;
+    // print(data);
+    List<AcNilaiModel> ac = List<AcNilaiModel>.from(
+      data.map((e) => AcNilaiModel.fromJson(e)),
+    );
+    return ac;
+  } else {
+    throw "Get data ac failed";
   }
 }

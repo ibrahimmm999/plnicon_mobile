@@ -19,50 +19,51 @@ class KwhNilaiModel extends Equatable {
   final double rekomendasi;
   final DateTime createdAt;
   final DateTime updatedAt;
-  final List<FotoModel> foto;
+  // final List<FotoModel> foto;
 
-  const KwhNilaiModel(
-      {required this.id,
-      required this.kwhId,
-      required this.pmId,
-      required this.loadR,
-      required this.loadS,
-      required this.loadT,
-      required this.vrn,
-      required this.vsn,
-      required this.vtn,
-      required this.vng,
-      required this.vrs,
-      required this.vrt,
-      required this.vst,
-      required this.temuan,
-      required this.rekomendasi,
-      required this.createdAt,
-      required this.updatedAt,
-      required this.foto});
+  const KwhNilaiModel({
+    required this.id,
+    required this.kwhId,
+    required this.pmId,
+    required this.loadR,
+    required this.loadS,
+    required this.loadT,
+    required this.vrn,
+    required this.vsn,
+    required this.vtn,
+    required this.vng,
+    required this.vrs,
+    required this.vrt,
+    required this.vst,
+    required this.temuan,
+    required this.rekomendasi,
+    required this.createdAt,
+    required this.updatedAt,
+    // required this.foto
+  });
 
   factory KwhNilaiModel.fromJson(Map<String, dynamic> json) {
     return KwhNilaiModel(
       id: json['id'],
       kwhId: json['kwh_id'],
       pmId: json['pm_id'],
-      loadR: json['load_r'],
-      loadS: json['load_s'],
-      loadT: json['load_t'],
-      vrn: json['vrn'],
-      vsn: json['vsn'],
-      vtn: json['vtn'],
-      vng: json['vng'],
-      vrs: json['vrs'],
-      vrt: json['vrt'],
-      vst: json['vst'],
+      vrn: double.parse(json['vrn']),
+      vsn: double.parse(json['vsn']),
+      vtn: double.parse(json['vtn']),
+      vng: double.parse(json['vng']),
+      vrs: double.parse(json['vrs']),
+      vrt: double.parse(json['vrt']),
+      vst: double.parse(json['vst']),
+      loadR: double.parse(json['load_r']),
+      loadS: double.parse(json['load_s']),
+      loadT: double.parse(json['load_t']),
       temuan: json['temuan'] ?? "",
       rekomendasi: json['rekomendasi'] ?? "",
       createdAt: DateTime.parse(json['created_at']),
       updatedAt: DateTime.parse(json['created_at']),
-      foto: List<FotoModel>.from(
-        json['foto'].map((x) => FotoModel.fromJson(x)),
-      ),
+      // foto: List<FotoModel>.from(
+      //   json['foto'].map((x) => FotoModel.fromJson(x)),
+      // ),
     );
   }
 
@@ -85,6 +86,6 @@ class KwhNilaiModel extends Equatable {
         rekomendasi,
         createdAt,
         updatedAt,
-        foto
+        // foto
       ];
 }

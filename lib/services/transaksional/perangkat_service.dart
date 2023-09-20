@@ -33,6 +33,32 @@ class PerangkatService {
     }
   }
 
+  Future<List<PerangkatNilaiModel>> getAcByPmAndMaster(
+      {required int pmId, required int perangkatId}) async {
+    var url = UrlService()
+        .api('perangkat-nilai?pm_id=$pmId&perangkat_id=$perangkatId');
+    var headers = {
+      'Content-Type': 'application/json',
+      'Authorization': await UserService().getTokenPreference() ?? '',
+    };
+
+    var response = await http.get(
+      url,
+      headers: headers,
+    );
+
+    if (response.statusCode == 200) {
+      var data = jsonDecode(response.body)['data'] as List;
+      print(data);
+      List<PerangkatNilaiModel> perangkat = List<PerangkatNilaiModel>.from(
+        data.map((e) => PerangkatNilaiModel.fromJson(e)),
+      );
+      return perangkat;
+    } else {
+      throw "Get data perangkat failed";
+    }
+  }
+
   Future<PerangkatNilaiModel> postPerangkat(
       {required int perangkatId,
       required String pmId,
@@ -68,30 +94,33 @@ class PerangkatService {
 
   Future<bool> postFotoPerangkat(
       {required int perangkatNilaiId,
-      required Map<String, String> foto}) async {
+      required String urlFoto,
+      required String description}) async {
     late Uri url = UrlService().api('perangkat-foto');
 
     var headers = {
       'Content-Type': 'application/json',
       'Authorization': await UserService().getTokenPreference() ?? '',
     };
-    foto.forEach((key, value) async {
-      var body = {
-        'perangkat_nilai_id': perangkatNilaiId,
-        'fotoFile': key,
-        'description': value
-      };
-      var response = await http.post(
-        url,
-        headers: headers,
-        body: jsonEncode(body),
-      );
-      if (response.statusCode == 200) {
-        print(response.request);
-      } else {
-        throw "Post foto perangkat failed";
-      }
-    });
-    return true;
+    var request = http.MultipartRequest('POST', url);
+
+    // add headers
+    request.headers.addAll(headers);
+
+    request.fields['perangkat_nilai_id'] = perangkatNilaiId.toString();
+    request.fields['deskripsi'] = description;
+    request.files.add(await http.MultipartFile.fromPath('fotoFile', urlFoto));
+
+    var response = await request.send();
+
+    var responsed = await http.Response.fromStream(response);
+
+    if (response.statusCode == 200) {
+      var data = jsonDecode(responsed.body)['data'];
+      print(data);
+      return true;
+    } else {
+      throw "Add foto perangkat failed";
+    }
   }
 }

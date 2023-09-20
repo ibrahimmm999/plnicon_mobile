@@ -32,6 +32,31 @@ class PdbService {
     }
   }
 
+  Future<List<PdbNilaiModel>> getAcByPmAndMaster(
+      {required int pmId, required int pdbId}) async {
+    var url = UrlService().api('pdb-nilai?pm_id=$pmId&pdb_id=$pdbId');
+    var headers = {
+      'Content-Type': 'application/json',
+      'Authorization': await UserService().getTokenPreference() ?? '',
+    };
+
+    var response = await http.get(
+      url,
+      headers: headers,
+    );
+
+    if (response.statusCode == 200) {
+      var data = jsonDecode(response.body)['data'] as List;
+      print(data);
+      List<PdbNilaiModel> pdb = List<PdbNilaiModel>.from(
+        data.map((e) => PdbNilaiModel.fromJson(e)),
+      );
+      return pdb;
+    } else {
+      throw "Get data pdb failed";
+    }
+  }
+
   Future<PdbNilaiModel> postPdb(
       {required int pdbId,
       required int pmId,
@@ -68,30 +93,34 @@ class PdbService {
   }
 
   Future<bool> postFotoPdb(
-      {required int pdbNilaiId, required Map<String, String> foto}) async {
+      {required int pdbNilaiId,
+      required String urlFoto,
+      required String description}) async {
     late Uri url = UrlService().api('pdb-foto');
 
     var headers = {
       'Content-Type': 'application/json',
       'Authorization': await UserService().getTokenPreference() ?? '',
     };
-    foto.forEach((key, value) async {
-      var body = {
-        'pdb_nilai_id': pdbNilaiId,
-        'fotoFile': key,
-        'description': value
-      };
-      var response = await http.post(
-        url,
-        headers: headers,
-        body: jsonEncode(body),
-      );
-      if (response.statusCode == 200) {
-        print(response.request);
-      } else {
-        throw "Post foto pdb failed";
-      }
-    });
-    return true;
+    var request = http.MultipartRequest('POST', url);
+
+    // add headers
+    request.headers.addAll(headers);
+
+    request.fields['pdb_nilai_id'] = pdbNilaiId.toString();
+    request.fields['deskripsi'] = description;
+    request.files.add(await http.MultipartFile.fromPath('fotoFile', urlFoto));
+
+    var response = await request.send();
+
+    var responsed = await http.Response.fromStream(response);
+
+    if (response.statusCode == 200) {
+      var data = jsonDecode(responsed.body)['data'];
+      print(data);
+      return true;
+    } else {
+      throw "Add foto pdb failed";
+    }
   }
 }

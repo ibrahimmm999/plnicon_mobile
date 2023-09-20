@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:plnicon_mobile/providers/images_provider.dart';
 import 'package:plnicon_mobile/theme/theme.dart';
 import 'package:plnicon_mobile/widgets/custom_popup.dart';
-import 'package:provider/provider.dart';
 
 class InputDokumentasi extends StatefulWidget {
   const InputDokumentasi(
@@ -26,17 +25,18 @@ String contentPath = '';
 File? contentFile;
 int inputCount = 11;
 List<String> inputFoto = [
-  "Foto panel keseluruhan",
-  "Foto R (ampere)",
-  "Foto S (ampere)",
-  "Foto T (ampere)",
-  "Foto R-N Voltage",
-  "Foto S-N Voltage",
-  "Foto T-N Voltage",
-  "Foto N-G Voltage",
-  "Foto R Ampere",
-  "Foto S Ampere",
-  "Foto T Ampere",
+  "Foto Fisik KWH",
+  "Foto Pembersihan KWH",
+  "Foto Beban Phasa R",
+  "Foto Beban Phasa S",
+  "Foto Beban Phasa T",
+  "Foto Tegangan R-N",
+  "Foto Tegangan S-N ",
+  "Foto Tegangan T-N ",
+  "Foto Tegangan N-G ",
+  "Foto Tegangan R-S ",
+  "Foto Tegangan R-T ",
+  "Foto Tegangan S-T ",
 ];
 
 class _InputDokumentasiState extends State<InputDokumentasi> {
@@ -118,15 +118,13 @@ class _InputDokumentasiState extends State<InputDokumentasi> {
                     controller: widget.controller,
                     add: () {
                       widget.imagesProvider.addDeskripsi(
-                          // key: "kwh",
                           path: widget.imagesProvider.croppedImageFile!.path,
                           deskripsi:
-                              "${widget.controller.text} ( ${inputFoto[11 - inputCount]} )");
+                              "${widget.controller.text} ( ${inputFoto[11 - inputCount - 1]} )");
                       widget.controller.clear();
                     },
                   ),
                 );
-                inputCount -= 1;
               } else {
                 // ignore: use_build_context_synchronously
                 showDialog(
@@ -145,6 +143,7 @@ class _InputDokumentasiState extends State<InputDokumentasi> {
                 );
               }
             }
+            inputCount -= 1;
           },
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),

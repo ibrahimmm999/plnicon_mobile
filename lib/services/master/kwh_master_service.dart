@@ -2,42 +2,41 @@
 
 import 'dart:convert';
 
+import 'package:intl/intl.dart';
 import 'package:plnicon_mobile/models/master/kwh_master_model.dart';
 import 'package:plnicon_mobile/services/url_service.dart';
 import 'package:http/http.dart' as http;
 import 'package:plnicon_mobile/services/user_service.dart';
 
 class KwhMasterService {
-  Future<KwhMasterModel> postKwhMaster(
-      {required int kwhId,
-      required int popId,
-      required String daya,
-      required String arester,
-      required String aresterType,
-      required String capmcbr,
-      required String capmcbs,
-      required String capmcbt,
-      required String cos,
-      required String cosType,
-      required String jumlahPhasa,
-      required String warnaKabelR,
-      required String warnaKabelS,
-      required String warnaKabelT,
-      required String warnaKabelN,
-      required String warnaKabelG,
-      required String luasKabelR,
-      required String luasKabelS,
-      required String luasKabelT,
-      required String luasKabelN,
-      required DateTime tglInstalasi}) async {
-    late Uri url = UrlService().api('kwh');
+  Future<KwhMasterModel> postKwhMaster({
+    required int popId,
+    required double daya,
+    required String arester,
+    required String aresterType,
+    required double capmcbr,
+    required double capmcbs,
+    required double capmcbt,
+    required String cos,
+    required String cosType,
+    required int jumlahPhasa,
+    required String warnaKabelR,
+    required String warnaKabelS,
+    required String warnaKabelT,
+    required String warnaKabelN,
+    required String warnaKabelG,
+    required double luasKabelR,
+    required double luasKabelS,
+    required double luasKabelT,
+    required double luasKabelN,
+  }) async {
+    late Uri url = UrlService().api('kwh-meter');
 
     var headers = {
       'Content-Type': 'application/json',
       'Authorization': await UserService().getTokenPreference() ?? '',
     };
     var body = {
-      'id': kwhId,
       'pop_id': popId,
       'daya': daya,
       'jumlah_phasa': jumlahPhasa,
@@ -57,7 +56,7 @@ class KwhMasterService {
       'luas_kabels': luasKabelS,
       'luas_kabelt': luasKabelT,
       'luas_kabeln': luasKabelN,
-      'tgl_instalasi': tglInstalasi
+      'tgl_instalasi': "2023-08-08 00:00:00"
     };
 
     var response = await http.post(
@@ -77,26 +76,26 @@ class KwhMasterService {
   Future<KwhMasterModel> editKwhMaster({
     required int kwhId,
     required int popId,
-    required String daya,
+    required double daya,
     required String arester,
     required String aresterType,
-    required String capmcbr,
-    required String capmcbs,
-    required String capmcbt,
+    required double capmcbr,
+    required double capmcbs,
+    required double capmcbt,
     required String cos,
     required String cosType,
-    required String jumlahPhasa,
+    required int jumlahPhasa,
     required String warnaKabelR,
     required String warnaKabelS,
     required String warnaKabelT,
     required String warnaKabelN,
     required String warnaKabelG,
-    required String luasKabelR,
-    required String luasKabelS,
-    required String luasKabelT,
-    required String luasKabelN,
+    required double luasKabelR,
+    required double luasKabelS,
+    required double luasKabelT,
+    required double luasKabelN,
   }) async {
-    late Uri url = UrlService().api('edit-kwh');
+    late Uri url = UrlService().api('edit-kwh-meter');
 
     var headers = {
       'Content-Type': 'application/json',
@@ -123,6 +122,8 @@ class KwhMasterService {
       'luas_kabels': luasKabelS,
       'luas_kabelt': luasKabelT,
       'luas_kabeln': luasKabelN,
+      'tgl_instalasi': DateFormat("yyyy-MM-dd'T'HH:mm:ss.ssssssZ")
+          .parse("2021-01-03T18:42:49.608466Z")
     };
 
     var response = await http.post(

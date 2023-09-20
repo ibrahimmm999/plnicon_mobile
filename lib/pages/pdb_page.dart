@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:plnicon_mobile/models/master/pdb_master_model.dart';
+import 'package:plnicon_mobile/pages/edit_master/edit_pdb_page.dart';
 import 'package:plnicon_mobile/pages/main_page.dart';
 import 'package:plnicon_mobile/providers/images_provider.dart';
 import 'package:plnicon_mobile/providers/page_provider.dart';
 import 'package:plnicon_mobile/providers/pop_provider.dart';
 import 'package:plnicon_mobile/services/master/pdb_master_service.dart';
-import 'package:plnicon_mobile/services/transaksional/pdb_service.dart';
 import 'package:plnicon_mobile/theme/theme.dart';
 import 'package:plnicon_mobile/widgets/custom_button.dart';
 import 'package:plnicon_mobile/widgets/custom_dropdown.dart';
@@ -67,34 +67,30 @@ class PDBPage extends StatelessWidget {
                 padding: EdgeInsets.all(defaultMargin),
                 children: [
                   Text(
-                    "Nama",
+                    "Nama : ${pdb.nama}",
                     style: buttonText.copyWith(color: textDarkColor),
                   ),
-                  TextInput(controller: namaController),
                   const SizedBox(
                     height: 20,
                   ),
                   Text(
-                    "Arester",
+                    "Arester : ${pdb.arester}",
                     style: buttonText.copyWith(color: textDarkColor),
                   ),
-                  TextInput(controller: aresterController),
                   const SizedBox(
                     height: 20,
                   ),
                   Text(
-                    "Arester Tipe",
+                    "Arester Tipe : ${pdb.aresterTipe}",
                     style: buttonText.copyWith(color: textDarkColor),
                   ),
-                  TextInput(controller: aresterTipeController),
                   const SizedBox(
                     height: 20,
                   ),
                   Text(
-                    "Tipe",
+                    "Tipe : ${pdb.tipe}",
                     style: buttonText.copyWith(color: textDarkColor),
                   ),
-                  TextInput(controller: tipeController),
                   const SizedBox(
                     height: 20,
                   ),
@@ -106,17 +102,15 @@ class PDBPage extends StatelessWidget {
                     height: 20,
                   ),
                   CustomButton(
-                      text: "Save",
-                      onPressed: () async {
-                        await PdbMasterService().editPdbMaster(
-                            pdbId: pdb.id,
-                            nama: namaController.text,
-                            tipe: tipeController.text,
-                            arester: aresterController.text,
-                            aresterTipe: aresterTipeController.text,
-                            popId: pdb.popId);
-                        popProvider.getDataPop(id: pdb.popId);
-                        Navigator.pop(context);
+                      text: "Edit",
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => EditPdbPage(
+                                      pdb: pdb,
+                                      title: "Edit PDB",
+                                    )));
                       },
                       color: primaryGreen,
                       clickColor: clickGreen)

@@ -8,6 +8,7 @@ import 'package:plnicon_mobile/models/nilai/pdb_nilai_model.dart';
 import 'package:plnicon_mobile/models/nilai/perangkat_nilai_model.dart';
 import 'package:plnicon_mobile/models/nilai/rect_nilai_model.dart';
 import 'package:plnicon_mobile/services/transaksional/ac_service.dart';
+import 'package:plnicon_mobile/services/transaksional/inverter_service.dart';
 
 class TransaksionalProvider extends ChangeNotifier {
   bool found = false;
@@ -29,8 +30,6 @@ class TransaksionalProvider extends ChangeNotifier {
   List<GensetNilaiModel> get listGenset => _listGenset;
   List<PerangkatNilaiModel> get listPerangkat => _listPerangkat;
 
-  late AcNilaiModel currentAc;
-
   void setAc(AcNilaiModel ac) {
     for (var i = 0; i < _listAc.length; i++) {
       if (_listAc[i].pmId == ac.pmId && _listAc[i].acId == ac.acId) {
@@ -48,24 +47,25 @@ class TransaksionalProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  bool getAc(int pmId, int acId) {
-    notifyListeners();
-    print(_listAc.length);
-    for (var i = 0; i < _listAc.length; i++) {
-      print("LIST AC: ${_listAc[i].pmId}");
-      print("LIST AC: ${_listAc[i].pmId}");
-      print("AC: $pmId");
-      print("AC: $acId");
-      if (_listAc[i].pmId == pmId && _listAc[i].acId == acId) {
-        currentAc = _listAc[i];
-        print(currentAc);
-        notifyListeners();
-        return true;
-      }
+  Future<bool> getAc(int pmId, int acId) async {
+    try {
+      _listAc = await AcService().getAcByPmAndMaster(acId: acId, pmId: pmId);
+      notifyListeners();
+      return true;
+    } catch (e) {
+      rethrow;
     }
-    print("QQQ");
-    notifyListeners();
-    return false;
+  }
+
+  Future<bool> getInverter(int pmId, int inverterId) async {
+    try {
+      _listInverter = await InverterService()
+          .getByPmAndMaster(inverterId: inverterId, pmId: pmId);
+      notifyListeners();
+      return true;
+    } catch (e) {
+      rethrow;
+    }
   }
 
   set setListKwh(List<KwhNilaiModel> kwh) {

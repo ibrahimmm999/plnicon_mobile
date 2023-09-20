@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:plnicon_mobile/models/master/ac_master_model.dart';
+import 'package:plnicon_mobile/models/master/ats_master_model.dart';
 import 'package:plnicon_mobile/models/master/environment_master_model.dart';
 import 'package:plnicon_mobile/models/master/exalarm_master_model.dart';
 import 'package:plnicon_mobile/models/master/genset_master_model.dart';
@@ -21,6 +22,7 @@ class PopModel extends Equatable {
   final String building;
   final String tipe;
   final List<AcMasterModel> listAc;
+  final List<AtsMasterModel> listAts;
   final List<InverterMasterModel> listInverter;
   final List<GensetMasterModel> listGenset;
   final List<RackMasterModel> listRack;
@@ -42,6 +44,7 @@ class PopModel extends Equatable {
       required this.building,
       required this.tipe,
       required this.listAc,
+      required this.listAts,
       required this.listKwh,
       required this.listInverter,
       required this.listGenset,
@@ -67,6 +70,10 @@ class PopModel extends Equatable {
           ? []
           : List<AcMasterModel>.from(
               json['ac'].map((x) => AcMasterModel.fromJson(x))),
+      listAts: json['ats'] == null
+          ? []
+          : List<AtsMasterModel>.from(
+              json['ats'].map((x) => AtsMasterModel.fromJson(x))),
       listKwh: json['kwh'] == null
           ? []
           : List<KwhMasterModel>.from(
@@ -115,6 +122,7 @@ class PopModel extends Equatable {
         building,
         tipe,
         listAc,
+        listAts,
         listGenset,
         listInverter,
         listRack,

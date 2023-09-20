@@ -33,6 +33,31 @@ class GensetService {
     }
   }
 
+  Future<List<GensetNilaiModel>> getGensetByPmAndMaster(
+      {required int pmId, required int gensetId}) async {
+    var url = UrlService().api('genset-nilai?pm_id=$pmId&genset_id=$gensetId');
+    var headers = {
+      'Content-Type': 'application/json',
+      'Authorization': await UserService().getTokenPreference() ?? '',
+    };
+
+    var response = await http.get(
+      url,
+      headers: headers,
+    );
+
+    if (response.statusCode == 200) {
+      var data = jsonDecode(response.body)['data'] as List;
+      print(data);
+      List<GensetNilaiModel> genset = List<GensetNilaiModel>.from(
+        data.map((e) => GensetNilaiModel.fromJson(e)),
+      );
+      return genset;
+    } else {
+      throw "Get data genset failed";
+    }
+  }
+
   Future<GensetNilaiModel> postGenset(
       {required int gensetId,
       required int pmId,
@@ -95,7 +120,9 @@ class GensetService {
   }
 
   Future<bool> postFotoGenset(
-      {required int gensetNilaiId, required FotoModel foto}) async {
+      {required int gensetNilaiId,
+      required String urlFoto,
+      required String description}) async {
     late Uri url = UrlService().api('genset-foto');
 
     var headers = {
@@ -103,24 +130,24 @@ class GensetService {
       'Authorization': await UserService().getTokenPreference() ?? '',
     };
     var request = http.MultipartRequest('POST', url);
-    var body = {
-      'genset_nilai_id': gensetNilaiId,
-      'fotoFile': foto.url,
-      'description': foto.deskripsi
-    };
 
-    var response = await http.post(
-      url,
-      headers: headers,
-      body: jsonEncode(body),
-    );
-    print(response.request);
+    // add headers
+    request.headers.addAll(headers);
+
+    request.fields['genset_nilai_id'] = gensetNilaiId.toString();
+    request.fields['deskripsi'] = description;
+    request.files.add(await http.MultipartFile.fromPath('fotoFile', urlFoto));
+
+    var response = await request.send();
+
+    var responsed = await http.Response.fromStream(response);
 
     if (response.statusCode == 200) {
-      var data = jsonDecode(response.body)['data'];
+      var data = jsonDecode(responsed.body)['data'];
+      print(data);
       return true;
     } else {
-      throw "Post foto genset failed";
+      throw "Add foto genset failed";
     }
   }
 }

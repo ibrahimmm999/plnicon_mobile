@@ -2,21 +2,21 @@
 
 import 'dart:convert';
 
-import 'package:plnicon_mobile/models/master/inverter_master_model.dart';
+import 'package:intl/intl.dart';
+import 'package:plnicon_mobile/models/master/ats_master_model.dart';
 import 'package:plnicon_mobile/services/url_service.dart';
 import 'package:http/http.dart' as http;
 import 'package:plnicon_mobile/services/user_service.dart';
 
-class InverterMasterService {
-  Future<InverterMasterModel> postInverterMaster({
+class AtsMasterService {
+  Future<AtsMasterModel> postAtsMaster({
+    required String status,
     required String sn,
-    required String kondisi,
     required String merk,
-    required int kapasitas,
     required String tipe,
     required int popId,
   }) async {
-    late Uri url = UrlService().api('inverter');
+    late Uri url = UrlService().api('ats');
 
     var headers = {
       'Content-Type': 'application/json',
@@ -24,50 +24,51 @@ class InverterMasterService {
     };
     var body = {
       'pop_id': popId,
+      'status': status,
       'sn': sn,
-      'kondisi': kondisi,
       'merk': merk,
-      'kapasitas': kapasitas,
       'tipe': tipe,
-      'tgl_instalasi': "2023-08-08 00:00:00"
+      'tgl_instalasi': DateFormat("yyyy-MM-dd'T'HH:mm:ss.ssssssZ")
+          .parse("2021-01-03T18:42:49.608466Z")
     };
-
-    var response = await http.post(
-      url,
-      headers: headers,
-      body: jsonEncode(body),
-    );
-
-    if (response.statusCode == 200) {
-      var data = jsonDecode(response.body)['data'];
-      return InverterMasterModel.fromJson(data);
-    } else {
-      throw "Post data inverter failed";
+    try {
+      var response = await http.post(
+        url,
+        headers: headers,
+        body: jsonEncode(body),
+      );
+      print(response.statusCode);
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body)['data'];
+        return AtsMasterModel.fromJson(data);
+      } else {
+        throw "Post data ats failed";
+      }
+    } catch (e) {
+      rethrow;
     }
   }
 
-  Future<InverterMasterModel> editInverterMaster({
-    required int inverterId,
+  Future<AtsMasterModel> editAtsMaster({
+    required int atsId,
     required int popId,
+    required String status,
     required String sn,
-    required String kondisi,
     required String merk,
-    required int kapasitas,
     required String tipe,
   }) async {
-    late Uri url = UrlService().api('edit-inverter');
+    late Uri url = UrlService().api('edit-ats');
 
     var headers = {
       'Content-Type': 'application/json',
       'Authorization': await UserService().getTokenPreference() ?? '',
     };
     var body = {
-      'id': inverterId,
+      'id': atsId,
       'pop_id': popId,
+      'status': status,
       'sn': sn,
-      'kondisi': kondisi,
       'merk': merk,
-      'kapasitas': kapasitas,
       'tipe': tipe,
     };
 
@@ -79,9 +80,9 @@ class InverterMasterService {
 
     if (response.statusCode == 200) {
       var data = jsonDecode(response.body)['data'];
-      return InverterMasterModel.fromJson(data);
+      return AtsMasterModel.fromJson(data);
     } else {
-      throw "Edit data inverter failed";
+      throw "Edit data ats failed";
     }
   }
 }

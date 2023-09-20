@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:plnicon_mobile/models/master/inverter_master_model.dart';
+import 'package:plnicon_mobile/models/nilai/inverter_nilai_model.dart';
 import 'package:plnicon_mobile/models/pm_model.dart';
+import 'package:plnicon_mobile/pages/edit_master/edit_inverter_page.dart';
 import 'package:plnicon_mobile/pages/main_page.dart';
 import 'package:plnicon_mobile/providers/images_provider.dart';
 import 'package:plnicon_mobile/providers/page_provider.dart';
 import 'package:plnicon_mobile/providers/pop_provider.dart';
+import 'package:plnicon_mobile/providers/transaksional_provider.dart';
+import 'package:plnicon_mobile/providers/user_provider.dart';
 import 'package:plnicon_mobile/services/master/inverter_master_service.dart';
 import 'package:plnicon_mobile/services/transaksional/inverter_service.dart';
+import 'package:plnicon_mobile/services/user_service.dart';
 import 'package:plnicon_mobile/theme/theme.dart';
 import 'package:plnicon_mobile/widgets/custom_button.dart';
 import 'package:plnicon_mobile/widgets/input_dokumentasi.dart';
@@ -29,29 +34,71 @@ class InverterPage extends StatefulWidget {
 
 class _InverterPageState extends State<InverterPage> {
   @override
+  void initState() {
+    getinit();
+    super.initState();
+  }
+
+  bool loading = true;
+  String hasilUji = "";
+  getinit() async {
+    UserProvider userProvider =
+        Provider.of<UserProvider>(context, listen: false);
+    TransaksionalProvider inverterProvider =
+        Provider.of<TransaksionalProvider>(context, listen: false);
+    ImagesProvider imagesProvider =
+        Provider.of<ImagesProvider>(context, listen: false);
+    final String? token = await UserService().getTokenPreference();
+
+    if (token == null) {
+    } else {
+      if (await userProvider.getUser(token: token)) {
+        await inverterProvider.getInverter(widget.pm.id, widget.inverter.id);
+        hasilUji = inverterProvider.listInverter.isEmpty
+            ? ""
+            : inverterProvider.listInverter.first.hasilUji;
+      }
+    }
+    loading = false;
+  }
+
   Widget build(BuildContext context) {
-    TextEditingController loadController = TextEditingController();
-    TextEditingController inputACController = TextEditingController();
-    TextEditingController inputDCController = TextEditingController();
-    TextEditingController outputDCController = TextEditingController();
-    TextEditingController mainfallController = TextEditingController();
+    TransaksionalProvider inverterProvider =
+        Provider.of<TransaksionalProvider>(context);
+    TextEditingController loadController = TextEditingController(
+        text: inverterProvider.listInverter.isEmpty
+            ? ""
+            : inverterProvider.listInverter.last.load);
+    TextEditingController inputACController = TextEditingController(
+        text: inverterProvider.listInverter.isEmpty
+            ? ""
+            : inverterProvider.listInverter.last.inputAc);
+    TextEditingController inputDCController = TextEditingController(
+        text: inverterProvider.listInverter.isEmpty
+            ? ""
+            : inverterProvider.listInverter.last.inputDc);
+    TextEditingController outputDCController = TextEditingController(
+        text: inverterProvider.listInverter.isEmpty
+            ? ""
+            : inverterProvider.listInverter.last.ouputDc);
+    TextEditingController mainfallController = TextEditingController(
+        text: inverterProvider.listInverter.isEmpty
+            ? ""
+            : inverterProvider.listInverter.last.mainfall);
     TextEditingController deskripsiController = TextEditingController();
-    TextEditingController temuanController = TextEditingController();
-    TextEditingController rekomendasiController = TextEditingController();
-    TextEditingController merkController =
-        TextEditingController(text: widget.inverter.merk);
-    TextEditingController snController =
-        TextEditingController(text: widget.inverter.sn);
-    TextEditingController tipeController =
-        TextEditingController(text: widget.inverter.tipe);
-    TextEditingController kondisiController =
-        TextEditingController(text: widget.inverter.kondisi);
-    TextEditingController kapasitasController =
-        TextEditingController(text: widget.inverter.kapasitas.toString());
+    TextEditingController temuanController = TextEditingController(
+        text: inverterProvider.listInverter.isEmpty
+            ? ""
+            : inverterProvider.listInverter.last.temuan);
+    TextEditingController rekomendasiController = TextEditingController(
+        text: inverterProvider.listInverter.isEmpty
+            ? ""
+            : inverterProvider.listInverter.last.rekomendasi);
+
     ImagesProvider imagesProvider = Provider.of<ImagesProvider>(context);
     PageProvider pageProvider = Provider.of<PageProvider>(context);
     PopProvider popProvider = Provider.of<PopProvider>(context);
-    String hasilUji = "";
+
     List<String> listHasilPengujian = ["OK", "Not OK"];
     Widget switchContent() {
       return SizedBox(
@@ -83,42 +130,37 @@ class _InverterPageState extends State<InverterPage> {
                 padding: EdgeInsets.all(defaultMargin),
                 children: [
                   Text(
-                    "Merk",
+                    "Merk : ${widget.inverter.merk}",
                     style: buttonText.copyWith(color: textDarkColor),
                   ),
-                  TextInput(controller: merkController),
                   const SizedBox(
                     height: 20,
                   ),
                   Text(
-                    "Kondisi",
+                    "Kondisi : ${widget.inverter.kondisi}",
                     style: buttonText.copyWith(color: textDarkColor),
                   ),
-                  TextInput(controller: kondisiController),
                   const SizedBox(
                     height: 20,
                   ),
                   Text(
-                    "Tipe",
+                    "Tipe : ${widget.inverter.tipe}",
                     style: buttonText.copyWith(color: textDarkColor),
                   ),
-                  TextInput(controller: tipeController),
                   const SizedBox(
                     height: 20,
                   ),
                   Text(
-                    "Kapasitas",
+                    "Kapasitas : ${widget.inverter.kapasitas}",
                     style: buttonText.copyWith(color: textDarkColor),
                   ),
-                  TextInput(controller: kapasitasController),
                   const SizedBox(
                     height: 20,
                   ),
                   Text(
-                    "SN",
+                    "SN : ${widget.inverter.sn}",
                     style: buttonText.copyWith(color: textDarkColor),
                   ),
-                  TextInput(controller: snController),
                   const SizedBox(
                     height: 20,
                   ),
@@ -130,18 +172,14 @@ class _InverterPageState extends State<InverterPage> {
                     height: 20,
                   ),
                   CustomButton(
-                      text: "Save",
-                      onPressed: () async {
-                        await InverterMasterService().editInverterMaster(
-                            inverterId: widget.inverter.id,
-                            popId: widget.inverter.popId,
-                            sn: snController.text,
-                            kondisi: kondisiController.text,
-                            merk: merkController.text,
-                            kapasitas: int.parse(kapasitasController.text),
-                            tipe: tipeController.text);
-                        popProvider.getDataPop(id: widget.inverter.popId);
-                        Navigator.pop(context);
+                      text: "Edit",
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => EditInverterPage(
+                                    inverter: widget.inverter,
+                                    title: "Edit Inverter")));
                       },
                       color: primaryGreen,
                       clickColor: clickGreen),
@@ -260,23 +298,35 @@ class _InverterPageState extends State<InverterPage> {
                     child: CustomButton(
                         text: "Save",
                         onPressed: () async {
-                          await InverterService().postInverter(
-                              inverterId: widget.inverter.id,
-                              pmId: widget.pm.id,
-                              load: loadController.text,
-                              inputAc: inputACController.text,
-                              inputDc: inputDCController.text,
-                              outputDc: outputDCController.text,
-                              mainfall: mainfallController.text,
-                              hasilUji: hasilUji,
-                              temuan: temuanController.text,
-                              rekomendasi: rekomendasiController.text);
-                          // ignore: use_build_context_synchronously
-                          Navigator.pushAndRemoveUntil(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => const MainPage()),
-                              (route) => false);
+                          if (inverterProvider.listInverter.isEmpty) {
+                            InverterNilaiModel inverter =
+                                await InverterService().postInverter(
+                                    inverterId: widget.inverter.id,
+                                    pmId: widget.pm.id,
+                                    load: loadController.text,
+                                    inputAc: inputACController.text,
+                                    inputDc: inputDCController.text,
+                                    outputDc: outputDCController.text,
+                                    mainfall: mainfallController.text,
+                                    hasilUji: hasilUji,
+                                    temuan: temuanController.text,
+                                    rekomendasi: rekomendasiController.text);
+                          } else {
+                            InverterNilaiModel inverter =
+                                await InverterService().editInverter(
+                                    id: inverterProvider.listInverter.last.id,
+                                    inverterId: widget.inverter.id,
+                                    pmId: widget.pm.id,
+                                    load: loadController.text,
+                                    inputAc: inputACController.text,
+                                    inputDc: inputDCController.text,
+                                    outputDc: outputDCController.text,
+                                    mainfall: mainfallController.text,
+                                    hasilUji: hasilUji,
+                                    temuan: temuanController.text,
+                                    rekomendasi: rekomendasiController.text);
+                          }
+                          Navigator.pop(context);
                         },
                         color: primaryBlue,
                         clickColor: clickBlue),

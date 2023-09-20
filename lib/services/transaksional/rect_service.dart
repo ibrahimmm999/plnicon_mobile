@@ -32,6 +32,31 @@ class RectService {
     }
   }
 
+  Future<List<RectNilaiModel>> getRectByPmAndMaster(
+      {required int pmId, required int rectId}) async {
+    var url = UrlService().api('rect-nilai?pm_id=$pmId&rect_id=$rectId');
+    var headers = {
+      'Content-Type': 'application/json',
+      'Authorization': await UserService().getTokenPreference() ?? '',
+    };
+
+    var response = await http.get(
+      url,
+      headers: headers,
+    );
+
+    if (response.statusCode == 200) {
+      var data = jsonDecode(response.body)['data'] as List;
+      print(data);
+      List<RectNilaiModel> rect = List<RectNilaiModel>.from(
+        data.map((e) => RectNilaiModel.fromJson(e)),
+      );
+      return rect;
+    } else {
+      throw "Get data rect failed";
+    }
+  }
+
   Future<RectNilaiModel> postRect(
       {required int rectId,
       required int pmId,
@@ -72,30 +97,34 @@ class RectService {
   }
 
   Future<bool> postFotoRect(
-      {required int rectNilaiId, required Map<String, String> foto}) async {
+      {required int rectNilaiId,
+      required String urlFoto,
+      required String description}) async {
     late Uri url = UrlService().api('rect-foto');
 
     var headers = {
       'Content-Type': 'application/json',
       'Authorization': await UserService().getTokenPreference() ?? '',
     };
-    foto.forEach((key, value) async {
-      var body = {
-        'rect_nilai_id': rectNilaiId,
-        'fotoFile': key,
-        'description': value
-      };
-      var response = await http.post(
-        url,
-        headers: headers,
-        body: jsonEncode(body),
-      );
-      if (response.statusCode == 200) {
-        print(response.request);
-      } else {
-        throw "Post foto rect failed";
-      }
-    });
-    return true;
+    var request = http.MultipartRequest('POST', url);
+
+    // add headers
+    request.headers.addAll(headers);
+
+    request.fields['rect_nilai_id'] = rectNilaiId.toString();
+    request.fields['deskripsi'] = description;
+    request.files.add(await http.MultipartFile.fromPath('fotoFile', urlFoto));
+
+    var response = await request.send();
+
+    var responsed = await http.Response.fromStream(response);
+
+    if (response.statusCode == 200) {
+      var data = jsonDecode(responsed.body)['data'];
+      print(data);
+      return true;
+    } else {
+      throw "Add foto rect failed";
+    }
   }
 }

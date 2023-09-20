@@ -22,8 +22,8 @@ class KwhMasterModel extends Equatable {
   final String warnaKabelN;
   final String warnaKabelG;
   // final DateTime tanggalInstalasi;
-  final DateTime createdAt;
-  final DateTime updatedAt;
+  // final DateTime createdAt;
+  // final DateTime updatedAt;
 
   const KwhMasterModel({
     required this.id,
@@ -47,8 +47,8 @@ class KwhMasterModel extends Equatable {
     required this.warnaKabelN,
     required this.warnaKabelR,
     // required this.tanggalInstalasi,
-    required this.createdAt,
-    required this.updatedAt,
+    // required this.createdAt,
+    // required this.updatedAt,
   });
 
   factory KwhMasterModel.fromJson(Map<String, dynamic> json) {
@@ -56,13 +56,13 @@ class KwhMasterModel extends Equatable {
       id: json['id'],
       popId: json['pop_id'],
       daya: double.parse(json['daya'].toString()),
-      cos: json['cos'],
+      cos: json['cos'] ?? "",
       jumlahPhasa: json['jumlah_phasa'],
       capmcbr: double.parse((json['capmcbr'] ?? 0).toString()),
       capmcbs: double.parse((json['capmcbs'] ?? 0).toString()),
       capmcbt: double.parse((json['capmcbt'] ?? 0).toString()),
       cosType: json['cos_type'] ?? "",
-      arester: json['arester'],
+      arester: json['arester'] ?? "",
       aresterType: json['arester_type'] ?? "",
       luasKabelN: double.parse((json['luas_kabeln'] ?? 0).toString()),
       luasKabelS: double.parse((json['luas_kabels'] ?? 0).toString()),
@@ -74,8 +74,8 @@ class KwhMasterModel extends Equatable {
       warnaKabelR: json['warna_kabelr'] ?? "",
       warnaKabelT: json['warna_kabelt'] ?? "",
       // tanggalInstalasi: DateTime.parse(json['tgl_instalasi']),
-      createdAt: DateTime.parse(json['created_at']),
-      updatedAt: DateTime.parse(json['created_at']),
+      // createdAt: DateTime.parse(json['created_at']),
+      // updatedAt: DateTime.parse(json['created_at']),
     );
   }
 
@@ -102,7 +102,7 @@ class KwhMasterModel extends Equatable {
         capmcbs,
         capmcbt,
         // tanggalInstalasi,
-        createdAt,
-        updatedAt,
+        // createdAt,
+        // updatedAt,
       ];
 }

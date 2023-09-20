@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:plnicon_mobile/models/pm_model.dart';
 import 'package:plnicon_mobile/pages/ac_page.dart';
+import 'package:plnicon_mobile/pages/add_master/add_ac_page.dart';
+import 'package:plnicon_mobile/pages/add_master/add_ats_page.dart';
+import 'package:plnicon_mobile/pages/add_master/add_inverter_page.dart';
+import 'package:plnicon_mobile/pages/add_master/add_kwh_page.dart';
 import 'package:plnicon_mobile/pages/baterai_page.dart';
 import 'package:plnicon_mobile/pages/environment_page.dart';
 import 'package:plnicon_mobile/pages/ex_alarm_page.dart';
@@ -62,15 +66,14 @@ class _PmDetailPageState extends State<PmDetailPage> {
     Widget card(String title) {
       return Container(
         width: double.infinity,
-        padding: EdgeInsets.all(defaultMargin),
+        padding: EdgeInsets.symmetric(horizontal: defaultMargin, vertical: 8),
         margin: const EdgeInsets.symmetric(vertical: 8),
         decoration: BoxDecoration(
-            // border: Border.all(width: 2),
-            color: primaryBlue,
+            border: Border.all(width: 1),
             borderRadius: BorderRadius.circular(defaultRadius)),
         child: Text(
           title,
-          style: buttonText,
+          style: buttonText.copyWith(color: textDarkColor),
         ),
       );
     }
@@ -83,10 +86,10 @@ class _PmDetailPageState extends State<PmDetailPage> {
                 popProvider.listPop.clear();
                 Navigator.pushAndRemoveUntil(
                     context,
-                    MaterialPageRoute(builder: (context) => MainPage()),
+                    MaterialPageRoute(builder: (context) => const MainPage()),
                     (route) => false);
               },
-              child: Icon(Icons.arrow_back)),
+              child: const Icon(Icons.arrow_back)),
           title: Center(
             child: Container(
               margin: const EdgeInsets.only(right: 60),
@@ -113,407 +116,1076 @@ class _PmDetailPageState extends State<PmDetailPage> {
                     )
                   ]
                 : [
-                    Text(
-                      "AC",
-                      style: header3,
-                    ),
-                    const SizedBox(
-                      height: 4,
-                    ),
-                    Column(
-                      children: popProvider.listPop.first.listAc.isNotEmpty
-                          ? popProvider.listPop.first.listAc.map((e) {
-                              var index =
-                                  popProvider.listPop.first.listAc.indexOf(e) +
-                                      1;
-                              return GestureDetector(
-                                  onTap: () {
-                                    imagesProvider.clearList();
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => ACPage(
-                                                pm: widget.pm,
-                                                acMaster: e,
-                                                title: "AC $index",
-                                              )),
-                                    );
-                                  },
-                                  child: card("AC $index  -  ${e.merk}"));
-                            }).toList()
-                          : [],
-                    ),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    Text(
-                      "Genset",
-                      style: header3,
-                    ),
-                    const SizedBox(
-                      height: 4,
-                    ),
-                    Visibility(
-                      visible: popProvider.listPop.first.listGenset.isNotEmpty,
-                      child: Column(
-                        children: popProvider.listPop.first.listGenset.map((e) {
-                          var index =
-                              popProvider.listPop.first.listGenset.indexOf(e) +
-                                  1;
-                          return GestureDetector(
-                              onTap: () {
-                                imagesProvider.clearList();
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => GensetPage(
-                                            pm: widget.pm,
-                                            gensetMasterModel: e,
-                                            title: "Genset $index",
-                                          )),
-                                );
-                              },
-                              child: card("Genset $index  -  ${e.merk}"));
-                        }).toList(),
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    Text(
-                      "Inverter",
-                      style: header3,
-                    ),
-                    const SizedBox(
-                      height: 4,
-                    ),
-                    Visibility(
-                      visible:
-                          popProvider.listPop.first.listInverter.isNotEmpty,
-                      child: Column(
-                        children:
-                            popProvider.listPop.first.listInverter.map((e) {
-                          var index = popProvider.listPop.first.listInverter
-                                  .indexOf(e) +
-                              1;
-                          return GestureDetector(
-                              onTap: () {
-                                imagesProvider.clearList();
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => InverterPage(
-                                            pm: widget.pm,
-                                            inverter: e,
-                                            title: "Inverter $index",
-                                          )),
-                                );
-                              },
-                              child: card("Inverter $index  -  ${e.merk}"));
-                        }).toList(),
-                      ),
-                    ),
+                    // KWH
+                    Container(
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                            boxShadow: const [
+                              BoxShadow(
+                                  color: Color.fromARGB(30, 0, 0, 0),
+                                  offset: Offset(0, 4),
+                                  blurRadius: 4)
+                            ],
+                            color: primaryBlue,
+                            borderRadius: BorderRadius.circular(defaultRadius)),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: defaultMargin, vertical: 12),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    "KWH",
+                                    style: buttonText.copyWith(
+                                        color: textDarkColor),
+                                  ),
+                                  GestureDetector(
+                                      onTap: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) => AddKwhPage(
+                                                    popId: widget.pm.popId,
+                                                  )),
+                                        );
+                                      },
+                                      child: const Icon(Icons.add))
+                                ],
+                              ),
+                            ),
+                            Container(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: defaultMargin, vertical: 8),
+                              decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.vertical(
+                                      bottom: Radius.circular(defaultRadius))),
+                              width: double.infinity,
+                              child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: popProvider
+                                          .listPop.first.listKwh.isNotEmpty
+                                      ? popProvider.listPop.first.listKwh
+                                          .map((e) {
+                                          var index = popProvider
+                                                  .listPop.first.listKwh
+                                                  .indexOf(e) +
+                                              1;
+                                          return GestureDetector(
+                                              onTap: () {
+                                                imagesProvider.clearList();
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          KWHPage(
+                                                            pm: widget.pm,
+                                                            kwh: e,
+                                                            title: "KWH $index",
+                                                          )),
+                                                );
+                                              },
+                                              child: card("KWH $index"));
+                                        }).toList()
+                                      : [
+                                          Text(
+                                            "N/A",
+                                            style: body,
+                                          )
+                                        ]),
+                            ),
+                          ],
+                        )),
                     const SizedBox(
                       height: 20,
                     ),
-                    Text(
-                      "Rack",
-                      style: header3,
-                    ),
-                    const SizedBox(
-                      height: 4,
-                    ),
-                    Visibility(
-                      visible: popProvider.listPop.first.listRack.isNotEmpty,
-                      child: Column(
-                        children: popProvider.listPop.first.listRack.map((e) {
-                          var index =
-                              popProvider.listPop.first.listRack.indexOf(e) + 1;
-                          return GestureDetector(
-                              onTap: () {
-                                imagesProvider.clearList();
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => RackPage(
-                                            rack: e,
-                                            title: "Rack $index",
-                                          )),
-                                );
-                              },
-                              child: card("Rack $index"));
-                        }).toList(),
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    Text(
-                      "Rectifier",
-                      style: header3,
-                    ),
-                    const SizedBox(
-                      height: 4,
-                    ),
-                    Visibility(
-                      visible: popProvider.listPop.first.listRect.isNotEmpty,
-                      child: Column(
-                        children: popProvider.listPop.first.listRect.map((e) {
-                          var index =
-                              popProvider.listPop.first.listRect.indexOf(e) + 1;
-                          return GestureDetector(
-                              onTap: () {
-                                imagesProvider.clearList();
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => RectiPage(
-                                            rect: e,
-                                            pm: widget.pm,
-                                            title: "Rectifier $index",
-                                          )),
-                                );
-                              },
-                              child: card("Rectifier $index"));
-                        }).toList(),
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    Text(
-                      "PDB",
-                      style: header3,
-                    ),
-                    const SizedBox(
-                      height: 4,
-                    ),
-                    Visibility(
-                      visible: popProvider.listPop.first.listPdb.isNotEmpty,
-                      child: Column(
-                        children: popProvider.listPop.first.listPdb.map((e) {
-                          var index =
-                              popProvider.listPop.first.listPdb.indexOf(e) + 1;
-                          return GestureDetector(
-                              onTap: () {
-                                imagesProvider.clearList();
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => PDBPage(
-                                            pdb: e,
-                                            title: "PDB $index",
-                                          )),
-                                );
-                              },
-                              child: card("PDB $index"));
-                        }).toList(),
-                      ),
-                    ),
+
+                    // Genset
+                    Container(
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                            boxShadow: const [
+                              BoxShadow(
+                                  color: Color.fromARGB(30, 0, 0, 0),
+                                  offset: Offset(0, 4),
+                                  blurRadius: 4)
+                            ],
+                            color: primaryBlue,
+                            borderRadius: BorderRadius.circular(defaultRadius)),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: defaultMargin, vertical: 12),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    "Genset",
+                                    style: buttonText.copyWith(
+                                        color: textDarkColor),
+                                  ),
+                                  const Icon(Icons.add)
+                                ],
+                              ),
+                            ),
+                            Container(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: defaultMargin, vertical: 8),
+                              decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.vertical(
+                                      bottom: Radius.circular(defaultRadius))),
+                              width: double.infinity,
+                              child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: popProvider
+                                          .listPop.first.listGenset.isNotEmpty
+                                      ? popProvider.listPop.first.listGenset
+                                          .map((e) {
+                                          var index = popProvider
+                                                  .listPop.first.listGenset
+                                                  .indexOf(e) +
+                                              1;
+                                          return GestureDetector(
+                                              onTap: () {
+                                                imagesProvider.clearList();
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          GensetPage(
+                                                            pm: widget.pm,
+                                                            gensetMasterModel:
+                                                                e,
+                                                            title:
+                                                                "Genset $index",
+                                                          )),
+                                                );
+                                              },
+                                              child: card(
+                                                  "Genset $index  -  ${e.merk}"));
+                                        }).toList()
+                                      : [
+                                          Text(
+                                            "N/A",
+                                            style: body,
+                                          )
+                                        ]),
+                            ),
+                          ],
+                        )),
                     const SizedBox(
                       height: 20,
                     ),
-                    Text(
-                      "KWH",
-                      style: header3,
-                    ),
-                    const SizedBox(
-                      height: 4,
-                    ),
-                    Visibility(
-                      visible: popProvider.listPop.first.listKwh.isNotEmpty,
-                      child: Column(
-                        children: popProvider.listPop.first.listKwh.map((e) {
-                          var index =
-                              popProvider.listPop.first.listKwh.indexOf(e) + 1;
-                          return GestureDetector(
-                              onTap: () {
-                                imagesProvider.clearList();
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => KWHPage(
-                                            kwh: e,
-                                            title: "KWH $index",
-                                          )),
-                                );
-                              },
-                              child: card("KWH $index"));
-                        }).toList(),
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    Text(
-                      "Ex Alarm",
-                      style: header3,
-                    ),
-                    const SizedBox(
-                      height: 4,
-                    ),
-                    Visibility(
-                      visible: popProvider.listPop.first.listExAlarm.isNotEmpty,
-                      child: Column(
-                        children:
-                            popProvider.listPop.first.listExAlarm.map((e) {
-                          return GestureDetector(
-                              onTap: () {
-                                imagesProvider.clearList();
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => ExAlarmPage(
-                                            exalarm: e,
-                                            title: "Ex Alarm",
-                                          )),
-                                );
-                              },
-                              child: card("Ex Alarm"));
-                        }).toList(),
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    Text(
-                      "Environment",
-                      style: header3,
-                    ),
-                    const SizedBox(
-                      height: 4,
-                    ),
-                    Visibility(
-                      visible:
-                          popProvider.listPop.first.listEnvironment.isNotEmpty,
-                      child: Column(
-                        children:
-                            popProvider.listPop.first.listEnvironment.map((e) {
-                          return GestureDetector(
-                              onTap: () {
-                                imagesProvider.clearList();
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => EnvironmentPage(
-                                            environment: e,
-                                            title: "Environment",
-                                          )),
-                                );
-                              },
-                              child: card("Environment "));
-                        }).toList(),
-                      ),
-                    ),
+
+                    // ATS
+                    Container(
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                            boxShadow: const [
+                              BoxShadow(
+                                  color: Color.fromARGB(30, 0, 0, 0),
+                                  offset: Offset(0, 4),
+                                  blurRadius: 4)
+                            ],
+                            color: primaryBlue,
+                            borderRadius: BorderRadius.circular(defaultRadius)),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: defaultMargin, vertical: 12),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    "ATS",
+                                    style: buttonText.copyWith(
+                                        color: textDarkColor),
+                                  ),
+                                  GestureDetector(
+                                      onTap: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) => AddAtsPage(
+                                                  popId: widget.pm.popId)),
+                                        );
+                                      },
+                                      child: const Icon(Icons.add))
+                                ],
+                              ),
+                            ),
+                            Container(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: defaultMargin, vertical: 8),
+                              decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.vertical(
+                                      bottom: Radius.circular(defaultRadius))),
+                              width: double.infinity,
+                              child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: popProvider
+                                          .listPop.first.listGenset.isNotEmpty
+                                      ? popProvider.listPop.first.listGenset
+                                          .map((e) {
+                                          var index = popProvider
+                                                  .listPop.first.listGenset
+                                                  .indexOf(e) +
+                                              1;
+                                          return GestureDetector(
+                                              onTap: () {
+                                                imagesProvider.clearList();
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          GensetPage(
+                                                            pm: widget.pm,
+                                                            gensetMasterModel:
+                                                                e,
+                                                            title: "ATS $index",
+                                                          )),
+                                                );
+                                              },
+                                              child: card(
+                                                  "ATS $index  -  ${e.merk}"));
+                                        }).toList()
+                                      : [
+                                          Text(
+                                            "N/A",
+                                            style: body,
+                                          )
+                                        ]),
+                            ),
+                          ],
+                        )),
                     const SizedBox(
                       height: 20,
                     ),
-                    Text(
-                      "MCB",
-                      style: header3,
-                    ),
-                    const SizedBox(
-                      height: 4,
-                    ),
-                    Column(
-                        children: popProvider
-                                    .listPop.first.listPdb.isNotEmpty &&
-                                popProvider.listPop.first.listPdb.first.listMcb
-                                    .isNotEmpty
-                            ? popProvider.listPop.first.listPdb.first.listMcb
-                                .map((e) {
-                                var index = popProvider
-                                        .listPop.first.listPdb.first.listMcb
-                                        .indexOf(e) +
-                                    1;
-                                return GestureDetector(
-                                    onTap: () {
-                                      imagesProvider.clearList();
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) => McbPage(
-                                                  mcb: e,
-                                                  title: "MCB $index",
-                                                )),
-                                      );
-                                    },
-                                    child: card("MCB $index"));
-                              }).toList()
-                            : []),
+
+                    // PDB
+                    Container(
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                            boxShadow: const [
+                              BoxShadow(
+                                  color: Color.fromARGB(30, 0, 0, 0),
+                                  offset: Offset(0, 4),
+                                  blurRadius: 4)
+                            ],
+                            color: primaryBlue,
+                            borderRadius: BorderRadius.circular(defaultRadius)),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: defaultMargin, vertical: 12),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    "PDB",
+                                    style: buttonText.copyWith(
+                                        color: textDarkColor),
+                                  ),
+                                  const Icon(Icons.add)
+                                ],
+                              ),
+                            ),
+                            Container(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: defaultMargin, vertical: 8),
+                              decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.vertical(
+                                      bottom: Radius.circular(defaultRadius))),
+                              width: double.infinity,
+                              child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: popProvider
+                                          .listPop.first.listPdb.isNotEmpty
+                                      ? popProvider.listPop.first.listPdb
+                                          .map((e) {
+                                          var index = popProvider
+                                                  .listPop.first.listPdb
+                                                  .indexOf(e) +
+                                              1;
+                                          return GestureDetector(
+                                              onTap: () {
+                                                imagesProvider.clearList();
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          PDBPage(
+                                                            pdb: e,
+                                                            title: "PDB $index",
+                                                          )),
+                                                );
+                                              },
+                                              child: card("PDB $index"));
+                                        }).toList()
+                                      : [
+                                          Text(
+                                            "N/A",
+                                            style: body,
+                                          )
+                                        ]),
+                            ),
+                          ],
+                        )),
+
                     const SizedBox(
                       height: 20,
                     ),
-                    Text(
-                      "Modul",
-                      style: header3,
-                    ),
-                    const SizedBox(
-                      height: 4,
-                    ),
-                    Column(
-                      children: popProvider.listPop.first.listRect.isNotEmpty &&
-                              popProvider.listPop.first.listRect.first.listModul
-                                  .isNotEmpty
-                          ? popProvider.listPop.first.listRect.first.listModul
-                              .map((e) {
-                              var index = popProvider
-                                      .listPop.first.listRect.first.listModul
-                                      .indexOf(e) +
-                                  1;
-                              return GestureDetector(
-                                  onTap: () {
-                                    imagesProvider.clearList();
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => ModulPage(
-                                                modul: e,
-                                                title: "Modul $index",
-                                              )),
-                                    );
-                                  },
-                                  child: card("Modul $index"));
-                            }).toList()
-                          : [],
-                    ),
+
+                    // Rectifier
+                    Container(
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                            boxShadow: const [
+                              BoxShadow(
+                                  color: Color.fromARGB(30, 0, 0, 0),
+                                  offset: Offset(0, 4),
+                                  blurRadius: 4)
+                            ],
+                            color: primaryBlue,
+                            borderRadius: BorderRadius.circular(defaultRadius)),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: defaultMargin, vertical: 12),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    "Rectifier",
+                                    style: buttonText.copyWith(
+                                        color: textDarkColor),
+                                  ),
+                                  const Icon(Icons.add)
+                                ],
+                              ),
+                            ),
+                            Container(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: defaultMargin, vertical: 8),
+                              decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.vertical(
+                                      bottom: Radius.circular(defaultRadius))),
+                              width: double.infinity,
+                              child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: popProvider
+                                          .listPop.first.listRect.isNotEmpty
+                                      ? popProvider.listPop.first.listRect
+                                          .map((e) {
+                                          var index = popProvider
+                                                  .listPop.first.listRect
+                                                  .indexOf(e) +
+                                              1;
+                                          return GestureDetector(
+                                              onTap: () {
+                                                imagesProvider.clearList();
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          RectiPage(
+                                                            rect: e,
+                                                            pm: widget.pm,
+                                                            title:
+                                                                "Rectifier $index",
+                                                          )),
+                                                );
+                                              },
+                                              child: card("Rectifier $index"));
+                                        }).toList()
+                                      : [
+                                          Text(
+                                            "N/A",
+                                            style: body,
+                                          )
+                                        ]),
+                            ),
+                          ],
+                        )),
+
                     const SizedBox(
                       height: 20,
                     ),
-                    Text(
-                      "Baterai",
-                      style: header3,
-                    ),
+
+                    // Modul
+                    Container(
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                            boxShadow: const [
+                              BoxShadow(
+                                  color: Color.fromARGB(30, 0, 0, 0),
+                                  offset: Offset(0, 4),
+                                  blurRadius: 4)
+                            ],
+                            color: primaryBlue,
+                            borderRadius: BorderRadius.circular(defaultRadius)),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: defaultMargin, vertical: 12),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    "Modul",
+                                    style: buttonText.copyWith(
+                                        color: textDarkColor),
+                                  ),
+                                  const Icon(Icons.add)
+                                ],
+                              ),
+                            ),
+                            Container(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: defaultMargin, vertical: 8),
+                              decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.vertical(
+                                      bottom: Radius.circular(defaultRadius))),
+                              width: double.infinity,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: popProvider.listPop.first.listRect
+                                            .isNotEmpty &&
+                                        popProvider.listPop.first.listRect.first
+                                            .listModul.isNotEmpty
+                                    ? popProvider
+                                        .listPop.first.listRect.first.listModul
+                                        .map((e) {
+                                        var index = popProvider.listPop.first
+                                                .listRect.first.listModul
+                                                .indexOf(e) +
+                                            1;
+                                        return GestureDetector(
+                                            onTap: () {
+                                              imagesProvider.clearList();
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        ModulPage(
+                                                          modul: e,
+                                                          title: "Modul $index",
+                                                        )),
+                                              );
+                                            },
+                                            child: card("Modul $index"));
+                                      }).toList()
+                                    : [
+                                        Text(
+                                          "N/A",
+                                          style: body,
+                                        )
+                                      ],
+                              ),
+                            ),
+                          ],
+                        )),
+
                     const SizedBox(
-                      height: 4,
+                      height: 20,
                     ),
-                    Column(
-                      children: popProvider.listPop.first.listRect.isNotEmpty &&
-                              popProvider.listPop.first.listRect.first
-                                  .listBaterai.isNotEmpty
-                          ? popProvider.listPop.first.listRect.first.listBaterai
-                              .map((e) {
-                              var index = popProvider
-                                      .listPop.first.listRect.first.listBaterai
-                                      .indexOf(e) +
-                                  1;
-                              return GestureDetector(
-                                  onTap: () {
-                                    imagesProvider.clearList();
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => BateraiPage(
-                                                pm: widget.pm,
-                                                bateraiMaster: e,
-                                                title: "Baterai $index",
-                                              )),
-                                    );
-                                  },
-                                  child: card("Baterai $index"));
-                            }).toList()
-                          : [],
+
+                    // Baterai
+                    Container(
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                            boxShadow: const [
+                              BoxShadow(
+                                  color: Color.fromARGB(30, 0, 0, 0),
+                                  offset: Offset(0, 4),
+                                  blurRadius: 4)
+                            ],
+                            color: primaryBlue,
+                            borderRadius: BorderRadius.circular(defaultRadius)),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: defaultMargin, vertical: 12),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    "Baterai",
+                                    style: buttonText.copyWith(
+                                        color: textDarkColor),
+                                  ),
+                                  const Icon(Icons.add)
+                                ],
+                              ),
+                            ),
+                            Container(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: defaultMargin, vertical: 8),
+                              decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.vertical(
+                                      bottom: Radius.circular(defaultRadius))),
+                              width: double.infinity,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: popProvider.listPop.first.listRect
+                                            .isNotEmpty &&
+                                        popProvider.listPop.first.listRect.first
+                                            .listBaterai.isNotEmpty
+                                    ? popProvider.listPop.first.listRect.first
+                                        .listBaterai
+                                        .map((e) {
+                                        var index = popProvider.listPop.first
+                                                .listRect.first.listBaterai
+                                                .indexOf(e) +
+                                            1;
+                                        return GestureDetector(
+                                            onTap: () {
+                                              imagesProvider.clearList();
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        BateraiPage(
+                                                          pm: widget.pm,
+                                                          bateraiMaster: e,
+                                                          title:
+                                                              "Baterai $index",
+                                                        )),
+                                              );
+                                            },
+                                            child: card("Baterai $index"));
+                                      }).toList()
+                                    : [
+                                        Text(
+                                          "N/A",
+                                          style: body,
+                                        )
+                                      ],
+                              ),
+                            ),
+                          ],
+                        )),
+
+                    const SizedBox(
+                      height: 20,
                     ),
+
+                    // Inverter
+                    Container(
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                            boxShadow: const [
+                              BoxShadow(
+                                  color: Color.fromARGB(30, 0, 0, 0),
+                                  offset: Offset(0, 4),
+                                  blurRadius: 4)
+                            ],
+                            color: primaryBlue,
+                            borderRadius: BorderRadius.circular(defaultRadius)),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: defaultMargin, vertical: 12),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    "Inverter",
+                                    style: buttonText.copyWith(
+                                        color: textDarkColor),
+                                  ),
+                                  GestureDetector(
+                                      onTap: () {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    AddInverterPage(
+                                                      popId: widget.pm.popId,
+                                                    )));
+                                      },
+                                      child: const Icon(Icons.add))
+                                ],
+                              ),
+                            ),
+                            Container(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: defaultMargin, vertical: 8),
+                              decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.vertical(
+                                      bottom: Radius.circular(defaultRadius))),
+                              width: double.infinity,
+                              child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: popProvider
+                                          .listPop.first.listInverter.isNotEmpty
+                                      ? popProvider.listPop.first.listInverter
+                                          .map((e) {
+                                          var index = popProvider
+                                                  .listPop.first.listInverter
+                                                  .indexOf(e) +
+                                              1;
+                                          return GestureDetector(
+                                              onTap: () {
+                                                imagesProvider.clearList();
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          InverterPage(
+                                                            pm: widget.pm,
+                                                            inverter: e,
+                                                            title:
+                                                                "Inverter $index",
+                                                          )),
+                                                );
+                                              },
+                                              child: card(
+                                                  "Inverter $index  -  ${e.merk}"));
+                                        }).toList()
+                                      : [
+                                          Text(
+                                            "N/A",
+                                            style: body,
+                                          )
+                                        ]),
+                            ),
+                          ],
+                        )),
+
+                    const SizedBox(
+                      height: 20,
+                    ),
+
+                    // Ex Alarm
+                    Container(
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                            boxShadow: const [
+                              BoxShadow(
+                                  color: Color.fromARGB(30, 0, 0, 0),
+                                  offset: Offset(0, 4),
+                                  blurRadius: 4)
+                            ],
+                            color: primaryBlue,
+                            borderRadius: BorderRadius.circular(defaultRadius)),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: defaultMargin, vertical: 12),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    "Ex Alarm",
+                                    style: buttonText.copyWith(
+                                        color: textDarkColor),
+                                  ),
+                                  const Icon(Icons.add)
+                                ],
+                              ),
+                            ),
+                            Container(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: defaultMargin, vertical: 8),
+                              decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.vertical(
+                                      bottom: Radius.circular(defaultRadius))),
+                              width: double.infinity,
+                              child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: popProvider
+                                          .listPop.first.listExAlarm.isNotEmpty
+                                      ? popProvider.listPop.first.listExAlarm
+                                          .map((e) {
+                                          return GestureDetector(
+                                              onTap: () {
+                                                imagesProvider.clearList();
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          ExAlarmPage(
+                                                            exalarm: e,
+                                                            title: "Ex Alarm",
+                                                          )),
+                                                );
+                                              },
+                                              child: card("Ex Alarm"));
+                                        }).toList()
+                                      : [
+                                          Text(
+                                            "N/A",
+                                            style: body,
+                                          )
+                                        ]),
+                            ),
+                          ],
+                        )),
+
+                    const SizedBox(
+                      height: 20,
+                    ),
+
+                    // AC
+                    Container(
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                            boxShadow: const [
+                              BoxShadow(
+                                  color: Color.fromARGB(30, 0, 0, 0),
+                                  offset: Offset(0, 4),
+                                  blurRadius: 4)
+                            ],
+                            color: primaryBlue,
+                            borderRadius: BorderRadius.circular(defaultRadius)),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: defaultMargin, vertical: 12),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    "AC",
+                                    style: buttonText.copyWith(
+                                        color: textDarkColor),
+                                  ),
+                                  GestureDetector(
+                                      onTap: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) => AddAcPage(
+                                                    popId: widget.pm.popId,
+                                                  )),
+                                        );
+                                      },
+                                      child: const Icon(Icons.add))
+                                ],
+                              ),
+                            ),
+                            Container(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: defaultMargin, vertical: 8),
+                              decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.vertical(
+                                      bottom: Radius.circular(defaultRadius))),
+                              width: double.infinity,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: popProvider
+                                        .listPop.first.listAc.isNotEmpty
+                                    ? popProvider.listPop.first.listAc.map((e) {
+                                        var index = popProvider
+                                                .listPop.first.listAc
+                                                .indexOf(e) +
+                                            1;
+                                        return GestureDetector(
+                                            onTap: () async {
+                                              imagesProvider.clearList();
+
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        ACPage(
+                                                          pm: widget.pm,
+                                                          acMaster: e,
+                                                          title: "AC $index",
+                                                        )),
+                                              );
+                                            },
+                                            child: card(
+                                                "AC $index  -  ${e.merk}"));
+                                      }).toList()
+                                    : [
+                                        Text(
+                                          "N/A",
+                                          style: body,
+                                        )
+                                      ],
+                              ),
+                            ),
+                          ],
+                        )),
+
+                    const SizedBox(
+                      height: 20,
+                    ),
+
+                    // Environment
+                    Container(
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                            boxShadow: const [
+                              BoxShadow(
+                                  color: Color.fromARGB(30, 0, 0, 0),
+                                  offset: Offset(0, 4),
+                                  blurRadius: 4)
+                            ],
+                            color: primaryBlue,
+                            borderRadius: BorderRadius.circular(defaultRadius)),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: defaultMargin, vertical: 12),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    "Environment",
+                                    style: buttonText.copyWith(
+                                        color: textDarkColor),
+                                  ),
+                                  const Icon(Icons.add)
+                                ],
+                              ),
+                            ),
+                            Container(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: defaultMargin, vertical: 8),
+                              decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.vertical(
+                                      bottom: Radius.circular(defaultRadius))),
+                              width: double.infinity,
+                              child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: popProvider.listPop.first
+                                          .listEnvironment.isNotEmpty
+                                      ? popProvider
+                                          .listPop.first.listEnvironment
+                                          .map((e) {
+                                          return GestureDetector(
+                                              onTap: () {
+                                                imagesProvider.clearList();
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          EnvironmentPage(
+                                                            environment: e,
+                                                            title:
+                                                                "Environment",
+                                                          )),
+                                                );
+                                              },
+                                              child: card("Environment "));
+                                        }).toList()
+                                      : [
+                                          Text(
+                                            "N/A",
+                                            style: body,
+                                          )
+                                        ]),
+                            ),
+                          ],
+                        )),
+
+                    const SizedBox(
+                      height: 20,
+                    ),
+
+                    // Rack
+                    Container(
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                            boxShadow: const [
+                              BoxShadow(
+                                  color: Color.fromARGB(30, 0, 0, 0),
+                                  offset: Offset(0, 4),
+                                  blurRadius: 4)
+                            ],
+                            color: primaryBlue,
+                            borderRadius: BorderRadius.circular(defaultRadius)),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: defaultMargin, vertical: 12),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    "Rack",
+                                    style: buttonText.copyWith(
+                                        color: textDarkColor),
+                                  ),
+                                  const Icon(Icons.add)
+                                ],
+                              ),
+                            ),
+                            Container(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: defaultMargin, vertical: 8),
+                              decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.vertical(
+                                      bottom: Radius.circular(defaultRadius))),
+                              width: double.infinity,
+                              child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: popProvider
+                                          .listPop.first.listRack.isNotEmpty
+                                      ? popProvider.listPop.first.listRack
+                                          .map((e) {
+                                          var index = popProvider
+                                                  .listPop.first.listRack
+                                                  .indexOf(e) +
+                                              1;
+                                          return GestureDetector(
+                                              onTap: () {
+                                                imagesProvider.clearList();
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          RackPage(
+                                                            rack: e,
+                                                            title:
+                                                                "Rack $index",
+                                                          )),
+                                                );
+                                              },
+                                              child: card("Rack $index"));
+                                        }).toList()
+                                      : [
+                                          Text(
+                                            "N/A",
+                                            style: body,
+                                          )
+                                        ]),
+                            ),
+                          ],
+                        )),
+
+                    const SizedBox(
+                      height: 20,
+                    ),
+
+                    // Mcb
+                    Container(
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                            boxShadow: const [
+                              BoxShadow(
+                                  color: Color.fromARGB(30, 0, 0, 0),
+                                  offset: Offset(0, 4),
+                                  blurRadius: 4)
+                            ],
+                            color: primaryBlue,
+                            borderRadius: BorderRadius.circular(defaultRadius)),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: defaultMargin, vertical: 12),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    "MCB",
+                                    style: buttonText.copyWith(
+                                        color: textDarkColor),
+                                  ),
+                                  const Icon(Icons.add)
+                                ],
+                              ),
+                            ),
+                            Container(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: defaultMargin, vertical: 8),
+                              decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.vertical(
+                                      bottom: Radius.circular(defaultRadius))),
+                              width: double.infinity,
+                              child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: popProvider.listPop.first.listPdb
+                                              .isNotEmpty &&
+                                          popProvider.listPop.first.listPdb
+                                              .first.listMcb.isNotEmpty
+                                      ? popProvider
+                                          .listPop.first.listPdb.first.listMcb
+                                          .map((e) {
+                                          var index = popProvider.listPop.first
+                                                  .listPdb.first.listMcb
+                                                  .indexOf(e) +
+                                              1;
+                                          return GestureDetector(
+                                              onTap: () {
+                                                imagesProvider.clearList();
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          McbPage(
+                                                            mcb: e,
+                                                            title: "MCB $index",
+                                                          )),
+                                                );
+                                              },
+                                              child: card("MCB $index"));
+                                        }).toList()
+                                      : [
+                                          Text(
+                                            "N/A",
+                                            style: body,
+                                          )
+                                        ]),
+                            ),
+                          ],
+                        )),
+
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 28),
                       child: CustomButton(

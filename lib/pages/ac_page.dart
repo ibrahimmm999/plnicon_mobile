@@ -5,11 +5,14 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:plnicon_mobile/models/master/ac_master_model.dart';
 import 'package:plnicon_mobile/models/nilai/ac_nilai_model.dart';
 import 'package:plnicon_mobile/models/pm_model.dart';
+import 'package:plnicon_mobile/pages/edit_master/edit_ac_page.dart';
+import 'package:plnicon_mobile/pages/photo_view_page.dart';
 import 'package:plnicon_mobile/providers/images_provider.dart';
 import 'package:plnicon_mobile/providers/page_provider.dart';
-import 'package:plnicon_mobile/providers/pop_provider.dart';
-import 'package:plnicon_mobile/services/master/ac_master_service.dart';
+import 'package:plnicon_mobile/providers/transaksional_provider.dart';
+import 'package:plnicon_mobile/providers/user_provider.dart';
 import 'package:plnicon_mobile/services/transaksional/ac_service.dart';
+import 'package:plnicon_mobile/services/user_service.dart';
 import 'package:plnicon_mobile/theme/theme.dart';
 import 'package:plnicon_mobile/widgets/custom_appbar.dart';
 import 'package:plnicon_mobile/widgets/custom_button.dart';
@@ -40,12 +43,38 @@ class _ACPageState extends State<ACPage> {
     super.initState();
   }
 
-  getinit() async {}
-
+  bool loading = true;
   String pengujian = "";
+  getinit() async {
+    UserProvider userProvider =
+        Provider.of<UserProvider>(context, listen: false);
+    TransaksionalProvider acProvider =
+        Provider.of<TransaksionalProvider>(context, listen: false);
+    ImagesProvider imagesProvider =
+        Provider.of<ImagesProvider>(context, listen: false);
+    final String? token = await UserService().getTokenPreference();
+
+    if (token == null) {
+    } else {
+      if (await userProvider.getUser(token: token)) {
+        await acProvider.getAc(widget.pm.id, widget.acMaster.id);
+        pengujian = acProvider.listAc.isEmpty
+            ? ""
+            : acProvider.listAc.first.hasilPengujian;
+      }
+    }
+    loading = false;
+  }
 
   @override
   Widget build(BuildContext context) {
+    List<String> guideInputFoto = [
+      "Foto Fisik AC",
+      "Foto Pembersihan AC",
+    ];
+
+    TransaksionalProvider acProvider =
+        Provider.of<TransaksionalProvider>(context);
     ImagesProvider imagesProvider = Provider.of<ImagesProvider>(context);
     Future<void> handlePicker() async {
       imagesProvider.setCroppedImageFile = null;
@@ -60,26 +89,20 @@ class _ACPageState extends State<ACPage> {
       });
     }
 
-    TextEditingController suhuController = TextEditingController();
-    TextEditingController temuanController = TextEditingController();
-    TextEditingController rekomendasiController = TextEditingController();
+    TextEditingController suhuController = TextEditingController(
+        text: acProvider.listAc.isEmpty
+            ? ""
+            : acProvider.listAc.last.suhuAc.toString());
+    TextEditingController temuanController = TextEditingController(
+        text: acProvider.listAc.isEmpty ? "" : acProvider.listAc.last.temuan);
+    TextEditingController rekomendasiController = TextEditingController(
+        text: acProvider.listAc.isEmpty
+            ? ""
+            : acProvider.listAc.last.rekomendasi);
     TextEditingController deskripsiController = TextEditingController();
-    TextEditingController namaAcController =
-        TextEditingController(text: widget.acMaster.nama);
-    TextEditingController kondisiController =
-        TextEditingController(text: widget.acMaster.kondisi);
-    TextEditingController merkController =
-        TextEditingController(text: widget.acMaster.merk);
-    TextEditingController kapasitasController =
-        TextEditingController(text: widget.acMaster.kapasitas);
-    TextEditingController tekananFreonController =
-        TextEditingController(text: widget.acMaster.tekananFreon);
-    TextEditingController modeHidupController =
-        TextEditingController(text: widget.acMaster.modeHidup);
 
     List<String> listHasilPengujian = ["Ok", "Not OK"];
     PageProvider pageProvider = Provider.of<PageProvider>(context);
-    PopProvider popProvider = Provider.of<PopProvider>(context);
     Widget switchContent() {
       return SizedBox(
         width: MediaQuery.sizeOf(context).width,
@@ -110,50 +133,44 @@ class _ACPageState extends State<ACPage> {
                 padding: EdgeInsets.all(defaultMargin),
                 children: [
                   Text(
-                    "Nama",
+                    "Nama : ${widget.acMaster.nama}",
                     style: buttonText.copyWith(color: textDarkColor),
                   ),
-                  TextInput(controller: namaAcController),
                   const SizedBox(
                     height: 20,
                   ),
                   Text(
-                    "Kondisi",
+                    "Kondisi : ${widget.acMaster.kondisi}",
                     style: buttonText.copyWith(color: textDarkColor),
                   ),
-                  TextInput(controller: kondisiController),
                   const SizedBox(
                     height: 20,
                   ),
                   Text(
-                    "Merk",
+                    "Merk : ${widget.acMaster.merk}",
                     style: buttonText.copyWith(color: textDarkColor),
                   ),
-                  TextInput(controller: merkController),
                   const SizedBox(
                     height: 20,
                   ),
                   Text(
-                    "Kapasitas",
+                    "Kapasitas : ${widget.acMaster.kapasitas}",
                     style: buttonText.copyWith(color: textDarkColor),
                   ),
-                  TextInput(controller: kapasitasController),
                   const SizedBox(
                     height: 20,
                   ),
                   Text(
-                    "Tekanan Freon",
+                    "Tekanan Freon : ${widget.acMaster.tekananFreon}",
                     style: buttonText.copyWith(color: textDarkColor),
                   ),
-                  TextInput(controller: tekananFreonController),
                   const SizedBox(
                     height: 20,
                   ),
                   Text(
-                    "Mode Hidup",
+                    "Mode Hidup : ${widget.acMaster.modeHidup}",
                     style: buttonText.copyWith(color: textDarkColor),
                   ),
-                  TextInput(controller: modeHidupController),
                   const SizedBox(
                     height: 20,
                   ),
@@ -165,20 +182,16 @@ class _ACPageState extends State<ACPage> {
                     height: 32,
                   ),
                   CustomButton(
-                      text: "Save",
-                      onPressed: () async {
-                        await AcMasterService().editAcMaster(
-                          popId: widget.acMaster.popId,
-                          acId: widget.acMaster.id,
-                          nama: namaAcController.text,
-                          kondisi: kondisiController.text,
-                          merk: merkController.text,
-                          kapasitas: kapasitasController.text,
-                          tekananFreon: tekananFreonController.text,
-                          modeHidup: modeHidupController.text,
-                        );
-                        popProvider.getDataPop(id: widget.acMaster.popId);
-                        Navigator.pop(context);
+                      text: "Edit Data",
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => EditAcPage(
+                                      acMaster: widget.acMaster,
+                                      title: "Edit AC",
+                                      pm: widget.pm,
+                                    )));
                       },
                       color: primaryGreen,
                       clickColor: clickGreen),
@@ -225,11 +238,22 @@ class _ACPageState extends State<ACPage> {
                                       horizontal: 12),
                                   child: Column(
                                     children: [
-                                      Image.file(
-                                        File(e.key),
-                                        height: 240,
-                                        width: 240,
-                                        fit: BoxFit.cover,
+                                      GestureDetector(
+                                        onTap: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (_) => PhotoViewPage(
+                                                    foto: e.key,
+                                                    description: e.value)),
+                                          );
+                                        },
+                                        child: Image.file(
+                                          File(e.key),
+                                          height: 240,
+                                          width: 240,
+                                          fit: BoxFit.cover,
+                                        ),
                                       ),
                                       Text(
                                         e.value,
@@ -369,21 +393,36 @@ class _ACPageState extends State<ACPage> {
                   child: CustomButton(
                       text: "Save",
                       onPressed: () async {
-                        AcNilaiModel ac = await AcService().postAc(
-                            acId: widget.acMaster.id,
-                            pmId: widget.pm.id,
-                            suhuAc: int.parse(suhuController.text),
-                            hasilPengujian: pengujian,
-                            temuan: temuanController.text,
-                            rekomendasi: rekomendasiController.text);
-                        // ignore: avoid_print
-                        print("AC : $ac");
-                        imagesProvider.foto.forEach((key, value) async {
-                          await AcService().postFotoAc(
-                              acNilaiId: ac.id,
-                              urlFoto: key,
-                              description: value);
-                        });
+                        if (acProvider.listAc.isEmpty) {
+                          AcNilaiModel ac = await AcService().postAc(
+                              acId: widget.acMaster.id,
+                              pmId: widget.pm.id,
+                              suhuAc: int.parse(suhuController.text),
+                              hasilPengujian: pengujian,
+                              temuan: temuanController.text,
+                              rekomendasi: rekomendasiController.text);
+                          imagesProvider.foto.forEach((key, value) async {
+                            await AcService().postFotoAc(
+                                acNilaiId: ac.id,
+                                urlFoto: key,
+                                description: value);
+                          });
+                        } else {
+                          AcNilaiModel ac = await AcService().editAc(
+                              id: acProvider.listAc.last.id,
+                              acId: widget.acMaster.id,
+                              pmId: widget.pm.id,
+                              suhuAc: int.parse(suhuController.text),
+                              hasilPengujian: pengujian,
+                              temuan: temuanController.text,
+                              rekomendasi: rekomendasiController.text);
+                          imagesProvider.foto.forEach((key, value) async {
+                            await AcService().postFotoAc(
+                                acNilaiId: ac.id,
+                                urlFoto: key,
+                                description: value);
+                          });
+                        }
                         // ignore: use_build_context_synchronously
                         Navigator.pop(context);
                       },
@@ -403,10 +442,18 @@ class _ACPageState extends State<ACPage> {
     return Scaffold(
         appBar: CustomAppBar(isMainPage: false, title: widget.title),
         body: Column(
-          children: [
-            switchContent(),
-            Expanded(child: buildContent()),
-          ],
+          mainAxisAlignment:
+              loading ? MainAxisAlignment.center : MainAxisAlignment.start,
+          children: loading
+              ? [
+                  Center(
+                      child: CircularProgressIndicator(
+                          backgroundColor: primaryBlue))
+                ]
+              : [
+                  switchContent(),
+                  Expanded(child: buildContent()),
+                ],
         ));
   }
 }
