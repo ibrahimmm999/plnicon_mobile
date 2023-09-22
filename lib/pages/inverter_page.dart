@@ -356,10 +356,18 @@ class _InverterPageState extends State<InverterPage> {
           ),
         ),
         body: Column(
-          children: [
-            switchContent(),
-            Expanded(child: buildContent()),
-          ],
+          mainAxisAlignment:
+              loading ? MainAxisAlignment.center : MainAxisAlignment.start,
+          children: loading
+              ? [
+                  Center(
+                      child: CircularProgressIndicator(
+                          backgroundColor: primaryBlue))
+                ]
+              : [
+                  switchContent(),
+                  Expanded(child: buildContent()),
+                ],
         ));
   }
 }

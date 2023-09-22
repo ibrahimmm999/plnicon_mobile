@@ -9,7 +9,7 @@ class AcMasterModel extends Equatable {
   final String kondisi;
   final String tekananFreon;
   final String modeHidup;
-  // final DateTime tanggalInstalasi;
+  final String tanggalInstalasi;
   final DateTime createdAt;
   final DateTime updatedAt;
 
@@ -22,7 +22,7 @@ class AcMasterModel extends Equatable {
     required this.nama,
     required this.modeHidup,
     required this.kondisi,
-    // required this.tanggalInstalasi,
+    required this.tanggalInstalasi,
     required this.createdAt,
     required this.updatedAt,
   });
@@ -37,7 +37,7 @@ class AcMasterModel extends Equatable {
       nama: json['nama'],
       modeHidup: json['mode_hidup'],
       kondisi: json['kondisi'],
-      // tanggalInstalasi: DateTime.parse(json['tgl_instalasi']),
+      tanggalInstalasi: (json['tgl_instalasi']),
       createdAt: DateTime.parse(json['created_at']),
       updatedAt: DateTime.parse(json['created_at']),
     );
@@ -53,7 +53,7 @@ class AcMasterModel extends Equatable {
         nama,
         modeHidup,
         kondisi,
-        // tanggalInstalasi,
+        tanggalInstalasi,
         createdAt,
         updatedAt,
       ];

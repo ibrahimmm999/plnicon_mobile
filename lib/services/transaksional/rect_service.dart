@@ -96,6 +96,47 @@ class RectService {
     }
   }
 
+  Future<RectNilaiModel> editRect(
+      {required int id,
+      required int rectId,
+      required int pmId,
+      required double loadr,
+      required double loads,
+      required double loadt,
+      required String temuan,
+      required String rekomendasi}) async {
+    late Uri url = UrlService().api('edit-rect-nilai');
+    var headers = {
+      'Content-Type': 'application/json',
+      'Authorization': await UserService().getTokenPreference() ?? '',
+    };
+
+    var body = {
+      'id': id,
+      'rect_id': rectId,
+      'pm_id': pmId,
+      'loadr': loadr,
+      'loads': loads,
+      'loadt': loadt,
+      'temuan': temuan,
+      'rekomendasi': rekomendasi
+    };
+
+    var response = await http.post(
+      url,
+      headers: headers,
+      body: jsonEncode(body),
+      encoding: Encoding.getByName('utf-8'),
+    );
+    print(response.request);
+    if (response.statusCode == 200) {
+      var data = jsonDecode(response.body)['data'];
+      return RectNilaiModel.fromJson(data);
+    } else {
+      throw "Post data rectifier failed";
+    }
+  }
+
   Future<bool> postFotoRect(
       {required int rectNilaiId,
       required String urlFoto,

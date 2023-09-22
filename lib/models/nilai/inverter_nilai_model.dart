@@ -43,7 +43,7 @@ class InverterNilaiModel extends Equatable {
       load: json['load'],
       inputAc: json['input_ac'],
       inputDc: json['input_dc'],
-      ouputDc: json['ouput_dc'],
+      ouputDc: json['output_dc'],
       mainfall: json['mainfall'],
       hasilUji: json['hasil_uji'],
       temuan: json['temuan'] ?? "",

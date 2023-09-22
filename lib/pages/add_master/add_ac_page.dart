@@ -73,7 +73,7 @@ class AddAcPage extends StatelessWidget {
             height: 20,
           ),
           Text(
-            "Tanggal Instalasi : -",
+            "Tanggal Instalasi :",
             style: buttonText.copyWith(color: textDarkColor),
           ),
           const SizedBox(

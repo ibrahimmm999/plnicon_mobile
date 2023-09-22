@@ -25,6 +25,8 @@ class ImagesProvider extends ChangeNotifier {
   //   "rectifier": {},
   // };
 
+// {url : {url:desc}}
+  // Map<String, Map<String, String>> listFoto = {};
   Map<String, String> foto = {};
 
   File? get imageFile => _imageFile;
@@ -43,7 +45,7 @@ class ImagesProvider extends ChangeNotifier {
   Future<bool> pickImage() async {
     try {
       final pickedImage =
-          await ImagePicker().pickImage(source: ImageSource.camera);
+          await ImagePicker().pickImage(source: ImageSource.gallery);
       _imageFile = pickedImage != null ? File(pickedImage.path) : null;
       notifyListeners();
       return true;
@@ -63,10 +65,6 @@ class ImagesProvider extends ChangeNotifier {
       if (cropedImage != null) {
         foto.addEntries(<String, String>{croppedImagePath: ""}.entries);
       }
-      // if (cropedImage != null) {
-      //   listImage[key]!
-      //       .addEntries(<String, String>{cropedImage.path: ""}.entries);
-      // }
       notifyListeners();
       return true;
     } catch (e) {
@@ -86,6 +84,11 @@ class ImagesProvider extends ChangeNotifier {
     for (var element in listFoto) {
       foto.addAll({element.url: element.deskripsi});
     }
+    notifyListeners();
+  }
+
+  void deleteImage({required String path}) {
+    foto.remove(path);
     notifyListeners();
   }
 }

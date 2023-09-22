@@ -2,9 +2,9 @@ import 'package:equatable/equatable.dart';
 import 'package:plnicon_mobile/models/foto_model.dart';
 
 class RectNilaiModel extends Equatable {
-  final int id;
-  final int rectId;
-  final int pmId;
+  final String id;
+  final String rectId;
+  final String pmId;
   final double loadr;
   final double loads;
   final double loadt;
@@ -33,9 +33,9 @@ class RectNilaiModel extends Equatable {
       id: json['id'],
       rectId: json['rect_id'],
       pmId: json['pm_id'],
-      loadr: json['loadr'] ?? "",
-      loads: json['loads'] ?? "",
-      loadt: json['loadt'] ?? "",
+      loadr: double.parse(json['loadr'] ?? 0.0),
+      loads: double.parse(json['loads'] ?? 0.0),
+      loadt: double.parse(json['loadt'] ?? 0.0),
       temuan: json['temuan'] ?? "",
       rekomendasi: json['rekomendasi'] ?? "",
       createdAt: DateTime.parse(json['created_at']),

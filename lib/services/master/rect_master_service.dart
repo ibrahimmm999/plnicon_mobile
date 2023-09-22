@@ -8,17 +8,16 @@ import 'package:http/http.dart' as http;
 import 'package:plnicon_mobile/services/user_service.dart';
 
 class RectMasterService {
-  Future<RectMasterModel> postRectMaster(
-      {required int rectId,
-      required String sn,
-      required int jumlahPhasa,
-      required int slotModul,
-      required int modulTerpasang,
-      required int modulControl,
-      required String merk,
-      required String tipe,
-      required int popId,
-      required DateTime tglInstalasi}) async {
+  Future<RectMasterModel> postRectMaster({
+    required String sn,
+    required int jumlahPhasa,
+    required int slotModul,
+    required int modulTerpasang,
+    required int modulControl,
+    required String merk,
+    required String tipe,
+    required int popId,
+  }) async {
     late Uri url = UrlService().api('rect');
 
     var headers = {
@@ -26,7 +25,6 @@ class RectMasterService {
       'Authorization': await UserService().getTokenPreference() ?? '',
     };
     var body = {
-      'id': rectId,
       'pop_id': popId,
       'sn': sn,
       'jumlah_phasa': jumlahPhasa,
@@ -35,7 +33,7 @@ class RectMasterService {
       'slot_modul': slotModul,
       'modul_terpasang': modulTerpasang,
       'modul_control': modulControl,
-      'tgl_instalasi': tglInstalasi
+      'tgl_instalasi': "2023-08-08 00:00:00"
     };
 
     var response = await http.post(

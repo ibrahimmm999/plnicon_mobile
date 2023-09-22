@@ -5,6 +5,7 @@ import 'package:plnicon_mobile/pages/add_master/add_ac_page.dart';
 import 'package:plnicon_mobile/pages/add_master/add_ats_page.dart';
 import 'package:plnicon_mobile/pages/add_master/add_inverter_page.dart';
 import 'package:plnicon_mobile/pages/add_master/add_kwh_page.dart';
+import 'package:plnicon_mobile/pages/add_master/add_recti_page.dart';
 import 'package:plnicon_mobile/pages/baterai_page.dart';
 import 'package:plnicon_mobile/pages/environment_page.dart';
 import 'package:plnicon_mobile/pages/ex_alarm_page.dart';
@@ -100,22 +101,19 @@ class _PmDetailPageState extends State<PmDetailPage> {
             ),
           ),
         ),
-        body: ListView(
-            padding:
-                EdgeInsets.symmetric(horizontal: defaultMargin, vertical: 20),
-            children: popProvider.listPop.isEmpty
-                ? [
-                    Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          CircularProgressIndicator(
-                              backgroundColor: primaryBlue),
-                        ],
-                      ),
-                    )
-                  ]
-                : [
+        body: popProvider.listPop.isEmpty
+            ? Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Center(
+                      child: CircularProgressIndicator(
+                          backgroundColor: primaryBlue)),
+                ],
+              )
+            : ListView(
+                padding: EdgeInsets.symmetric(
+                    horizontal: defaultMargin, vertical: 20),
+                children: [
                     // KWH
                     Container(
                         width: double.infinity,
@@ -479,7 +477,17 @@ class _PmDetailPageState extends State<PmDetailPage> {
                                     style: buttonText.copyWith(
                                         color: textDarkColor),
                                   ),
-                                  const Icon(Icons.add)
+                                  GestureDetector(
+                                      onTap: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  AddRectiPage(
+                                                      popId: widget.pm.popId)),
+                                        );
+                                      },
+                                      child: const Icon(Icons.add))
                                 ],
                               ),
                             ),
@@ -929,7 +937,7 @@ class _PmDetailPageState extends State<PmDetailPage> {
                                                 context,
                                                 MaterialPageRoute(
                                                     builder: (context) =>
-                                                        ACPage(
+                                                        AcPage(
                                                           pm: widget.pm,
                                                           acMaster: e,
                                                           title: "AC $index",
@@ -1200,6 +1208,16 @@ class _PmDetailPageState extends State<PmDetailPage> {
                                 await PmService().editPm(
                                     token: tokenUser,
                                     pmId: widget.pm.id,
+                                    area: widget.pm.area,
+                                    detailPm: widget.pm.detailPm,
+                                    userId: widget.pm.userId,
+                                    jenis: widget.pm.jenis,
+                                    kategori: widget.pm.kategori,
+                                    plan: widget.pm.plan,
+                                    popId: widget.pm.popId,
+                                    realisasi: widget.pm.realisasi,
+                                    statusApproval: widget.pm.statusApproval,
+                                    wilayah: widget.pm.wilayah,
                                     status: "REALISASI");
                               }
                             }
@@ -1207,7 +1225,7 @@ class _PmDetailPageState extends State<PmDetailPage> {
                             Navigator.pushAndRemoveUntil(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => const WorkPage()),
+                                  builder: (context) => const MainPage()),
                               (route) => false,
                             );
                           },

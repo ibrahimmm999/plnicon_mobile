@@ -131,6 +131,7 @@ class InverterService {
       'input_ac': inputAc,
       'input_dc': inputDc,
       'output_dc': outputDc,
+      'hasil_uji': hasilUji,
       'mainfall': mainfall,
       'temuan': temuan,
       'rekomendasi': rekomendasi,
@@ -147,7 +148,7 @@ class InverterService {
       var data = jsonDecode(response.body)['data'];
       return InverterNilaiModel.fromJson(data);
     } else {
-      throw "Post data inverter failed";
+      throw "Edit data inverter failed";
     }
   }
 

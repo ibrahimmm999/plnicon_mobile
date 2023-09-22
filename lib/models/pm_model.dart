@@ -11,6 +11,8 @@ class PmModel extends Equatable {
   final DateTime plan;
   final DateTime realisasi;
   final String jenis;
+  final String area;
+  final String wilayah;
   final String kategori;
   final String detailPm;
   final PopModel pop;
@@ -28,6 +30,8 @@ class PmModel extends Equatable {
     required this.kategori,
     required this.detailPm,
     required this.pop,
+    required this.area,
+    required this.wilayah,
   });
 
   factory PmModel.fromJson(Map<String, dynamic> json) {
@@ -42,6 +46,8 @@ class PmModel extends Equatable {
         realisasi: DateTime.parse(json['realisasi']),
         jenis: json['jenis'],
         kategori: json['kategori'],
+        area: json['area'],
+        wilayah: json['wilayah'],
         detailPm: json['detail_pm'],
         pop: PopModel.fromJson(json['datapop']));
   }
@@ -56,6 +62,8 @@ class PmModel extends Equatable {
         statusApproval,
         plan,
         realisasi,
+        area,
+        wilayah,
         jenis,
         kategori,
         detailPm,

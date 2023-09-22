@@ -1,13 +1,17 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:plnicon_mobile/models/nilai/rect_nilai_model.dart';
 import 'package:plnicon_mobile/models/pm_model.dart';
-import 'package:plnicon_mobile/pages/main_page.dart';
+import 'package:plnicon_mobile/pages/edit_master/edit_recti_page.dart';
 import 'package:plnicon_mobile/providers/images_provider.dart';
 import 'package:plnicon_mobile/providers/page_provider.dart';
 import 'package:plnicon_mobile/providers/pop_provider.dart';
+import 'package:plnicon_mobile/providers/transaksional_provider.dart';
+import 'package:plnicon_mobile/providers/user_provider.dart';
 import 'package:plnicon_mobile/services/master/rect_master_service.dart';
 import 'package:plnicon_mobile/services/transaksional/rect_service.dart';
+import 'package:plnicon_mobile/services/user_service.dart';
 import 'package:plnicon_mobile/theme/theme.dart';
 import 'package:plnicon_mobile/widgets/custom_button.dart';
 import 'package:plnicon_mobile/widgets/input_dokumentasi.dart';
@@ -33,34 +37,42 @@ File? contentFile;
 class _RectiPageState extends State<RectiPage> {
   @override
   void initState() {
+    getinit();
     super.initState();
     contentPath = '';
     contentFile = null;
   }
 
+  bool loading = true;
+  getinit() async {
+    UserProvider userProvider =
+        Provider.of<UserProvider>(context, listen: false);
+    TransaksionalProvider rectProvider =
+        Provider.of<TransaksionalProvider>(context, listen: false);
+
+    final String? token = await UserService().getTokenPreference();
+
+    if (token == null) {
+    } else {
+      if (await userProvider.getUser(token: token)) {
+        await rectProvider.getRect(widget.pm.id, widget.rect.id);
+      }
+    }
+    loading = false;
+  }
+
   @override
   Widget build(BuildContext context) {
-    int phasa = 3;
+    TransaksionalProvider rectProvider =
+        Provider.of<TransaksionalProvider>(context);
+    int phasa = widget.rect.jumlahPhasa;
     TextEditingController loadrController = TextEditingController();
     TextEditingController loadsController = TextEditingController();
     TextEditingController loadtController = TextEditingController();
     TextEditingController temuanController = TextEditingController();
     TextEditingController rekomendasiController = TextEditingController();
     TextEditingController deskripsiController = TextEditingController();
-    TextEditingController merkController =
-        TextEditingController(text: widget.rect.merk);
-    TextEditingController snController =
-        TextEditingController(text: widget.rect.sn);
-    TextEditingController tipeController =
-        TextEditingController(text: widget.rect.tipe);
-    TextEditingController jumlahPhasaController =
-        TextEditingController(text: widget.rect.jumlahPhasa.toString());
-    TextEditingController modulControlController =
-        TextEditingController(text: widget.rect.modulControl.toString());
-    TextEditingController modulTerpasangController =
-        TextEditingController(text: widget.rect.modulTerpasang.toString());
-    TextEditingController slotModulController =
-        TextEditingController(text: widget.rect.slotModul.toString());
+
     PageProvider pageProvider = Provider.of<PageProvider>(context);
     PopProvider popProvider = Provider.of<PopProvider>(context);
     ImagesProvider imagesProvider = Provider.of<ImagesProvider>(context);
@@ -94,58 +106,51 @@ class _RectiPageState extends State<RectiPage> {
                 padding: EdgeInsets.all(defaultMargin),
                 children: [
                   Text(
-                    "Merk",
+                    "Merk : ${widget.rect.merk}",
                     style: buttonText.copyWith(color: textDarkColor),
                   ),
-                  TextInput(controller: merkController),
                   const SizedBox(
                     height: 20,
                   ),
                   Text(
-                    "SN",
+                    "SN : ${widget.rect.sn}",
                     style: buttonText.copyWith(color: textDarkColor),
                   ),
-                  TextInput(controller: snController),
                   const SizedBox(
                     height: 20,
                   ),
                   Text(
-                    "Tipe",
+                    "Tipe : ${widget.rect.tipe}",
                     style: buttonText.copyWith(color: textDarkColor),
                   ),
-                  TextInput(controller: tipeController),
                   const SizedBox(
                     height: 20,
                   ),
                   Text(
-                    "Jumlah Phasa",
+                    "Jumlah Phasa : ${widget.rect.jumlahPhasa}",
                     style: buttonText.copyWith(color: textDarkColor),
                   ),
-                  TextInput(controller: jumlahPhasaController),
                   const SizedBox(
                     height: 20,
                   ),
                   Text(
-                    "Modul Control",
+                    "Modul Control : ${widget.rect.modulControl}",
                     style: buttonText.copyWith(color: textDarkColor),
                   ),
-                  TextInput(controller: modulControlController),
                   const SizedBox(
                     height: 20,
                   ),
                   Text(
-                    "Modul Terpasang",
+                    "Modul Terpasang : ${widget.rect.modulTerpasang}",
                     style: buttonText.copyWith(color: textDarkColor),
                   ),
-                  TextInput(controller: modulTerpasangController),
                   const SizedBox(
                     height: 20,
                   ),
                   Text(
-                    "Slot Modul",
+                    "Slot Modul : ${widget.rect.slotModul}",
                     style: buttonText.copyWith(color: textDarkColor),
                   ),
-                  TextInput(controller: slotModulController),
                   const SizedBox(
                     height: 20,
                   ),
@@ -157,25 +162,16 @@ class _RectiPageState extends State<RectiPage> {
                     height: 20,
                   ),
                   CustomButton(
-                      text: "Save",
-                      onPressed: () async {
-                        await RectMasterService().editRectMaster(
-                            rectId: widget.rect.id,
-                            sn: snController.text,
-                            jumlahPhasa: int.parse(jumlahPhasaController.text),
-                            slotModul: int.parse(slotModulController.text),
-                            modulTerpasang:
-                                int.parse(modulTerpasangController.text),
-                            modulControl:
-                                int.parse(modulControlController.text),
-                            merk: merkController.text,
-                            tipe: tipeController.text,
-                            popId: widget.rect.popId);
-                        popProvider.getDataPop(id: widget.rect.popId);
-                        Navigator.pop(context);
+                      text: "Edit",
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => EditRectiPage(
+                                    pm: widget.pm, rect: widget.rect)));
                       },
-                      color: primaryGreen,
-                      clickColor: clickGreen),
+                      color: primaryBlue,
+                      clickColor: clickBlue),
                   const SizedBox(
                     height: 32,
                   )
@@ -245,14 +241,26 @@ class _RectiPageState extends State<RectiPage> {
                     child: CustomButton(
                         text: "Save",
                         onPressed: () async {
-                          await RectService().postRect(
-                              rectId: widget.rect.id,
-                              pmId: widget.pm.id,
-                              loadr: double.parse(loadrController.text),
-                              loads: double.parse(loadsController.text),
-                              loadt: double.parse(loadtController.text),
-                              temuan: temuanController.text,
-                              rekomendasi: rekomendasiController.text);
+                          if (rectProvider.listRect.isEmpty) {
+                            RectNilaiModel rect = await RectService().postRect(
+                                rectId: widget.rect.id,
+                                pmId: widget.pm.id,
+                                loadr: double.parse(loadrController.text),
+                                loads: double.parse(loadsController.text),
+                                loadt: double.parse(loadtController.text),
+                                temuan: temuanController.text,
+                                rekomendasi: rekomendasiController.text);
+                          } else {
+                            RectNilaiModel rect = await RectService().editRect(
+                                id: int.parse(rectProvider.listRect.last.id),
+                                rectId: widget.rect.id,
+                                pmId: widget.pm.id,
+                                loadr: double.parse(loadrController.text),
+                                loads: double.parse(loadsController.text),
+                                loadt: double.parse(loadtController.text),
+                                temuan: temuanController.text,
+                                rekomendasi: rekomendasiController.text);
+                          }
                           Navigator.pop(context);
                         },
                         color: primaryBlue,
@@ -264,7 +272,7 @@ class _RectiPageState extends State<RectiPage> {
           }
         default:
           {
-            return Scaffold();
+            return const Scaffold();
           }
       }
     }

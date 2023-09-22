@@ -2,6 +2,7 @@
 
 import 'dart:convert';
 
+import 'package:plnicon_mobile/models/foto_model.dart';
 import 'package:plnicon_mobile/models/nilai/ac_nilai_model.dart';
 import 'package:plnicon_mobile/services/url_service.dart';
 import 'package:http/http.dart' as http;
@@ -83,7 +84,6 @@ class AcService {
 
     if (response.statusCode == 200) {
       var data = jsonDecode(response.body)['data'] as List;
-      print(data);
       List<AcNilaiModel> ac = List<AcNilaiModel>.from(
         data.map((e) => AcNilaiModel.fromJson(e)),
       );
@@ -100,6 +100,7 @@ class AcService {
       required int suhuAc,
       required String hasilPengujian,
       required String temuan,
+      required List<FotoModel> foto,
       required String rekomendasi}) async {
     late Uri url = UrlService().api('edit-air-conditioner-nilai');
 
@@ -156,33 +157,59 @@ class AcService {
 
     if (response.statusCode == 200) {
       var data = jsonDecode(responsed.body)['data'];
+      print(data);
       return true;
     } else {
       throw "Add foto ac failed";
     }
   }
-}
 
-Future<List<AcNilaiModel>> getFoto({required int acNilaiId}) async {
-  var url = UrlService().api('air-conditioner-foto');
-  var headers = {
-    'Content-Type': 'application/json',
-    'Authorization': await UserService().getTokenPreference() ?? '',
-  };
+  Future<List<FotoModel>> getFoto({required int acNilaiId}) async {
+    var url = UrlService().api('air-conditioner-foto');
+    var headers = {
+      'Content-Type': 'application/json',
+      'Authorization': await UserService().getTokenPreference() ?? '',
+    };
 
-  var response = await http.get(
-    url,
-    headers: headers,
-  );
-
-  if (response.statusCode == 200) {
-    var data = jsonDecode(response.body)['data'] as List;
-    // print(data);
-    List<AcNilaiModel> ac = List<AcNilaiModel>.from(
-      data.map((e) => AcNilaiModel.fromJson(e)),
+    var response = await http.get(
+      url,
+      headers: headers,
     );
-    return ac;
-  } else {
-    throw "Get data ac failed";
+
+    if (response.statusCode == 200) {
+      var data = jsonDecode(response.body)['data'] as List;
+
+      List<FotoModel> ac = List<FotoModel>.from(
+        data.map((e) => FotoModel.fromJson(e)),
+      );
+      return ac;
+    } else {
+      throw "Get data ac failed";
+    }
+  }
+
+  Future<bool> deleteImage({required int imageId}) async {
+    late Uri url = UrlService().api('delete-air-conditioner-foto');
+    var headers = {
+      'Content-Type': 'application/json',
+      'Authorization': await UserService().getTokenPreference() ?? '',
+    };
+
+    var body = {
+      'id': imageId,
+    };
+
+    var response = await http.post(
+      url,
+      headers: headers,
+      body: jsonEncode(body),
+    );
+    print(body);
+
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      throw "Delete image failed";
+    }
   }
 }

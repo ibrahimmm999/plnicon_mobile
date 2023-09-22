@@ -51,6 +51,33 @@ class AcMasterService {
     }
   }
 
+  Future<AcMasterModel> deleteAcMaster({required int id}) async {
+    late Uri url = UrlService().api('delete-air-conditioner');
+
+    var headers = {
+      'Content-Type': 'application/json',
+      'Authorization': await UserService().getTokenPreference() ?? '',
+    };
+    var body = {
+      'id': id,
+    };
+    try {
+      var response = await http.post(
+        url,
+        headers: headers,
+        body: jsonEncode(body),
+      );
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body)['data'];
+        return AcMasterModel.fromJson(data);
+      } else {
+        throw "Delete data ac failed";
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future<AcMasterModel> editAcMaster({
     required int acId,
     required int popId,

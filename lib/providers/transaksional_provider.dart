@@ -9,6 +9,7 @@ import 'package:plnicon_mobile/models/nilai/perangkat_nilai_model.dart';
 import 'package:plnicon_mobile/models/nilai/rect_nilai_model.dart';
 import 'package:plnicon_mobile/services/transaksional/ac_service.dart';
 import 'package:plnicon_mobile/services/transaksional/inverter_service.dart';
+import 'package:plnicon_mobile/services/transaksional/rect_service.dart';
 
 class TransaksionalProvider extends ChangeNotifier {
   bool found = false;
@@ -50,6 +51,8 @@ class TransaksionalProvider extends ChangeNotifier {
   Future<bool> getAc(int pmId, int acId) async {
     try {
       _listAc = await AcService().getAcByPmAndMaster(acId: acId, pmId: pmId);
+      print("_listAc");
+      print(_listAc);
       notifyListeners();
       return true;
     } catch (e) {
@@ -61,6 +64,17 @@ class TransaksionalProvider extends ChangeNotifier {
     try {
       _listInverter = await InverterService()
           .getByPmAndMaster(inverterId: inverterId, pmId: pmId);
+      notifyListeners();
+      return true;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<bool> getRect(int pmId, int rectId) async {
+    try {
+      _listRect =
+          await RectService().getRectByPmAndMaster(rectId: rectId, pmId: pmId);
       notifyListeners();
       return true;
     } catch (e) {

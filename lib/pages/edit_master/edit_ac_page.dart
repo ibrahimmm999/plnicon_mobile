@@ -90,10 +90,6 @@ class EditAcPage extends StatelessWidget {
           const SizedBox(
             height: 20,
           ),
-          Text(
-            "Tanggal Instalasi : -",
-            style: buttonText.copyWith(color: textDarkColor),
-          ),
           const SizedBox(
             height: 32,
           ),

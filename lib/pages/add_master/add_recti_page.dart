@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:plnicon_mobile/models/master/rect_master_model.dart';
-import 'package:plnicon_mobile/models/pm_model.dart';
 import 'package:plnicon_mobile/providers/pop_provider.dart';
 import 'package:plnicon_mobile/services/master/rect_master_service.dart';
 import 'package:plnicon_mobile/theme/theme.dart';
@@ -9,29 +7,25 @@ import 'package:plnicon_mobile/widgets/custom_button.dart';
 import 'package:plnicon_mobile/widgets/text_input.dart';
 import 'package:provider/provider.dart';
 
-class EditRectiPage extends StatelessWidget {
-  const EditRectiPage({super.key, required this.pm, required this.rect});
+class AddRectiPage extends StatelessWidget {
+  const AddRectiPage({
+    super.key,
+    required this.popId,
+  });
 
-  final PmModel pm;
-  final RectMasterModel rect;
+  final int popId;
   @override
   Widget build(BuildContext context) {
     PopProvider popProvider = Provider.of<PopProvider>(context);
-    TextEditingController merkController =
-        TextEditingController(text: rect.merk);
-    TextEditingController snController = TextEditingController(text: rect.sn);
-    TextEditingController tipeController =
-        TextEditingController(text: rect.tipe);
-    TextEditingController jumlahPhasaController =
-        TextEditingController(text: rect.jumlahPhasa.toString());
-    TextEditingController modulControlController =
-        TextEditingController(text: rect.modulControl.toString());
-    TextEditingController modulTerpasangController =
-        TextEditingController(text: rect.modulTerpasang.toString());
-    TextEditingController slotModulController =
-        TextEditingController(text: rect.slotModul.toString());
+    TextEditingController merkController = TextEditingController();
+    TextEditingController snController = TextEditingController();
+    TextEditingController tipeController = TextEditingController();
+    TextEditingController jumlahPhasaController = TextEditingController();
+    TextEditingController modulControlController = TextEditingController();
+    TextEditingController modulTerpasangController = TextEditingController();
+    TextEditingController slotModulController = TextEditingController();
     return Scaffold(
-      appBar: const CustomAppBar(isMainPage: false, title: "Edit Rectifier"),
+      appBar: const CustomAppBar(isMainPage: false, title: "Add Rectifier"),
       body: ListView(
         padding: EdgeInsets.all(defaultMargin),
         children: [
@@ -101,8 +95,7 @@ class EditRectiPage extends StatelessWidget {
           CustomButton(
               text: "Save",
               onPressed: () async {
-                await RectMasterService().editRectMaster(
-                    rectId: rect.id,
+                await RectMasterService().postRectMaster(
                     sn: snController.text,
                     jumlahPhasa: int.parse(jumlahPhasaController.text),
                     slotModul: int.parse(slotModulController.text),
@@ -110,9 +103,8 @@ class EditRectiPage extends StatelessWidget {
                     modulControl: int.parse(modulControlController.text),
                     merk: merkController.text,
                     tipe: tipeController.text,
-                    popId: rect.popId);
-                popProvider.getDataPop(id: rect.popId);
-                Navigator.pop(context);
+                    popId: popId);
+                popProvider.getDataPop(id: popId);
                 Navigator.pop(context);
               },
               color: primaryGreen,
