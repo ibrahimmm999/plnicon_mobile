@@ -122,8 +122,7 @@ class KwhMasterService {
       'luas_kabels': luasKabelS,
       'luas_kabelt': luasKabelT,
       'luas_kabeln': luasKabelN,
-      'tgl_instalasi': DateFormat("yyyy-MM-dd'T'HH:mm:ss.ssssssZ")
-          .parse("2021-01-03T18:42:49.608466Z")
+      'tgl_instalasi': "2023-08-08 00:00:00"
     };
 
     var response = await http.post(

@@ -207,6 +207,7 @@ class AddKwhPage extends StatelessWidget {
                     luasKabelS: double.parse(luasKabelSController.text),
                     luasKabelT: double.parse(luasKabelTController.text),
                     luasKabelN: double.parse(luasKabelNController.text));
+                Navigator.pop(context);
               },
               color: primaryGreen,
               clickColor: clickGreen),

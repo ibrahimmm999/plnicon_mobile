@@ -50,7 +50,6 @@ class _AcPageState extends State<AcPage> {
   String fotoAcIndoor = "";
   String pengujian = "";
   bool loading = true;
-  Map<String, Map<String, String>> listFoto = {};
   getinit() async {
     UserProvider userProvider =
         Provider.of<UserProvider>(context, listen: false);
@@ -69,7 +68,7 @@ class _AcPageState extends State<AcPage> {
             ? ""
             : acProvider.listAc.first.hasilPengujian;
         if (acProvider.listAc.isNotEmpty) {
-          acProvider.listAc.first.foto!.forEach((element) {
+          for (var element in acProvider.listAc.first.foto!) {
             String url = element.url.replaceAll("http://localhost",
                 "https://jakban.iconpln.co.id/backend-plnicon/public");
 
@@ -79,11 +78,9 @@ class _AcPageState extends State<AcPage> {
               fotoAcIndoor = url;
             } else if (element.deskripsi == "Suhu AC") {
               fotoAcSuhu = url;
-              print(listFoto);
             }
             imagesProvider.foto[url] = element.deskripsi;
-            print(listFoto);
-          });
+          }
         }
       }
     }
@@ -416,7 +413,7 @@ class _AcPageState extends State<AcPage> {
                           ),
                         ),
                         Visibility(
-                          visible: fotoAcIndoor.isEmpty,
+                          visible: fotoAcOutdoor.isEmpty,
                           child: Icon(
                             Icons.photo_camera_outlined,
                             color: textLightColor,
@@ -804,7 +801,7 @@ class _AcPageState extends State<AcPage> {
                               fotoAcSuhu.isNotEmpty) {
                             AcNilaiModel ac = await AcService().editAc(
                                 foto: [
-                                  FotoModel(
+                                  const FotoModel(
                                       id: 99,
                                       url: "url",
                                       deskripsi: "deskripsi")
@@ -816,22 +813,18 @@ class _AcPageState extends State<AcPage> {
                                 hasilPengujian: pengujian,
                                 temuan: temuanController.text,
                                 rekomendasi: rekomendasiController.text);
-                            print("acProvider.listAc.last.foto");
-                            print(acProvider.listAc);
                             if (acProvider.listAc.isNotEmpty) {
                               for (var item in acProvider.listAc.last.foto!) {
-                                print(item);
                                 await AcService().deleteImage(imageId: item.id);
                               }
                             }
-                            print("imagesProvider.foto");
-                            print(imagesProvider.foto);
                             imagesProvider.foto.forEach((key, value) async {
                               await AcService().postFotoAc(
                                   acNilaiId: ac.id,
                                   urlFoto: key,
                                   description: value);
                             });
+                            // ignore: use_build_context_synchronously
                             Navigator.pop(context);
                           } else {
                             ScaffoldMessenger.of(context)

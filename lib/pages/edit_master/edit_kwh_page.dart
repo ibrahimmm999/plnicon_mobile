@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:plnicon_mobile/models/master/kwh_master_model.dart';
+import 'package:plnicon_mobile/services/master/kwh_master_service.dart';
+import 'package:plnicon_mobile/services/transaksional/kwh_service.dart';
 import 'package:plnicon_mobile/theme/theme.dart';
 import 'package:plnicon_mobile/widgets/custom_appbar.dart';
 import 'package:plnicon_mobile/widgets/custom_button.dart';
@@ -13,6 +15,8 @@ class EditKwhPage extends StatelessWidget {
   Widget build(BuildContext context) {
     TextEditingController aresterTypeController =
         TextEditingController(text: kwh.aresterType);
+    TextEditingController dayaController =
+        TextEditingController(text: kwh.daya.toString());
     TextEditingController aresterController =
         TextEditingController(text: kwh.arester);
     TextEditingController cosController = TextEditingController(text: kwh.cos);
@@ -70,6 +74,14 @@ class EditKwhPage extends StatelessWidget {
             style: buttonText.copyWith(color: textDarkColor),
           ),
           TextInput(controller: cosController),
+          const SizedBox(
+            height: 20,
+          ),
+          Text(
+            "Daya",
+            style: buttonText.copyWith(color: textDarkColor),
+          ),
+          TextInput(controller: dayaController),
           const SizedBox(
             height: 20,
           ),
@@ -194,7 +206,31 @@ class EditKwhPage extends StatelessWidget {
           ),
           CustomButton(
               text: "Save",
-              onPressed: () {},
+              onPressed: () async {
+                await KwhMasterService().editKwhMaster(
+                    kwhId: kwh.id,
+                    popId: kwh.popId,
+                    daya: double.parse(dayaController.text),
+                    arester: aresterController.text,
+                    aresterType: aresterTypeController.text,
+                    capmcbr: double.parse(capmcbrController.text),
+                    capmcbs: double.parse(capmcbsController.text),
+                    capmcbt: double.parse(capmcbtController.text),
+                    cos: cosController.text,
+                    cosType: cosTypeController.text,
+                    jumlahPhasa: int.parse(jumlahPhasaController.text),
+                    warnaKabelR: warnaKabelRController.text,
+                    warnaKabelS: warnaKabelSController.text,
+                    warnaKabelT: warnaKabelTController.text,
+                    warnaKabelN: warnaKabelNController.text,
+                    warnaKabelG: warnaKabelGController.text,
+                    luasKabelR: double.parse(luasKabelRController.text),
+                    luasKabelS: double.parse(luasKabelSController.text),
+                    luasKabelT: double.parse(luasKabelTController.text),
+                    luasKabelN: double.parse(luasKabelNController.text));
+                Navigator.pop(context);
+                Navigator.pop(context);
+              },
               color: primaryGreen,
               clickColor: clickGreen),
           const SizedBox(

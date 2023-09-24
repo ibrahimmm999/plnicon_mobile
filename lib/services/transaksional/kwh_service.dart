@@ -33,7 +33,7 @@ class KwhService {
   }
 
   Future<List<KwhNilaiModel>> getKwhByPmAndMaster(
-      {required int pmId, required int kwhId}) async {
+      {required String pmId, required String kwhId}) async {
     var url = UrlService().api('kwh-meter-nilai?pm_id=$pmId&kwh_id=$kwhId');
     var headers = {
       'Content-Type': 'application/json',
@@ -60,16 +60,16 @@ class KwhService {
   Future<KwhNilaiModel> postKwh(
       {required int kwhId,
       required int pmId,
-      required double loadr,
-      required double loads,
-      required double loadt,
-      required double vrn,
-      required double vsn,
-      required double vtn,
-      required double vng,
-      required double vrs,
-      required double vrt,
-      required double vst,
+      required String loadr,
+      required String loads,
+      required String loadt,
+      required String vrn,
+      required String vsn,
+      required String vtn,
+      required String vng,
+      required String vrs,
+      required String vrt,
+      required String vst,
       required String temuan,
       required String rekomendasi}) async {
     late Uri url = UrlService().api('kwh-meter-nilai');
@@ -81,9 +81,9 @@ class KwhService {
     var body = {
       'kwh_id': kwhId,
       'pm_id': pmId,
-      'loadr': loadr,
-      'loads': loads,
-      'loadt': loadt,
+      'load_r': loadr,
+      'load_s': loads,
+      'load_t': loadt,
       'vrn': vrn,
       'vsn': vsn,
       'vtn': vtn,
@@ -107,6 +107,61 @@ class KwhService {
       return KwhNilaiModel.fromJson(data);
     } else {
       throw "Post data kwh failed";
+    }
+  }
+
+  Future<KwhNilaiModel> editKwh(
+      {required int id,
+      required int kwhId,
+      required int pmId,
+      required double loadr,
+      required double loads,
+      required double loadt,
+      required double vrn,
+      required double vsn,
+      required double vtn,
+      required double vng,
+      required double vrs,
+      required double vrt,
+      required double vst,
+      required String temuan,
+      required String rekomendasi}) async {
+    late Uri url = UrlService().api('edit-kwh-meter-nilai');
+    var headers = {
+      'Content-Type': 'application/json',
+      'Authorization': await UserService().getTokenPreference() ?? '',
+    };
+
+    var body = {
+      'id': id,
+      'kwh_id': kwhId,
+      'pm_id': pmId,
+      'load_r': loadr,
+      'load_s': loads,
+      'load_t': loadt,
+      'vrn': vrn,
+      'vsn': vsn,
+      'vtn': vtn,
+      'vng': vng,
+      'vrs': vrs,
+      'vrt': vrt,
+      'vst': vst,
+      'temuan': temuan,
+      'rekomendasi': rekomendasi
+    };
+
+    var response = await http.post(
+      url,
+      headers: headers,
+      body: jsonEncode(body),
+      encoding: Encoding.getByName('utf-8'),
+    );
+    if (response.statusCode == 200) {
+      var data = jsonDecode(response.body)['data'];
+      print(data);
+      return KwhNilaiModel.fromJson(data);
+    } else {
+      throw "Edit data kwh failed";
     }
   }
 

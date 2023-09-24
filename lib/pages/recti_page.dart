@@ -9,7 +9,6 @@ import 'package:plnicon_mobile/providers/page_provider.dart';
 import 'package:plnicon_mobile/providers/pop_provider.dart';
 import 'package:plnicon_mobile/providers/transaksional_provider.dart';
 import 'package:plnicon_mobile/providers/user_provider.dart';
-import 'package:plnicon_mobile/services/master/rect_master_service.dart';
 import 'package:plnicon_mobile/services/transaksional/rect_service.dart';
 import 'package:plnicon_mobile/services/user_service.dart';
 import 'package:plnicon_mobile/theme/theme.dart';
@@ -31,24 +30,25 @@ class RectiPage extends StatefulWidget {
   State<RectiPage> createState() => _RectiPageState();
 }
 
-String contentPath = '';
-File? contentFile;
-
 class _RectiPageState extends State<RectiPage> {
   @override
   void initState() {
     getinit();
     super.initState();
-    contentPath = '';
-    contentFile = null;
   }
 
+  String fotoLoadR = "";
+  String fotoLoadS = "";
+  String fotoLoadT = "";
+  String fotoFisik = "";
   bool loading = true;
   getinit() async {
     UserProvider userProvider =
         Provider.of<UserProvider>(context, listen: false);
     TransaksionalProvider rectProvider =
         Provider.of<TransaksionalProvider>(context, listen: false);
+    ImagesProvider imagesProvider =
+        Provider.of<ImagesProvider>(context, listen: false);
 
     final String? token = await UserService().getTokenPreference();
 
@@ -56,6 +56,23 @@ class _RectiPageState extends State<RectiPage> {
     } else {
       if (await userProvider.getUser(token: token)) {
         await rectProvider.getRect(widget.pm.id, widget.rect.id);
+        if (rectProvider.listRect.isNotEmpty) {
+          for (var element in rectProvider.listRect.first.foto) {
+            String url = element.url.replaceAll("http://localhost",
+                "https://jakban.iconpln.co.id/backend-plnicon/public");
+
+            if (element.deskripsi == "Foto Fisik") {
+              fotoFisik = url;
+            } else if (element.deskripsi == "Load R") {
+              fotoLoadR = url;
+            } else if (element.deskripsi == "Load S") {
+              fotoLoadS = url;
+            } else if (element.deskripsi == "Load t") {
+              fotoLoadT = url;
+            }
+            imagesProvider.foto[url] = element.deskripsi;
+          }
+        }
       }
     }
     loading = false;
@@ -65,17 +82,44 @@ class _RectiPageState extends State<RectiPage> {
   Widget build(BuildContext context) {
     TransaksionalProvider rectProvider =
         Provider.of<TransaksionalProvider>(context);
+    ImagesProvider imagesProvider = Provider.of<ImagesProvider>(context);
+    PageProvider pageProvider = Provider.of<PageProvider>(context);
+    Future<void> handlePicker() async {
+      imagesProvider.setCroppedImageFile = null;
+      await imagesProvider.pickImage();
+      await imagesProvider.cropImage(
+          imageFile: imagesProvider.imageFile, key: "");
+      setState(() {
+        if (imagesProvider.croppedImagePath.isNotEmpty) {
+          contentPath = imagesProvider.croppedImagePath;
+          contentFile = imagesProvider.croppedImageFile;
+        }
+      });
+    }
+
     int phasa = widget.rect.jumlahPhasa;
-    TextEditingController loadrController = TextEditingController();
-    TextEditingController loadsController = TextEditingController();
-    TextEditingController loadtController = TextEditingController();
-    TextEditingController temuanController = TextEditingController();
-    TextEditingController rekomendasiController = TextEditingController();
+    TextEditingController loadrController = TextEditingController(
+        text: rectProvider.listRect.isEmpty
+            ? ""
+            : rectProvider.listRect.last.loadr.toString());
+    TextEditingController loadsController = TextEditingController(
+        text: rectProvider.listRect.isEmpty
+            ? ""
+            : rectProvider.listRect.last.loads.toString());
+    TextEditingController loadtController = TextEditingController(
+        text: rectProvider.listRect.isEmpty
+            ? ""
+            : rectProvider.listRect.last.loadt.toString());
+    TextEditingController temuanController = TextEditingController(
+        text: rectProvider.listRect.isEmpty
+            ? ""
+            : rectProvider.listRect.last.temuan.toString());
+    TextEditingController rekomendasiController = TextEditingController(
+        text: rectProvider.listRect.isEmpty
+            ? ""
+            : rectProvider.listRect.last.rekomendasi.toString());
     TextEditingController deskripsiController = TextEditingController();
 
-    PageProvider pageProvider = Provider.of<PageProvider>(context);
-    PopProvider popProvider = Provider.of<PopProvider>(context);
-    ImagesProvider imagesProvider = Provider.of<ImagesProvider>(context);
     Widget switchContent() {
       return SizedBox(
         width: MediaQuery.sizeOf(context).width,

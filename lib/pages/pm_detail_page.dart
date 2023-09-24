@@ -18,7 +18,6 @@ import 'package:plnicon_mobile/pages/modul_page.dart';
 import 'package:plnicon_mobile/pages/pdb_page.dart';
 import 'package:plnicon_mobile/pages/rack_page.dart';
 import 'package:plnicon_mobile/pages/recti_page.dart';
-import 'package:plnicon_mobile/pages/work_page.dart';
 import 'package:plnicon_mobile/providers/images_provider.dart';
 import 'package:plnicon_mobile/providers/pop_provider.dart';
 import 'package:plnicon_mobile/providers/user_provider.dart';

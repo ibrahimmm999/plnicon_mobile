@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:easy_image_viewer/easy_image_viewer.dart';
 import 'package:flutter/material.dart';
 import 'package:plnicon_mobile/models/master/kwh_master_model.dart';
 import 'package:plnicon_mobile/models/nilai/kwh_nilai_model.dart';
@@ -9,7 +10,10 @@ import 'package:plnicon_mobile/pages/main_page.dart';
 import 'package:plnicon_mobile/pages/photo_view_page.dart';
 import 'package:plnicon_mobile/providers/images_provider.dart';
 import 'package:plnicon_mobile/providers/page_provider.dart';
+import 'package:plnicon_mobile/providers/transaksional_provider.dart';
+import 'package:plnicon_mobile/providers/user_provider.dart';
 import 'package:plnicon_mobile/services/transaksional/kwh_service.dart';
+import 'package:plnicon_mobile/services/user_service.dart';
 import 'package:plnicon_mobile/theme/theme.dart';
 import 'package:plnicon_mobile/widgets/custom_button.dart';
 import 'package:plnicon_mobile/widgets/custom_popup.dart';
@@ -34,7 +38,79 @@ class KWHPage extends StatefulWidget {
 
 class _KWHPageState extends State<KWHPage> {
   @override
+  void initState() {
+    getinit();
+    super.initState();
+  }
+
+  String fotoKwh = "";
+  String fotoVrn = "";
+  String fotoVsn = "";
+  String fotoVtn = "";
+  String fotoVrs = "";
+  String fotoVst = "";
+  String fotoVrt = "";
+  String fotoVng = "";
+  String fotoLoadR = "";
+  String fotoLoadS = "";
+  String fotoLoadT = "";
+  bool loading = true;
+  getinit() async {
+    UserProvider userProvider =
+        Provider.of<UserProvider>(context, listen: false);
+    TransaksionalProvider kwhProvider =
+        Provider.of<TransaksionalProvider>(context, listen: false);
+    ImagesProvider imagesProvider =
+        Provider.of<ImagesProvider>(context, listen: false);
+
+    imagesProvider.clearList();
+    final String? token = await UserService().getTokenPreference();
+
+    if (token == null) {
+    } else {
+      if (await userProvider.getUser(token: token)) {
+        await kwhProvider.getKwh(widget.pm.id, widget.kwh.id);
+        if (kwhProvider.listKwh.isNotEmpty) {
+          for (var element in kwhProvider.listKwh.first.foto) {
+            String url = element.url.replaceAll("http://localhost",
+                "https://jakban.iconpln.co.id/backend-plnicon/public");
+
+            if (element.deskripsi == "Foto KWH") {
+              fotoKwh = url;
+            } else if (element.deskripsi == "Tegangan Phasa R") {
+              fotoVrn = url;
+            } else if (element.deskripsi == "Tegangan Phasa S") {
+              fotoVsn = url;
+            } else if (element.deskripsi == "Tegangan Phasa T") {
+              fotoVtn = url;
+            } else if (element.deskripsi == "Tegangan R-S") {
+              fotoVrs = url;
+            } else if (element.deskripsi == "Tegangan R-T") {
+              fotoVrt = url;
+            } else if (element.deskripsi == "Tegangan S-T") {
+              fotoVst = url;
+            } else if (element.deskripsi == "Tegangan N-G") {
+              fotoVng = url;
+            } else if (element.deskripsi == "Load Phasa R") {
+              fotoLoadR = url;
+            } else if (element.deskripsi == "Load Phasa S") {
+              fotoLoadS = url;
+            } else if (element.deskripsi == "Load Phasa T") {
+              fotoLoadT = url;
+            }
+            imagesProvider.foto[url] = element.deskripsi;
+          }
+        }
+      }
+    }
+    loading = false;
+  }
+
+  @override
   Widget build(BuildContext context) {
+    TransaksionalProvider kwhProvider =
+        Provider.of<TransaksionalProvider>(context);
+
     ImagesProvider imagesProvider = Provider.of<ImagesProvider>(context);
     Future<void> handlePicker() async {
       imagesProvider.setCroppedImageFile = null;
@@ -51,24 +127,45 @@ class _KWHPageState extends State<KWHPage> {
 
     TextEditingController deskripsiController = TextEditingController();
 
-    TextEditingController rnVoltageController = TextEditingController();
+    TextEditingController rsVoltageController = TextEditingController(
+        text: kwhProvider.listKwh.isEmpty ? "" : kwhProvider.listKwh.last.vrs);
 
-    TextEditingController snVoltageController = TextEditingController();
-    TextEditingController ngVoltageController = TextEditingController();
+    TextEditingController rtVoltageController = TextEditingController(
+        text: kwhProvider.listKwh.isEmpty ? "" : kwhProvider.listKwh.last.vrt);
+    TextEditingController ngVoltageController = TextEditingController(
+        text: kwhProvider.listKwh.isEmpty ? "" : kwhProvider.listKwh.last.vng);
 
-    TextEditingController tnVoltageController = TextEditingController();
-    TextEditingController bebanAcRController = TextEditingController();
-    TextEditingController bebanAcSController = TextEditingController();
-    TextEditingController bebanAcTController = TextEditingController();
+    TextEditingController stVoltageController = TextEditingController(
+        text: kwhProvider.listKwh.isEmpty ? "" : kwhProvider.listKwh.last.vst);
+    TextEditingController teganganPhasaRController = TextEditingController(
+        text: kwhProvider.listKwh.isEmpty ? "" : kwhProvider.listKwh.last.vrn);
+    TextEditingController teganganPhasaSController = TextEditingController(
+        text: kwhProvider.listKwh.isEmpty ? "" : kwhProvider.listKwh.last.vsn);
+    TextEditingController teganganPhasaTController = TextEditingController(
+        text: kwhProvider.listKwh.isEmpty ? "" : kwhProvider.listKwh.last.vtn);
 
-    TextEditingController temuanController = TextEditingController();
+    TextEditingController temuanController = TextEditingController(
+        text:
+            kwhProvider.listKwh.isEmpty ? "" : kwhProvider.listKwh.last.temuan);
 
-    TextEditingController rAmpereController = TextEditingController();
+    TextEditingController loadPhasaR = TextEditingController(
+        text: kwhProvider.listKwh.isEmpty
+            ? ""
+            : kwhProvider.listKwh.last.loadPhasaR);
 
-    TextEditingController sAmpereController = TextEditingController();
+    TextEditingController loadPhasaS = TextEditingController(
+        text: kwhProvider.listKwh.isEmpty
+            ? ""
+            : kwhProvider.listKwh.last.loadPhasaS);
 
-    TextEditingController tAmpereController = TextEditingController();
-    TextEditingController rekomendasiController = TextEditingController();
+    TextEditingController loadPhasaT = TextEditingController(
+        text: kwhProvider.listKwh.isEmpty
+            ? ""
+            : kwhProvider.listKwh.last.loadPhasaT);
+    TextEditingController rekomendasiController = TextEditingController(
+        text: kwhProvider.listKwh.isEmpty
+            ? ""
+            : kwhProvider.listKwh.last.rekomendasi);
     PageProvider pageProvider = Provider.of<PageProvider>(context);
     Widget input() {
       return Column(
@@ -77,8 +174,8 @@ class _KWHPageState extends State<KWHPage> {
             children: [
               Expanded(
                 child: TextInput(
-                  controller: rAmpereController,
-                  label: "R (ampere)",
+                  controller: loadPhasaR,
+                  label: "Load R",
                   suffixText: "A",
                 ),
               ),
@@ -87,8 +184,8 @@ class _KWHPageState extends State<KWHPage> {
               ),
               Expanded(
                 child: TextInput(
-                  controller: sAmpereController,
-                  label: "S (ampere)",
+                  controller: loadPhasaS,
+                  label: "Load S",
                   suffixText: "A",
                 ),
               ),
@@ -97,8 +194,8 @@ class _KWHPageState extends State<KWHPage> {
               ),
               Expanded(
                 child: TextInput(
-                  controller: tAmpereController,
-                  label: "T (ampere)",
+                  controller: loadPhasaT,
+                  label: "Load T",
                   suffixText: "A",
                 ),
               ),
@@ -114,8 +211,8 @@ class _KWHPageState extends State<KWHPage> {
             children: [
               Expanded(
                 child: TextInput(
-                  controller: rnVoltageController,
-                  label: "R-N voltage",
+                  controller: rsVoltageController,
+                  label: "Tegangan R-S",
                   suffixText: "V",
                 ),
               ),
@@ -124,8 +221,8 @@ class _KWHPageState extends State<KWHPage> {
               ),
               Expanded(
                 child: TextInput(
-                  controller: snVoltageController,
-                  label: "S-N voltage",
+                  controller: rtVoltageController,
+                  label: "R-T voltage",
                   suffixText: "V",
                 ),
               ),
@@ -138,8 +235,8 @@ class _KWHPageState extends State<KWHPage> {
             children: [
               Expanded(
                 child: TextInput(
-                  controller: tnVoltageController,
-                  label: "T-N voltage",
+                  controller: stVoltageController,
+                  label: "Tegangan S-T",
                   suffixText: "V",
                 ),
               ),
@@ -149,7 +246,7 @@ class _KWHPageState extends State<KWHPage> {
               Expanded(
                 child: TextInput(
                   controller: ngVoltageController,
-                  label: "N-G voltage",
+                  label: "Tegangan N-G",
                   suffixText: "V",
                 ),
               ),
@@ -162,9 +259,9 @@ class _KWHPageState extends State<KWHPage> {
             children: [
               Expanded(
                 child: TextInput(
-                  controller: bebanAcRController,
-                  label: "R Ampere",
-                  suffixText: "A",
+                  controller: teganganPhasaRController,
+                  label: "Tegangan R",
+                  suffixText: "",
                 ),
               ),
               const SizedBox(
@@ -172,9 +269,9 @@ class _KWHPageState extends State<KWHPage> {
               ),
               Expanded(
                 child: TextInput(
-                  controller: bebanAcSController,
-                  label: "S Ampere",
-                  suffixText: "A",
+                  controller: teganganPhasaSController,
+                  label: "Tegangan S",
+                  suffixText: "",
                 ),
               ),
               const SizedBox(
@@ -182,9 +279,9 @@ class _KWHPageState extends State<KWHPage> {
               ),
               Expanded(
                 child: TextInput(
-                  controller: bebanAcTController,
-                  label: "T Ampere",
-                  suffixText: "A",
+                  controller: teganganPhasaTController,
+                  label: "Tegangan T",
+                  suffixText: "",
                 ),
               ),
             ],
@@ -213,31 +310,105 @@ class _KWHPageState extends State<KWHPage> {
             child: CustomButton(
                 text: "Save",
                 onPressed: () async {
-                  KwhNilaiModel kwhInput = await KwhService().postKwh(
-                      kwhId: widget.kwh.id,
-                      pmId: widget.pm.id,
-                      vrn: double.parse(rnVoltageController.text),
-                      vsn: double.parse(snVoltageController.text),
-                      vtn: double.parse(tnVoltageController.text),
-                      vng: double.parse(ngVoltageController.text),
-                      vrs: double.parse(bebanAcSController.text),
-                      vrt: double.parse(bebanAcRController.text),
-                      vst: double.parse(bebanAcTController.text),
-                      loadr: double.parse(rAmpereController.text),
-                      loads: double.parse(sAmpereController.text),
-                      loadt: double.parse(tAmpereController.text),
-                      temuan: temuanController.text,
-                      rekomendasi: rekomendasiController.text);
-                  imagesProvider.foto.forEach((key, value) async {
-                    await KwhService().postFotoKwh(
-                        kwhNilaiId: kwhInput.id,
-                        urlFoto: key,
-                        description: deskripsiController.text);
-                  });
-                  Navigator.pushAndRemoveUntil(
-                      context,
-                      MaterialPageRoute(builder: (context) => const MainPage()),
-                      (route) => false);
+                  if (kwhProvider.listKwh.isEmpty) {
+                    if (fotoKwh.isNotEmpty &&
+                        fotoLoadR.isNotEmpty &&
+                        fotoLoadS.isNotEmpty &&
+                        fotoLoadT.isNotEmpty &&
+                        fotoVng.isNotEmpty &&
+                        fotoVrn.isNotEmpty &&
+                        fotoVrs.isNotEmpty &&
+                        fotoVrt.isNotEmpty &&
+                        fotoVsn.isNotEmpty &&
+                        fotoVst.isNotEmpty &&
+                        fotoVtn.isNotEmpty) {
+                      KwhNilaiModel kwhInput = await KwhService().postKwh(
+                          kwhId: widget.kwh.id,
+                          pmId: widget.pm.id,
+                          loadr: loadPhasaR.text,
+                          loads: loadPhasaS.text,
+                          loadt: loadPhasaT.text,
+                          vrs: rsVoltageController.text,
+                          vrt: rtVoltageController.text,
+                          vst: stVoltageController.text,
+                          vng: ngVoltageController.text,
+                          vrn: teganganPhasaRController.text,
+                          vsn: teganganPhasaSController.text,
+                          vtn: teganganPhasaTController.text,
+                          temuan: temuanController.text,
+                          rekomendasi: rekomendasiController.text);
+                      imagesProvider.foto.forEach((key, value) async {
+                        await KwhService().postFotoKwh(
+                            kwhNilaiId: int.parse(kwhInput.id),
+                            urlFoto: key,
+                            description: deskripsiController.text);
+                        Navigator.pop(context);
+                      });
+                    } else {
+                      ScaffoldMessenger.of(context).removeCurrentSnackBar();
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          backgroundColor: primaryRed,
+                          content: const Text(
+                            'Isi foto dengan lengkap',
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      );
+                    }
+                  } else {
+                    if (fotoKwh.isNotEmpty &&
+                        fotoLoadR.isNotEmpty &&
+                        fotoLoadS.isNotEmpty &&
+                        fotoLoadT.isNotEmpty &&
+                        fotoVng.isNotEmpty &&
+                        fotoVrn.isNotEmpty &&
+                        fotoVrs.isNotEmpty &&
+                        fotoVrt.isNotEmpty &&
+                        fotoVsn.isNotEmpty &&
+                        fotoVst.isNotEmpty &&
+                        fotoVtn.isNotEmpty) {
+                      KwhNilaiModel kwhInput = await KwhService().editKwh(
+                          id: int.parse(kwhProvider.listKwh.last.id),
+                          kwhId: widget.kwh.id,
+                          pmId: widget.pm.id,
+                          loadr: double.parse(loadPhasaR.text),
+                          loads: double.parse(loadPhasaS.text),
+                          loadt: double.parse(loadPhasaT.text),
+                          vrs: double.parse(rsVoltageController.text),
+                          vrt: double.parse(rtVoltageController.text),
+                          vst: double.parse(stVoltageController.text),
+                          vng: double.parse(ngVoltageController.text),
+                          vrn: double.parse(teganganPhasaRController.text),
+                          vsn: double.parse(teganganPhasaSController.text),
+                          vtn: double.parse(teganganPhasaTController.text),
+                          temuan: temuanController.text,
+                          rekomendasi: rekomendasiController.text);
+                      //  if (acProvider.listKwh.isNotEmpty) {
+                      //   for (var item in acProvider.listKwh.last.foto!) {
+                      //     await AcService().deleteImage(imageId: item.id);
+                      //   }
+                      // }
+                      imagesProvider.foto.forEach((key, value) async {
+                        await KwhService().postFotoKwh(
+                            kwhNilaiId: int.parse(kwhInput.id),
+                            urlFoto: key,
+                            description: deskripsiController.text);
+                      });
+                      Navigator.pop(context);
+                    } else {
+                      ScaffoldMessenger.of(context).removeCurrentSnackBar();
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          backgroundColor: primaryRed,
+                          content: const Text(
+                            'Isi foto dengan lengkap',
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      );
+                    }
+                  }
                 },
                 color: primaryBlue,
                 clickColor: clickBlue),
@@ -420,127 +591,1070 @@ class _KWHPageState extends State<KWHPage> {
           {
             return Scaffold(
               backgroundColor: Colors.white,
-              body: ListView(
-                  padding: EdgeInsets.symmetric(
-                      horizontal: defaultMargin, vertical: 20),
-                  children: [
-                    // InputDokumentasi(
-                    //   imagesProvider: imagesProvider,
-                    //   controller: deskripsiController,
-                    //   isKwhPage: true,
-                    //   pageName: "kwh",
-                    // ),
-                    // Visibility(visible: inputCount == 0, child: input())
-                    Column(
+              body: loading
+                  ? const Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [Center(child: CircularProgressIndicator())],
+                    )
+                  : ListView(
+                      padding: EdgeInsets.symmetric(
+                          horizontal: defaultMargin, vertical: 20),
                       children: [
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 4, vertical: 8),
-                          decoration: BoxDecoration(
-                              borderRadius:
-                                  BorderRadius.circular(defaultRadius),
-                              border: Border.all(
-                                width: 2,
-                                color: neutral500,
-                              )),
-                          height: 360,
-                          width: double.infinity,
-                          child: imagesProvider.foto.isEmpty
-                              ? Center(
-                                  child: Text(
-                                    "Foto",
-                                    style: buttonText.copyWith(
-                                        color: textDarkColor),
-                                  ),
-                                )
-                              : ListView(
-                                  scrollDirection: Axis.horizontal,
-                                  children:
-                                      imagesProvider.foto.entries.map((e) {
-                                    return Container(
-                                      width: 240,
-                                      margin: const EdgeInsets.symmetric(
-                                          horizontal: 12),
-                                      child: Column(
-                                        children: [
-                                          GestureDetector(
-                                            onTap: () {
-                                              Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: (_) =>
-                                                        PhotoViewPage(
-                                                            foto: e.key,
-                                                            description:
-                                                                e.value)),
-                                              );
-                                            },
-                                            child: Image.file(
-                                              File(e.key),
-                                              height: 240,
-                                              width: 240,
-                                              fit: BoxFit.cover,
-                                            ),
-                                          ),
-                                          Text(
-                                            e.value,
-                                            style: buttonText.copyWith(
-                                                color: textDarkColor),
-                                            overflow: TextOverflow.clip,
-                                          )
-                                        ],
-                                      ),
-                                    );
-                                  }).toList()),
-                        ),
-                        GestureDetector(
-                          onTap: () async {
-                            await handlePicker();
-                            if (imagesProvider.croppedImageFile != null) {
-                              // ignore: use_build_context_synchronously
-                              showDialog(
-                                context: context,
-                                builder: (context) => CustomPopUp(
-                                  title: "Deskripsi",
-                                  controller: deskripsiController,
-                                  add: () {
-                                    imagesProvider.addDeskripsi(
-                                        path: contentPath,
-                                        deskripsi: deskripsiController.text);
-                                    deskripsiController.clear();
-                                  },
-                                ),
-                              );
-                            }
-                          },
-                          child: Container(
+                          Container(
                             padding: const EdgeInsets.symmetric(
-                                horizontal: 16, vertical: 12),
-                            margin: const EdgeInsets.symmetric(vertical: 20),
+                                horizontal: 4, vertical: 8),
                             decoration: BoxDecoration(
-                                color: primaryBlue,
                                 borderRadius:
-                                    BorderRadius.circular(defaultRadius)),
+                                    BorderRadius.circular(defaultRadius),
+                                border: Border.all(
+                                  width: 2,
+                                  color: neutral500,
+                                )),
+                            height: 360,
                             width: double.infinity,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  "Tambah Foto",
-                                  style: buttonText,
-                                ),
-                                Icon(
-                                  Icons.photo_camera_outlined,
-                                  color: textLightColor,
-                                )
-                              ],
+                            child: imagesProvider.foto.isEmpty
+                                ? Center(
+                                    child: Text(
+                                      "Foto",
+                                      style: buttonText.copyWith(
+                                          color: textDarkColor),
+                                    ),
+                                  )
+                                : ListView(
+                                    scrollDirection: Axis.horizontal,
+                                    children:
+                                        imagesProvider.foto.entries.map((e) {
+                                      return Container(
+                                        width: 240,
+                                        margin: const EdgeInsets.symmetric(
+                                            horizontal: 12),
+                                        child: Column(
+                                          children: [
+                                            GestureDetector(
+                                              onTap: () {
+                                                e.key.contains(
+                                                        "https://jakban.iconpln.co.id")
+                                                    ? showImageViewer(
+                                                        context,
+                                                        Image.network(e.key)
+                                                            .image,
+                                                        swipeDismissible: true,
+                                                        doubleTapZoomable: true)
+                                                    : showImageViewer(
+                                                        context,
+                                                        Image.file(File(e.key))
+                                                            .image,
+                                                        swipeDismissible: true,
+                                                        doubleTapZoomable:
+                                                            true);
+                                              },
+                                              child: Stack(
+                                                children: [
+                                                  e.key.contains(
+                                                          "https://jakban.iconpln.co.id")
+                                                      ? Image.network(
+                                                          e.key,
+                                                          height: 240,
+                                                          width: 240,
+                                                          fit: BoxFit.cover,
+                                                        )
+                                                      : Image.file(
+                                                          File(e.key),
+                                                          height: 240,
+                                                          width: 240,
+                                                          fit: BoxFit.cover,
+                                                        ),
+                                                  Align(
+                                                    alignment:
+                                                        Alignment.topRight,
+                                                    child: GestureDetector(
+                                                      onTap: () {
+                                                        setState(() {
+                                                          imagesProvider
+                                                              .deleteImage(
+                                                                  path: e.key);
+                                                          if (e.value ==
+                                                              "Foto KWH") {
+                                                            fotoKwh = "";
+                                                          } else if (e.value ==
+                                                              "Foto Load R") {
+                                                            fotoLoadR = "";
+                                                          } else if (e.value ==
+                                                              "Foto Load S") {
+                                                            fotoLoadS = "";
+                                                          } else if (e.value ==
+                                                              "Foto Load T") {
+                                                            fotoLoadT = "";
+                                                          } else if (e.value ==
+                                                              "Foto Tegangan N-G") {
+                                                            fotoVng = "";
+                                                          } else if (e.value ==
+                                                              "Foto Tegangan Phasa R") {
+                                                            fotoVrn = "";
+                                                          } else if (e.value ==
+                                                              "Foto Tegangan R-S") {
+                                                            fotoVrs = "";
+                                                          } else if (e.value ==
+                                                              "Foto Tegangan R-T") {
+                                                            fotoVrt = "";
+                                                          } else if (e.value ==
+                                                              "Foto Tegangan Phasa S") {
+                                                            fotoVsn = "";
+                                                          } else if (e.value ==
+                                                              "Foto Tegangan S-T") {
+                                                            fotoVst = "";
+                                                          } else if (e.value ==
+                                                              "Foto Tegangan Phasa T") {
+                                                            fotoVtn = "";
+                                                          }
+                                                        });
+                                                      },
+                                                      child: Container(
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          color: const Color
+                                                              .fromARGB(
+                                                              255, 255, 73, 60),
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(
+                                                                      180),
+                                                        ),
+                                                        child: const Icon(
+                                                          Icons.close,
+                                                          size: 24,
+                                                          color: Colors.white,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                            Text(
+                                              e.value,
+                                              style: buttonText.copyWith(
+                                                  color: textDarkColor),
+                                              overflow: TextOverflow.clip,
+                                            )
+                                          ],
+                                        ),
+                                      );
+                                    }).toList()),
+                          ),
+                          const SizedBox(
+                            height: 28,
+                          ),
+                          Text(
+                            "Foto KWH",
+                            style: buttonText.copyWith(color: textDarkColor),
+                          ),
+                          GestureDetector(
+                            onTap: fotoKwh.isEmpty
+                                ? () async {
+                                    await handlePicker();
+                                    if (imagesProvider.croppedImageFile !=
+                                        null) {
+                                      imagesProvider.addDeskripsi(
+                                          path: contentPath,
+                                          deskripsi: "Foto KWH");
+                                      fotoKwh = contentPath;
+                                      deskripsiController.clear();
+                                    }
+                                  }
+                                : () {},
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 16, vertical: 12),
+                              margin: const EdgeInsets.only(bottom: 20, top: 4),
+                              decoration: BoxDecoration(
+                                  color: primaryBlue,
+                                  borderRadius:
+                                      BorderRadius.circular(defaultRadius)),
+                              width: double.infinity,
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Expanded(
+                                    child: GestureDetector(
+                                      onTap: fotoKwh.isEmpty
+                                          ? () async {
+                                              await handlePicker();
+                                              if (imagesProvider
+                                                      .croppedImageFile !=
+                                                  null) {
+                                                imagesProvider.addDeskripsi(
+                                                    path: contentPath,
+                                                    deskripsi: "Foto KWH");
+                                                fotoKwh = contentPath;
+                                                deskripsiController.clear();
+                                              }
+                                            }
+                                          : () {
+                                              fotoKwh.contains(
+                                                      "https://jakban.iconpln.co.id")
+                                                  ? showImageViewer(
+                                                      context,
+                                                      Image.network(fotoKwh)
+                                                          .image,
+                                                      swipeDismissible: true,
+                                                      doubleTapZoomable: true)
+                                                  : showImageViewer(
+                                                      context,
+                                                      Image.file(File(fotoKwh))
+                                                          .image,
+                                                      swipeDismissible: true,
+                                                      doubleTapZoomable: true);
+                                            },
+                                      child: Text(
+                                        fotoKwh.isEmpty
+                                            ? "Tambah Foto"
+                                            : fotoKwh,
+                                        style: buttonText,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                  ),
+                                  Visibility(
+                                    visible: fotoKwh.isEmpty,
+                                    child: Icon(
+                                      Icons.photo_camera_outlined,
+                                      color: textLightColor,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
-                        ),
-                      ],
-                    ),
-                    input()
-                  ]),
+                          Text(
+                            "Foto Tegangan Phasa R",
+                            style: buttonText.copyWith(color: textDarkColor),
+                          ),
+                          GestureDetector(
+                            onTap: fotoVrn.isEmpty
+                                ? () async {
+                                    await handlePicker();
+                                    if (imagesProvider.croppedImageFile !=
+                                        null) {
+                                      imagesProvider.addDeskripsi(
+                                          path: contentPath,
+                                          deskripsi: "Tegangan Phasa R");
+                                      fotoVrn = contentPath;
+                                      deskripsiController.clear();
+                                    }
+                                  }
+                                : () {},
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 16, vertical: 12),
+                              margin: const EdgeInsets.only(bottom: 20, top: 4),
+                              decoration: BoxDecoration(
+                                  color: primaryBlue,
+                                  borderRadius:
+                                      BorderRadius.circular(defaultRadius)),
+                              width: double.infinity,
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Expanded(
+                                    child: GestureDetector(
+                                      onTap: fotoVrn.isEmpty
+                                          ? () async {
+                                              await handlePicker();
+                                              if (imagesProvider
+                                                      .croppedImageFile !=
+                                                  null) {
+                                                imagesProvider.addDeskripsi(
+                                                    path: contentPath,
+                                                    deskripsi:
+                                                        "Tegangan Phasa R");
+                                                fotoVrn = contentPath;
+                                                deskripsiController.clear();
+                                              }
+                                            }
+                                          : () {
+                                              fotoVrn.contains(
+                                                      "https://jakban.iconpln.co.id")
+                                                  ? showImageViewer(
+                                                      context,
+                                                      Image.network(fotoVrn)
+                                                          .image,
+                                                      swipeDismissible: true,
+                                                      doubleTapZoomable: true)
+                                                  : showImageViewer(
+                                                      context,
+                                                      Image.file(File(fotoVrn))
+                                                          .image,
+                                                      swipeDismissible: true,
+                                                      doubleTapZoomable: true);
+                                            },
+                                      child: Text(
+                                        fotoVrn.isEmpty
+                                            ? "Tambah Foto"
+                                            : fotoVrn,
+                                        style: buttonText,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                  ),
+                                  Visibility(
+                                    visible: fotoVrn.isEmpty,
+                                    child: Icon(
+                                      Icons.photo_camera_outlined,
+                                      color: textLightColor,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          Text(
+                            "Foto Tegangan Phasa S",
+                            style: buttonText.copyWith(color: textDarkColor),
+                          ),
+                          GestureDetector(
+                            onTap: fotoVsn.isEmpty
+                                ? () async {
+                                    await handlePicker();
+                                    if (imagesProvider.croppedImageFile !=
+                                        null) {
+                                      imagesProvider.addDeskripsi(
+                                          path: contentPath,
+                                          deskripsi: "Tegangan Phasa S");
+                                      fotoVsn = contentPath;
+                                      deskripsiController.clear();
+                                    }
+                                  }
+                                : () {},
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 16, vertical: 12),
+                              margin: const EdgeInsets.only(bottom: 20, top: 4),
+                              decoration: BoxDecoration(
+                                  color: primaryBlue,
+                                  borderRadius:
+                                      BorderRadius.circular(defaultRadius)),
+                              width: double.infinity,
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Expanded(
+                                    child: GestureDetector(
+                                      onTap: fotoVsn.isEmpty
+                                          ? () async {
+                                              await handlePicker();
+                                              if (imagesProvider
+                                                      .croppedImageFile !=
+                                                  null) {
+                                                imagesProvider.addDeskripsi(
+                                                    path: contentPath,
+                                                    deskripsi:
+                                                        "Tegangan Phasa S");
+                                                fotoVsn = contentPath;
+                                                deskripsiController.clear();
+                                              }
+                                            }
+                                          : () {
+                                              fotoVsn.contains(
+                                                      "https://jakban.iconpln.co.id")
+                                                  ? showImageViewer(
+                                                      context,
+                                                      Image.network(fotoVsn)
+                                                          .image,
+                                                      swipeDismissible: true,
+                                                      doubleTapZoomable: true)
+                                                  : showImageViewer(
+                                                      context,
+                                                      Image.file(File(fotoVsn))
+                                                          .image,
+                                                      swipeDismissible: true,
+                                                      doubleTapZoomable: true);
+                                            },
+                                      child: Text(
+                                        fotoVsn.isEmpty
+                                            ? "Tambah Foto"
+                                            : fotoVsn,
+                                        style: buttonText,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                  ),
+                                  Visibility(
+                                    visible: fotoVsn.isEmpty,
+                                    child: Icon(
+                                      Icons.photo_camera_outlined,
+                                      color: textLightColor,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          Text(
+                            "Foto Tegangan Phasa T",
+                            style: buttonText.copyWith(color: textDarkColor),
+                          ),
+                          GestureDetector(
+                            onTap: fotoVst.isEmpty
+                                ? () async {
+                                    await handlePicker();
+                                    if (imagesProvider.croppedImageFile !=
+                                        null) {
+                                      imagesProvider.addDeskripsi(
+                                          path: contentPath,
+                                          deskripsi: "Tegangan Phasa T");
+                                      fotoVst = contentPath;
+                                      deskripsiController.clear();
+                                    }
+                                  }
+                                : () {},
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 16, vertical: 12),
+                              margin: const EdgeInsets.only(bottom: 20, top: 4),
+                              decoration: BoxDecoration(
+                                  color: primaryBlue,
+                                  borderRadius:
+                                      BorderRadius.circular(defaultRadius)),
+                              width: double.infinity,
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Expanded(
+                                    child: GestureDetector(
+                                      onTap: fotoVst.isEmpty
+                                          ? () async {
+                                              await handlePicker();
+                                              if (imagesProvider
+                                                      .croppedImageFile !=
+                                                  null) {
+                                                imagesProvider.addDeskripsi(
+                                                    path: contentPath,
+                                                    deskripsi:
+                                                        "Tegangan Phasa T");
+                                                fotoVst = contentPath;
+                                                deskripsiController.clear();
+                                              }
+                                            }
+                                          : () {
+                                              fotoVst.contains(
+                                                      "https://jakban.iconpln.co.id")
+                                                  ? showImageViewer(
+                                                      context,
+                                                      Image.network(fotoVst)
+                                                          .image,
+                                                      swipeDismissible: true,
+                                                      doubleTapZoomable: true)
+                                                  : showImageViewer(
+                                                      context,
+                                                      Image.file(File(fotoVst))
+                                                          .image,
+                                                      swipeDismissible: true,
+                                                      doubleTapZoomable: true);
+                                            },
+                                      child: Text(
+                                        fotoVst.isEmpty
+                                            ? "Tambah Foto"
+                                            : fotoVst,
+                                        style: buttonText,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                  ),
+                                  Visibility(
+                                    visible: fotoVst.isEmpty,
+                                    child: Icon(
+                                      Icons.photo_camera_outlined,
+                                      color: textLightColor,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          Text(
+                            "Foto Tegangan R-S",
+                            style: buttonText.copyWith(color: textDarkColor),
+                          ),
+                          GestureDetector(
+                            onTap: fotoVrs.isEmpty
+                                ? () async {
+                                    await handlePicker();
+                                    if (imagesProvider.croppedImageFile !=
+                                        null) {
+                                      imagesProvider.addDeskripsi(
+                                          path: contentPath,
+                                          deskripsi: "Tegangan R-S");
+                                      fotoVrs = contentPath;
+                                      deskripsiController.clear();
+                                    }
+                                  }
+                                : () {},
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 16, vertical: 12),
+                              margin: const EdgeInsets.only(bottom: 20, top: 4),
+                              decoration: BoxDecoration(
+                                  color: primaryBlue,
+                                  borderRadius:
+                                      BorderRadius.circular(defaultRadius)),
+                              width: double.infinity,
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Expanded(
+                                    child: GestureDetector(
+                                      onTap: fotoVrs.isEmpty
+                                          ? () async {
+                                              await handlePicker();
+                                              if (imagesProvider
+                                                      .croppedImageFile !=
+                                                  null) {
+                                                imagesProvider.addDeskripsi(
+                                                    path: contentPath,
+                                                    deskripsi: "Tegangan R-S");
+                                                fotoVrs = contentPath;
+                                                deskripsiController.clear();
+                                              }
+                                            }
+                                          : () {
+                                              fotoVrs.contains(
+                                                      "https://jakban.iconpln.co.id")
+                                                  ? showImageViewer(
+                                                      context,
+                                                      Image.network(fotoVrs)
+                                                          .image,
+                                                      swipeDismissible: true,
+                                                      doubleTapZoomable: true)
+                                                  : showImageViewer(
+                                                      context,
+                                                      Image.file(File(fotoVrs))
+                                                          .image,
+                                                      swipeDismissible: true,
+                                                      doubleTapZoomable: true);
+                                            },
+                                      child: Text(
+                                        fotoVrs.isEmpty
+                                            ? "Tambah Foto"
+                                            : fotoVrs,
+                                        style: buttonText,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                  ),
+                                  Visibility(
+                                    visible: fotoVrs.isEmpty,
+                                    child: Icon(
+                                      Icons.photo_camera_outlined,
+                                      color: textLightColor,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          Text(
+                            "Foto Tegangan R-T",
+                            style: buttonText.copyWith(color: textDarkColor),
+                          ),
+                          GestureDetector(
+                            onTap: fotoVrt.isEmpty
+                                ? () async {
+                                    await handlePicker();
+                                    if (imagesProvider.croppedImageFile !=
+                                        null) {
+                                      imagesProvider.addDeskripsi(
+                                          path: contentPath,
+                                          deskripsi: "Tegangan R-T");
+                                      fotoVrt = contentPath;
+                                      deskripsiController.clear();
+                                    }
+                                  }
+                                : () {},
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 16, vertical: 12),
+                              margin: const EdgeInsets.only(bottom: 20, top: 4),
+                              decoration: BoxDecoration(
+                                  color: primaryBlue,
+                                  borderRadius:
+                                      BorderRadius.circular(defaultRadius)),
+                              width: double.infinity,
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Expanded(
+                                    child: GestureDetector(
+                                      onTap: fotoVrt.isEmpty
+                                          ? () async {
+                                              await handlePicker();
+                                              if (imagesProvider
+                                                      .croppedImageFile !=
+                                                  null) {
+                                                imagesProvider.addDeskripsi(
+                                                    path: contentPath,
+                                                    deskripsi: "Tegangan R-T");
+                                                fotoVrt = contentPath;
+                                                deskripsiController.clear();
+                                              }
+                                            }
+                                          : () {
+                                              fotoVrt.contains(
+                                                      "https://jakban.iconpln.co.id")
+                                                  ? showImageViewer(
+                                                      context,
+                                                      Image.network(fotoVrt)
+                                                          .image,
+                                                      swipeDismissible: true,
+                                                      doubleTapZoomable: true)
+                                                  : showImageViewer(
+                                                      context,
+                                                      Image.file(File(fotoVrt))
+                                                          .image,
+                                                      swipeDismissible: true,
+                                                      doubleTapZoomable: true);
+                                            },
+                                      child: Text(
+                                        fotoVrt.isEmpty
+                                            ? "Tambah Foto"
+                                            : fotoVrt,
+                                        style: buttonText,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                  ),
+                                  Visibility(
+                                    visible: fotoVrt.isEmpty,
+                                    child: Icon(
+                                      Icons.photo_camera_outlined,
+                                      color: textLightColor,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          Text(
+                            "Foto Tegangan S-T",
+                            style: buttonText.copyWith(color: textDarkColor),
+                          ),
+                          GestureDetector(
+                            onTap: fotoVst.isEmpty
+                                ? () async {
+                                    await handlePicker();
+                                    if (imagesProvider.croppedImageFile !=
+                                        null) {
+                                      imagesProvider.addDeskripsi(
+                                          path: contentPath,
+                                          deskripsi: "Tegangan S-T");
+                                      fotoVst = contentPath;
+                                      deskripsiController.clear();
+                                    }
+                                  }
+                                : () {},
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 16, vertical: 12),
+                              margin: const EdgeInsets.only(bottom: 20, top: 4),
+                              decoration: BoxDecoration(
+                                  color: primaryBlue,
+                                  borderRadius:
+                                      BorderRadius.circular(defaultRadius)),
+                              width: double.infinity,
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Expanded(
+                                    child: GestureDetector(
+                                      onTap: fotoVst.isEmpty
+                                          ? () async {
+                                              await handlePicker();
+                                              if (imagesProvider
+                                                      .croppedImageFile !=
+                                                  null) {
+                                                imagesProvider.addDeskripsi(
+                                                    path: contentPath,
+                                                    deskripsi: "Tegangan S-T");
+                                                fotoVst = contentPath;
+                                                deskripsiController.clear();
+                                              }
+                                            }
+                                          : () {
+                                              fotoVst.contains(
+                                                      "https://jakban.iconpln.co.id")
+                                                  ? showImageViewer(
+                                                      context,
+                                                      Image.network(fotoVst)
+                                                          .image,
+                                                      swipeDismissible: true,
+                                                      doubleTapZoomable: true)
+                                                  : showImageViewer(
+                                                      context,
+                                                      Image.file(File(fotoVst))
+                                                          .image,
+                                                      swipeDismissible: true,
+                                                      doubleTapZoomable: true);
+                                            },
+                                      child: Text(
+                                        fotoVst.isEmpty
+                                            ? "Tambah Foto"
+                                            : fotoVst,
+                                        style: buttonText,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                  ),
+                                  Visibility(
+                                    visible: fotoVst.isEmpty,
+                                    child: Icon(
+                                      Icons.photo_camera_outlined,
+                                      color: textLightColor,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          Text(
+                            "Foto Tegangan N-G",
+                            style: buttonText.copyWith(color: textDarkColor),
+                          ),
+                          GestureDetector(
+                            onTap: fotoVng.isEmpty
+                                ? () async {
+                                    await handlePicker();
+                                    if (imagesProvider.croppedImageFile !=
+                                        null) {
+                                      imagesProvider.addDeskripsi(
+                                          path: contentPath,
+                                          deskripsi: "Tegangan N-G");
+                                      fotoVng = contentPath;
+                                      deskripsiController.clear();
+                                    }
+                                  }
+                                : () {},
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 16, vertical: 12),
+                              margin: const EdgeInsets.only(bottom: 20, top: 4),
+                              decoration: BoxDecoration(
+                                  color: primaryBlue,
+                                  borderRadius:
+                                      BorderRadius.circular(defaultRadius)),
+                              width: double.infinity,
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Expanded(
+                                    child: GestureDetector(
+                                      onTap: fotoVng.isEmpty
+                                          ? () async {
+                                              await handlePicker();
+                                              if (imagesProvider
+                                                      .croppedImageFile !=
+                                                  null) {
+                                                imagesProvider.addDeskripsi(
+                                                    path: contentPath,
+                                                    deskripsi: "Tegangan N-G");
+                                                fotoVng = contentPath;
+                                                deskripsiController.clear();
+                                              }
+                                            }
+                                          : () {
+                                              fotoVng.contains(
+                                                      "https://jakban.iconpln.co.id")
+                                                  ? showImageViewer(
+                                                      context,
+                                                      Image.network(fotoVng)
+                                                          .image,
+                                                      swipeDismissible: true,
+                                                      doubleTapZoomable: true)
+                                                  : showImageViewer(
+                                                      context,
+                                                      Image.file(File(fotoVng))
+                                                          .image,
+                                                      swipeDismissible: true,
+                                                      doubleTapZoomable: true);
+                                            },
+                                      child: Text(
+                                        fotoVng.isEmpty
+                                            ? "Tambah Foto"
+                                            : fotoVng,
+                                        style: buttonText,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                  ),
+                                  Visibility(
+                                    visible: fotoVng.isEmpty,
+                                    child: Icon(
+                                      Icons.photo_camera_outlined,
+                                      color: textLightColor,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          Text(
+                            "Foto Load Phasa R",
+                            style: buttonText.copyWith(color: textDarkColor),
+                          ),
+                          GestureDetector(
+                            onTap: fotoLoadR.isEmpty
+                                ? () async {
+                                    await handlePicker();
+                                    if (imagesProvider.croppedImageFile !=
+                                        null) {
+                                      imagesProvider.addDeskripsi(
+                                          path: contentPath,
+                                          deskripsi: "Load Phasa R");
+                                      fotoLoadR = contentPath;
+                                      deskripsiController.clear();
+                                    }
+                                  }
+                                : () {},
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 16, vertical: 12),
+                              margin: const EdgeInsets.only(bottom: 20, top: 4),
+                              decoration: BoxDecoration(
+                                  color: primaryBlue,
+                                  borderRadius:
+                                      BorderRadius.circular(defaultRadius)),
+                              width: double.infinity,
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Expanded(
+                                    child: GestureDetector(
+                                      onTap: fotoLoadR.isEmpty
+                                          ? () async {
+                                              await handlePicker();
+                                              if (imagesProvider
+                                                      .croppedImageFile !=
+                                                  null) {
+                                                imagesProvider.addDeskripsi(
+                                                    path: contentPath,
+                                                    deskripsi: "Load Phasa R");
+                                                fotoLoadR = contentPath;
+                                                deskripsiController.clear();
+                                              }
+                                            }
+                                          : () {
+                                              fotoLoadR.contains(
+                                                      "https://jakban.iconpln.co.id")
+                                                  ? showImageViewer(
+                                                      context,
+                                                      Image.network(fotoLoadR)
+                                                          .image,
+                                                      swipeDismissible: true,
+                                                      doubleTapZoomable: true)
+                                                  : showImageViewer(
+                                                      context,
+                                                      Image.file(
+                                                              File(fotoLoadR))
+                                                          .image,
+                                                      swipeDismissible: true,
+                                                      doubleTapZoomable: true);
+                                            },
+                                      child: Text(
+                                        fotoLoadR.isEmpty
+                                            ? "Tambah Foto"
+                                            : fotoLoadR,
+                                        style: buttonText,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                  ),
+                                  Visibility(
+                                    visible: fotoLoadR.isEmpty,
+                                    child: Icon(
+                                      Icons.photo_camera_outlined,
+                                      color: textLightColor,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          Text(
+                            "Foto Load Phasa S",
+                            style: buttonText.copyWith(color: textDarkColor),
+                          ),
+                          GestureDetector(
+                            onTap: fotoLoadS.isEmpty
+                                ? () async {
+                                    await handlePicker();
+                                    if (imagesProvider.croppedImageFile !=
+                                        null) {
+                                      imagesProvider.addDeskripsi(
+                                          path: contentPath,
+                                          deskripsi: "Load Phasa S");
+                                      fotoLoadS = contentPath;
+                                      deskripsiController.clear();
+                                    }
+                                  }
+                                : () {},
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 16, vertical: 12),
+                              margin: const EdgeInsets.only(bottom: 20, top: 4),
+                              decoration: BoxDecoration(
+                                  color: primaryBlue,
+                                  borderRadius:
+                                      BorderRadius.circular(defaultRadius)),
+                              width: double.infinity,
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Expanded(
+                                    child: GestureDetector(
+                                      onTap: fotoLoadS.isEmpty
+                                          ? () async {
+                                              await handlePicker();
+                                              if (imagesProvider
+                                                      .croppedImageFile !=
+                                                  null) {
+                                                imagesProvider.addDeskripsi(
+                                                    path: contentPath,
+                                                    deskripsi: "Load Phasa S");
+                                                fotoLoadS = contentPath;
+                                                deskripsiController.clear();
+                                              }
+                                            }
+                                          : () {
+                                              fotoLoadS.contains(
+                                                      "https://jakban.iconpln.co.id")
+                                                  ? showImageViewer(
+                                                      context,
+                                                      Image.network(fotoLoadS)
+                                                          .image,
+                                                      swipeDismissible: true,
+                                                      doubleTapZoomable: true)
+                                                  : showImageViewer(
+                                                      context,
+                                                      Image.file(
+                                                              File(fotoLoadS))
+                                                          .image,
+                                                      swipeDismissible: true,
+                                                      doubleTapZoomable: true);
+                                            },
+                                      child: Text(
+                                        fotoLoadS.isEmpty
+                                            ? "Tambah Foto"
+                                            : fotoLoadS,
+                                        style: buttonText,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                  ),
+                                  Visibility(
+                                    visible: fotoLoadS.isEmpty,
+                                    child: Icon(
+                                      Icons.photo_camera_outlined,
+                                      color: textLightColor,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          Text(
+                            "Foto Load Phasa T",
+                            style: buttonText.copyWith(color: textDarkColor),
+                          ),
+                          GestureDetector(
+                            onTap: fotoLoadT.isEmpty
+                                ? () async {
+                                    await handlePicker();
+                                    if (imagesProvider.croppedImageFile !=
+                                        null) {
+                                      imagesProvider.addDeskripsi(
+                                          path: contentPath,
+                                          deskripsi: "Load Phasa T");
+                                      fotoLoadT = contentPath;
+                                      deskripsiController.clear();
+                                    }
+                                  }
+                                : () {},
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 16, vertical: 12),
+                              margin: const EdgeInsets.only(bottom: 20, top: 4),
+                              decoration: BoxDecoration(
+                                  color: primaryBlue,
+                                  borderRadius:
+                                      BorderRadius.circular(defaultRadius)),
+                              width: double.infinity,
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Expanded(
+                                    child: GestureDetector(
+                                      onTap: fotoLoadT.isEmpty
+                                          ? () async {
+                                              await handlePicker();
+                                              if (imagesProvider
+                                                      .croppedImageFile !=
+                                                  null) {
+                                                imagesProvider.addDeskripsi(
+                                                    path: contentPath,
+                                                    deskripsi: "Load Phasa T");
+                                                fotoLoadT = contentPath;
+                                                deskripsiController.clear();
+                                              }
+                                            }
+                                          : () {
+                                              fotoLoadT.contains(
+                                                      "https://jakban.iconpln.co.id")
+                                                  ? showImageViewer(
+                                                      context,
+                                                      Image.network(fotoLoadT)
+                                                          .image,
+                                                      swipeDismissible: true,
+                                                      doubleTapZoomable: true)
+                                                  : showImageViewer(
+                                                      context,
+                                                      Image.file(
+                                                              File(fotoLoadT))
+                                                          .image,
+                                                      swipeDismissible: true,
+                                                      doubleTapZoomable: true);
+                                            },
+                                      child: Text(
+                                        fotoLoadT.isEmpty
+                                            ? "Tambah Foto"
+                                            : fotoLoadT,
+                                        style: buttonText,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                  ),
+                                  Visibility(
+                                    visible: fotoLoadT.isEmpty,
+                                    child: Icon(
+                                      Icons.photo_camera_outlined,
+                                      color: textLightColor,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          input()
+                        ]),
             );
           }
         default:
