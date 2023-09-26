@@ -29,9 +29,9 @@ class RectNilaiModel extends Equatable {
 
   factory RectNilaiModel.fromJson(Map<String, dynamic> json) {
     return RectNilaiModel(
-      id: json['id'],
-      rectId: json['rect_id'],
-      pmId: json['pm_id'],
+      id: json['id'].toString(),
+      rectId: json['rect_id'].toString(),
+      pmId: json['pm_id'].toString(),
       loadr: (json['loadr'] ?? 0.0).toString(),
       loads: (json['loads'] ?? 0.0).toString(),
       loadt: (json['loadt'] ?? 0.0).toString(),

@@ -24,7 +24,7 @@ class GensetNilaiModel extends Equatable {
   final String kartuGantungUrl;
   final DateTime createdAt;
   final DateTime updatedAt;
-  final List<FotoModel> foto;
+  final List<FotoModel>? foto;
 
   const GensetNilaiModel({
     required this.id,
@@ -74,9 +74,11 @@ class GensetNilaiModel extends Equatable {
       kartuGantungUrl: json['kartu_gantung_url'] ?? "",
       createdAt: DateTime.parse(json['created_at']),
       updatedAt: DateTime.parse(json['created_at']),
-      foto: List<FotoModel>.from(
-        json['foto'].map((x) => FotoModel.fromJson(x)),
-      ),
+      foto: json['foto'] != null
+          ? List<FotoModel>.from(
+              json['foto'].map((x) => FotoModel.fromJson(x)),
+            )
+          : [],
     );
   }
 

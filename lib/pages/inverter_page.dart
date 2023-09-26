@@ -3,13 +3,11 @@ import 'package:plnicon_mobile/models/master/inverter_master_model.dart';
 import 'package:plnicon_mobile/models/nilai/inverter_nilai_model.dart';
 import 'package:plnicon_mobile/models/pm_model.dart';
 import 'package:plnicon_mobile/pages/edit_master/edit_inverter_page.dart';
-import 'package:plnicon_mobile/pages/main_page.dart';
 import 'package:plnicon_mobile/providers/images_provider.dart';
 import 'package:plnicon_mobile/providers/page_provider.dart';
 import 'package:plnicon_mobile/providers/pop_provider.dart';
 import 'package:plnicon_mobile/providers/transaksional_provider.dart';
 import 'package:plnicon_mobile/providers/user_provider.dart';
-import 'package:plnicon_mobile/services/master/inverter_master_service.dart';
 import 'package:plnicon_mobile/services/transaksional/inverter_service.dart';
 import 'package:plnicon_mobile/services/user_service.dart';
 import 'package:plnicon_mobile/theme/theme.dart';
@@ -39,6 +37,9 @@ class _InverterPageState extends State<InverterPage> {
     super.initState();
   }
 
+  String fotoAcOutdoor = "";
+  String fotoAcSuhu = "";
+  String fotoAcIndoor = "";
   bool loading = true;
   String hasilUji = "";
   getinit() async {
@@ -57,11 +58,27 @@ class _InverterPageState extends State<InverterPage> {
         hasilUji = inverterProvider.listInverter.isEmpty
             ? ""
             : inverterProvider.listInverter.first.hasilUji;
+        if (inverterProvider.listInverter.isNotEmpty) {
+          for (var element in inverterProvider.listInverter.first.foto!) {
+            String url = element.url.replaceAll("http://localhost",
+                "https://jakban.iconpln.co.id/backend-plnicon/public");
+
+            if (element.deskripsi == "AC Outdoor") {
+              fotoAcOutdoor = url;
+            } else if (element.deskripsi == "AC Indoor") {
+              fotoAcIndoor = url;
+            } else if (element.deskripsi == "Suhu AC") {
+              fotoAcSuhu = url;
+            }
+            imagesProvider.foto[url] = element.deskripsi;
+          }
+        }
       }
     }
     loading = false;
   }
 
+  @override
   Widget build(BuildContext context) {
     TransaksionalProvider inverterProvider =
         Provider.of<TransaksionalProvider>(context);

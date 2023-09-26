@@ -1,18 +1,19 @@
 import 'dart:io';
 
+import 'package:easy_image_viewer/easy_image_viewer.dart';
 import 'package:flutter/material.dart';
 import 'package:plnicon_mobile/models/nilai/rect_nilai_model.dart';
 import 'package:plnicon_mobile/models/pm_model.dart';
 import 'package:plnicon_mobile/pages/edit_master/edit_recti_page.dart';
 import 'package:plnicon_mobile/providers/images_provider.dart';
 import 'package:plnicon_mobile/providers/page_provider.dart';
-import 'package:plnicon_mobile/providers/pop_provider.dart';
 import 'package:plnicon_mobile/providers/transaksional_provider.dart';
 import 'package:plnicon_mobile/providers/user_provider.dart';
 import 'package:plnicon_mobile/services/transaksional/rect_service.dart';
 import 'package:plnicon_mobile/services/user_service.dart';
 import 'package:plnicon_mobile/theme/theme.dart';
 import 'package:plnicon_mobile/widgets/custom_button.dart';
+import 'package:plnicon_mobile/widgets/custom_popup.dart';
 import 'package:plnicon_mobile/widgets/input_dokumentasi.dart';
 import 'package:plnicon_mobile/widgets/text_input.dart';
 import 'package:provider/provider.dart';
@@ -57,6 +58,7 @@ class _RectiPageState extends State<RectiPage> {
       if (await userProvider.getUser(token: token)) {
         await rectProvider.getRect(widget.pm.id, widget.rect.id);
         if (rectProvider.listRect.isNotEmpty) {
+          print(rectProvider.listRect.first.foto.length);
           for (var element in rectProvider.listRect.first.foto) {
             String url = element.url.replaceAll("http://localhost",
                 "https://jakban.iconpln.co.id/backend-plnicon/public");
@@ -67,7 +69,7 @@ class _RectiPageState extends State<RectiPage> {
               fotoLoadR = url;
             } else if (element.deskripsi == "Load S") {
               fotoLoadS = url;
-            } else if (element.deskripsi == "Load t") {
+            } else if (element.deskripsi == "Load T") {
               fotoLoadT = url;
             }
             imagesProvider.foto[url] = element.deskripsi;
@@ -75,6 +77,7 @@ class _RectiPageState extends State<RectiPage> {
         }
       }
     }
+    print(imagesProvider.foto);
     loading = false;
   }
 
@@ -230,10 +233,463 @@ class _RectiPageState extends State<RectiPage> {
                 padding: EdgeInsets.symmetric(
                     horizontal: defaultMargin, vertical: 20),
                 children: [
-                  InputDokumentasi(
-                      imagesProvider: imagesProvider,
-                      controller: deskripsiController,
-                      pageName: "rectifier"),
+                  Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(defaultRadius),
+                        border: Border.all(
+                          width: 2,
+                          color: neutral500,
+                        )),
+                    height: 360,
+                    width: double.infinity,
+                    child: imagesProvider.foto.isEmpty
+                        ? Center(
+                            child: Text(
+                              "Foto",
+                              style: buttonText.copyWith(color: textDarkColor),
+                            ),
+                          )
+                        : ListView(
+                            scrollDirection: Axis.horizontal,
+                            children: imagesProvider.foto.entries.map((e) {
+                              return Container(
+                                width: 240,
+                                margin:
+                                    const EdgeInsets.symmetric(horizontal: 12),
+                                child: Column(
+                                  children: [
+                                    GestureDetector(
+                                      onTap: () {
+                                        e.key.contains(
+                                                "https://jakban.iconpln.co.id")
+                                            ? showImageViewer(context,
+                                                Image.network(e.key).image,
+                                                swipeDismissible: true,
+                                                doubleTapZoomable: true)
+                                            : showImageViewer(context,
+                                                Image.file(File(e.key)).image,
+                                                swipeDismissible: true,
+                                                doubleTapZoomable: true);
+                                      },
+                                      child: Stack(
+                                        children: [
+                                          e.key.contains(
+                                                  "https://jakban.iconpln.co.id")
+                                              ? Image.network(
+                                                  e.key,
+                                                  height: 240,
+                                                  width: 240,
+                                                  fit: BoxFit.cover,
+                                                )
+                                              : Image.file(
+                                                  File(e.key),
+                                                  height: 240,
+                                                  width: 240,
+                                                  fit: BoxFit.cover,
+                                                ),
+                                          Align(
+                                            alignment: Alignment.topRight,
+                                            child: GestureDetector(
+                                              onTap: () {
+                                                setState(() {
+                                                  imagesProvider.deleteImage(
+                                                      path: e.key);
+                                                  if (e.value == "Foto Fisik") {
+                                                    fotoFisik = "";
+                                                  } else if (e.value ==
+                                                      "Load R") {
+                                                    fotoLoadR = "";
+                                                  } else if (e.value ==
+                                                      "Load S") {
+                                                    fotoLoadS = "";
+                                                  } else if (e.value ==
+                                                      "Load T") {
+                                                    fotoLoadT = "";
+                                                  }
+                                                });
+                                              },
+                                              child: Container(
+                                                decoration: BoxDecoration(
+                                                  color: const Color.fromARGB(
+                                                      255, 255, 73, 60),
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          180),
+                                                ),
+                                                child: const Icon(
+                                                  Icons.close,
+                                                  size: 24,
+                                                  color: Colors.white,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    Text(
+                                      e.value,
+                                      style: buttonText.copyWith(
+                                          color: textDarkColor),
+                                      overflow: TextOverflow.clip,
+                                    )
+                                  ],
+                                ),
+                              );
+                            }).toList()),
+                  ),
+                  const SizedBox(
+                    height: 28,
+                  ),
+                  Text(
+                    "Foto Fisik",
+                    style: buttonText.copyWith(color: textDarkColor),
+                  ),
+                  GestureDetector(
+                    onTap: fotoFisik.isEmpty
+                        ? () async {
+                            await handlePicker();
+                            if (imagesProvider.croppedImageFile != null) {
+                              imagesProvider.addDeskripsi(
+                                  path: contentPath, deskripsi: "Foto Fisik");
+                              fotoFisik = contentPath;
+                              deskripsiController.clear();
+                            }
+                          }
+                        : () {},
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 12),
+                      margin: const EdgeInsets.only(bottom: 20, top: 4),
+                      decoration: BoxDecoration(
+                          color: primaryBlue,
+                          borderRadius: BorderRadius.circular(defaultRadius)),
+                      width: double.infinity,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: GestureDetector(
+                              onTap: fotoFisik.isEmpty
+                                  ? () async {
+                                      await handlePicker();
+                                      if (imagesProvider.croppedImageFile !=
+                                          null) {
+                                        imagesProvider.addDeskripsi(
+                                            path: contentPath,
+                                            deskripsi: "Foto Fisik");
+                                        fotoFisik = contentPath;
+                                        deskripsiController.clear();
+                                      }
+                                    }
+                                  : () {
+                                      fotoFisik.contains(
+                                              "https://jakban.iconpln.co.id")
+                                          ? showImageViewer(context,
+                                              Image.network(fotoFisik).image,
+                                              swipeDismissible: true,
+                                              doubleTapZoomable: true)
+                                          : showImageViewer(context,
+                                              Image.file(File(fotoFisik)).image,
+                                              swipeDismissible: true,
+                                              doubleTapZoomable: true);
+                                    },
+                              child: Text(
+                                fotoFisik.isEmpty ? "Tambah Foto" : fotoFisik,
+                                style: buttonText,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ),
+                          Visibility(
+                            visible: fotoFisik.isEmpty,
+                            child: Icon(
+                              Icons.photo_camera_outlined,
+                              color: textLightColor,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  Text(
+                    "Foto Load R",
+                    style: buttonText.copyWith(color: textDarkColor),
+                  ),
+                  GestureDetector(
+                    onTap: fotoLoadR.isEmpty
+                        ? () async {
+                            await handlePicker();
+                            if (imagesProvider.croppedImageFile != null) {
+                              imagesProvider.addDeskripsi(
+                                  path: contentPath, deskripsi: "Load R");
+                              fotoLoadR = contentPath;
+                              deskripsiController.clear();
+                            }
+                          }
+                        : () {},
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 12),
+                      margin: const EdgeInsets.only(bottom: 20, top: 4),
+                      decoration: BoxDecoration(
+                          color: primaryBlue,
+                          borderRadius: BorderRadius.circular(defaultRadius)),
+                      width: double.infinity,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: GestureDetector(
+                              onTap: fotoLoadR.isEmpty
+                                  ? () async {
+                                      await handlePicker();
+                                      if (imagesProvider.croppedImageFile !=
+                                          null) {
+                                        imagesProvider.addDeskripsi(
+                                            path: contentPath,
+                                            deskripsi: "Load R");
+                                        fotoLoadR = contentPath;
+                                        deskripsiController.clear();
+                                      }
+                                    }
+                                  : () {
+                                      fotoLoadR.contains(
+                                              "https://jakban.iconpln.co.id")
+                                          ? showImageViewer(context,
+                                              Image.network(fotoLoadR).image,
+                                              swipeDismissible: true,
+                                              doubleTapZoomable: true)
+                                          : showImageViewer(context,
+                                              Image.file(File(fotoLoadR)).image,
+                                              swipeDismissible: true,
+                                              doubleTapZoomable: true);
+                                    },
+                              child: Text(
+                                fotoLoadR.isEmpty ? "Tambah Foto" : fotoLoadR,
+                                style: buttonText,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ),
+                          Visibility(
+                            visible: fotoLoadR.isEmpty,
+                            child: Icon(
+                              Icons.photo_camera_outlined,
+                              color: textLightColor,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  Visibility(
+                    visible: phasa == 3,
+                    child: Text(
+                      "Foto Load S",
+                      style: buttonText.copyWith(color: textDarkColor),
+                    ),
+                  ),
+                  Visibility(
+                    visible: phasa == 3,
+                    child: GestureDetector(
+                      onTap: fotoLoadS.isEmpty
+                          ? () async {
+                              await handlePicker();
+                              if (imagesProvider.croppedImageFile != null) {
+                                imagesProvider.addDeskripsi(
+                                    path: contentPath, deskripsi: "Load S");
+                                fotoLoadS = contentPath;
+                                deskripsiController.clear();
+                              }
+                            }
+                          : () {},
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 12),
+                        margin: const EdgeInsets.only(bottom: 20, top: 4),
+                        decoration: BoxDecoration(
+                            color: primaryBlue,
+                            borderRadius: BorderRadius.circular(defaultRadius)),
+                        width: double.infinity,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Expanded(
+                              child: GestureDetector(
+                                onTap: fotoLoadS.isEmpty
+                                    ? () async {
+                                        await handlePicker();
+                                        if (imagesProvider.croppedImageFile !=
+                                            null) {
+                                          imagesProvider.addDeskripsi(
+                                              path: contentPath,
+                                              deskripsi: "Load S");
+                                          fotoLoadS = contentPath;
+                                          deskripsiController.clear();
+                                        }
+                                      }
+                                    : () {
+                                        fotoLoadS.contains(
+                                                "https://jakban.iconpln.co.id")
+                                            ? showImageViewer(context,
+                                                Image.network(fotoLoadS).image,
+                                                swipeDismissible: true,
+                                                doubleTapZoomable: true)
+                                            : showImageViewer(
+                                                context,
+                                                Image.file(File(fotoLoadS))
+                                                    .image,
+                                                swipeDismissible: true,
+                                                doubleTapZoomable: true);
+                                      },
+                                child: Text(
+                                  fotoLoadS.isEmpty ? "Tambah Foto" : fotoLoadS,
+                                  style: buttonText,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ),
+                            Visibility(
+                              visible: fotoLoadS.isEmpty,
+                              child: Icon(
+                                Icons.photo_camera_outlined,
+                                color: textLightColor,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  Visibility(
+                    visible: phasa == 3,
+                    child: Text(
+                      "Foto Load T",
+                      style: buttonText.copyWith(color: textDarkColor),
+                    ),
+                  ),
+                  Visibility(
+                    visible: phasa == 3,
+                    child: GestureDetector(
+                      onTap: fotoLoadT.isEmpty
+                          ? () async {
+                              await handlePicker();
+                              if (imagesProvider.croppedImageFile != null) {
+                                imagesProvider.addDeskripsi(
+                                    path: contentPath, deskripsi: "Load T");
+                                fotoLoadT = contentPath;
+                                deskripsiController.clear();
+                              }
+                            }
+                          : () {},
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 12),
+                        margin: const EdgeInsets.only(bottom: 20, top: 4),
+                        decoration: BoxDecoration(
+                            color: primaryBlue,
+                            borderRadius: BorderRadius.circular(defaultRadius)),
+                        width: double.infinity,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Expanded(
+                              child: GestureDetector(
+                                onTap: fotoLoadT.isEmpty
+                                    ? () async {
+                                        await handlePicker();
+                                        if (imagesProvider.croppedImageFile !=
+                                            null) {
+                                          imagesProvider.addDeskripsi(
+                                              path: contentPath,
+                                              deskripsi: "Load T");
+                                          fotoLoadT = contentPath;
+                                          deskripsiController.clear();
+                                        }
+                                      }
+                                    : () {
+                                        fotoLoadT.contains(
+                                                "https://jakban.iconpln.co.id")
+                                            ? showImageViewer(context,
+                                                Image.network(fotoLoadT).image,
+                                                swipeDismissible: true,
+                                                doubleTapZoomable: true)
+                                            : showImageViewer(
+                                                context,
+                                                Image.file(File(fotoLoadT))
+                                                    .image,
+                                                swipeDismissible: true,
+                                                doubleTapZoomable: true);
+                                      },
+                                child: Text(
+                                  fotoLoadT.isEmpty ? "Tambah Foto" : fotoLoadT,
+                                  style: buttonText,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ),
+                            Visibility(
+                              visible: fotoLoadT.isEmpty,
+                              child: Icon(
+                                Icons.photo_camera_outlined,
+                                color: textLightColor,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  Text(
+                    "Foto Tambahan",
+                    style: buttonText.copyWith(color: textDarkColor),
+                  ),
+                  GestureDetector(
+                    onTap: () async {
+                      await handlePicker();
+                      if (imagesProvider.croppedImageFile != null) {
+                        // ignore: use_build_context_synchronously
+                        showDialog(
+                          context: context,
+                          builder: (context) => CustomPopUp(
+                            title: "Deskripsi",
+                            controller: deskripsiController,
+                            add: () {
+                              imagesProvider.addDeskripsi(
+                                  path: contentPath,
+                                  deskripsi: deskripsiController.text);
+                              deskripsiController.clear();
+                            },
+                          ),
+                        );
+                      }
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 12),
+                      margin: const EdgeInsets.only(bottom: 20, top: 4),
+                      decoration: BoxDecoration(
+                          color: primaryBlue,
+                          borderRadius: BorderRadius.circular(defaultRadius)),
+                      width: double.infinity,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            "Tambah Foto",
+                            style: buttonText,
+                          ),
+                          Icon(
+                            Icons.photo_camera_outlined,
+                            color: textLightColor,
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
                   TextInput(
                     controller: loadrController,
                     label: "Load R",
@@ -290,10 +746,20 @@ class _RectiPageState extends State<RectiPage> {
                                 rectId: widget.rect.id,
                                 pmId: widget.pm.id,
                                 loadr: double.parse(loadrController.text),
-                                loads: double.parse(loadsController.text),
-                                loadt: double.parse(loadtController.text),
+                                loads: loadsController.text.isEmpty
+                                    ? 0.0
+                                    : double.parse(loadsController.text),
+                                loadt: loadtController.text.isEmpty
+                                    ? 0.0
+                                    : double.parse(loadtController.text),
                                 temuan: temuanController.text,
                                 rekomendasi: rekomendasiController.text);
+                            imagesProvider.foto.forEach((key, value) async {
+                              await RectService().postFotoRect(
+                                  rectNilaiId: int.parse(rect.id),
+                                  urlFoto: key,
+                                  description: value);
+                            });
                           } else {
                             RectNilaiModel rect = await RectService().editRect(
                                 id: int.parse(rectProvider.listRect.last.id),

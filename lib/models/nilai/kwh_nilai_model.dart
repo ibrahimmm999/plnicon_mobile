@@ -19,7 +19,7 @@ class KwhNilaiModel extends Equatable {
   final String rekomendasi;
   final DateTime createdAt;
   final DateTime updatedAt;
-  final List<FotoModel> foto;
+  final List<FotoModel>? foto;
 
   const KwhNilaiModel(
       {required this.id,

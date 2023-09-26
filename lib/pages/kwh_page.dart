@@ -71,7 +71,7 @@ class _KWHPageState extends State<KWHPage> {
       if (await userProvider.getUser(token: token)) {
         await kwhProvider.getKwh(widget.pm.id, widget.kwh.id);
         if (kwhProvider.listKwh.isNotEmpty) {
-          for (var element in kwhProvider.listKwh.first.foto) {
+          for (var element in kwhProvider.listKwh.first.foto!) {
             String url = element.url.replaceAll("http://localhost",
                 "https://jakban.iconpln.co.id/backend-plnicon/public");
 

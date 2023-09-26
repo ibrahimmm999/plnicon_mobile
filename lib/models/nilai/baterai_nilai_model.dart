@@ -22,7 +22,7 @@ class BateraiNilaiModel extends Equatable {
   final String rekomendasi;
   final DateTime createdAt;
   final DateTime updatedAt;
-  final List<FotoModel> foto;
+  final List<FotoModel>? foto;
 
   const BateraiNilaiModel({
     required this.id,
@@ -68,9 +68,11 @@ class BateraiNilaiModel extends Equatable {
       rekomendasi: json['rekomendasi'] ?? "",
       createdAt: DateTime.parse(json['created_at']),
       updatedAt: DateTime.parse(json['created_at']),
-      foto: List<FotoModel>.from(
-        json['foto'].map((x) => FotoModel.fromJson(x)),
-      ),
+      foto: json['foto'] != null
+          ? List<FotoModel>.from(
+              json['foto'].map((x) => FotoModel.fromJson(x)),
+            )
+          : [],
     );
   }
 

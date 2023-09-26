@@ -45,7 +45,6 @@ class TransaksionalProvider extends ChangeNotifier {
       _listAc.add(ac);
       found = false;
     }
-    print(_listAc);
     notifyListeners();
   }
 
@@ -85,7 +84,6 @@ class TransaksionalProvider extends ChangeNotifier {
     try {
       _listKwh = await KwhService()
           .getKwhByPmAndMaster(kwhId: kwhId.toString(), pmId: pmId.toString());
-      print("HAHAHA");
       notifyListeners();
       return true;
     } catch (e) {

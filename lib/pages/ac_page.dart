@@ -778,8 +778,8 @@ class _AcPageState extends State<AcPage> {
                                   acNilaiId: ac.id,
                                   urlFoto: key,
                                   description: value);
-                              Navigator.pop(context);
                             });
+                            Navigator.pop(context);
                           } else {
                             ScaffoldMessenger.of(context)
                                 .removeCurrentSnackBar();
