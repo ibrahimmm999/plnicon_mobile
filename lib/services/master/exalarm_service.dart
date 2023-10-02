@@ -8,11 +8,11 @@ import 'package:http/http.dart' as http;
 import 'package:plnicon_mobile/services/user_service.dart';
 
 class ExAlarmService {
-  Future<List<ExAlarmNilaiModel>> getExAlarm({required String token}) async {
+  Future<List<ExAlarmNilaiModel>> getExAlarm() async {
     var url = UrlService().api('ex-alarm');
     var headers = {
       'Content-Type': 'application/json',
-      'Authorization': token,
+      'Authorization': await UserService().getTokenPreference() ?? '',
     };
 
     var response = await http.get(
@@ -22,7 +22,6 @@ class ExAlarmService {
 
     if (response.statusCode == 200) {
       var data = jsonDecode(response.body)['data'] as List;
-      // print(data);
       List<ExAlarmNilaiModel> exalarm = List<ExAlarmNilaiModel>.from(
         data.map((e) => ExAlarmNilaiModel.fromJson(e)),
       );

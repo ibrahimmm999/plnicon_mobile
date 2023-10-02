@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:plnicon_mobile/models/nilai/ac_nilai_model.dart';
 import 'package:plnicon_mobile/models/nilai/baterai_nilai_model.dart';
+import 'package:plnicon_mobile/models/nilai/exalarm_nilai_model.dart';
 import 'package:plnicon_mobile/models/nilai/genset_nilai_model.dart';
 import 'package:plnicon_mobile/models/nilai/inverter_nilai_model.dart';
 import 'package:plnicon_mobile/models/nilai/kwh_nilai_model.dart';
 import 'package:plnicon_mobile/models/nilai/pdb_nilai_model.dart';
 import 'package:plnicon_mobile/models/nilai/perangkat_nilai_model.dart';
 import 'package:plnicon_mobile/models/nilai/rect_nilai_model.dart';
+import 'package:plnicon_mobile/services/master/exalarm_service.dart';
 import 'package:plnicon_mobile/services/transaksional/ac_service.dart';
+import 'package:plnicon_mobile/services/transaksional/baterai_service.dart';
+import 'package:plnicon_mobile/services/transaksional/genset_service.dart';
 import 'package:plnicon_mobile/services/transaksional/inverter_service.dart';
 import 'package:plnicon_mobile/services/transaksional/kwh_service.dart';
 import 'package:plnicon_mobile/services/transaksional/rect_service.dart';
@@ -22,6 +26,7 @@ class TransaksionalProvider extends ChangeNotifier {
   List<PdbNilaiModel> _listPdb = [];
   List<GensetNilaiModel> _listGenset = [];
   List<PerangkatNilaiModel> _listPerangkat = [];
+  List<ExAlarmNilaiModel> _listExalarm = [];
 
   List<AcNilaiModel> get listAc => _listAc;
   List<KwhNilaiModel> get listKwh => _listKwh;
@@ -31,6 +36,7 @@ class TransaksionalProvider extends ChangeNotifier {
   List<PdbNilaiModel> get listPdb => _listPdb;
   List<GensetNilaiModel> get listGenset => _listGenset;
   List<PerangkatNilaiModel> get listPerangkat => _listPerangkat;
+  List<ExAlarmNilaiModel> get listExalarm => _listExalarm;
 
   void setAc(AcNilaiModel ac) {
     for (var i = 0; i < _listAc.length; i++) {
@@ -51,6 +57,38 @@ class TransaksionalProvider extends ChangeNotifier {
   Future<bool> getAc(int pmId, int acId) async {
     try {
       _listAc = await AcService().getAcByPmAndMaster(acId: acId, pmId: pmId);
+      notifyListeners();
+      return true;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<bool> getGenset(int pmId, int gensetId) async {
+    try {
+      _listGenset = await GensetService()
+          .getGensetByPmAndMaster(pmId: pmId, gensetId: gensetId);
+      notifyListeners();
+      return true;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<bool> getExalarm(int pmId, int exalarm) async {
+    try {
+      _listExalarm = await ExAlarmService().getExAlarm();
+      notifyListeners();
+      return true;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<bool> getBaterai(int pmId, int batId) async {
+    try {
+      _listBaterai = await BateraiService()
+          .getBateraiByPmAndMaster(bateraiId: batId, pmId: pmId);
       notifyListeners();
       return true;
     } catch (e) {
