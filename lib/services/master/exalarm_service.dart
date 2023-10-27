@@ -89,7 +89,7 @@ class ExAlarmService {
     // add headers
     request.headers.addAll(headers);
 
-    request.fields['exalarm_nilai_id'] = exalarmNilaiId.toString();
+    request.fields['ex_alarm_id'] = exalarmNilaiId.toString();
     request.fields['deskripsi'] = description;
     request.files.add(await http.MultipartFile.fromPath('fotoFile', urlFoto));
 

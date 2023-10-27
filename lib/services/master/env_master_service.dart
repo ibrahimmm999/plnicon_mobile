@@ -19,7 +19,7 @@ class EnvironmentMasterService {
       required String suhuRuangan,
       required String kebersihanExhaust,
       required DateTime tglInstalasi}) async {
-    late Uri url = UrlService().api('env');
+    late Uri url = UrlService().api('environment');
 
     var headers = {
       'Content-Type': 'application/json',
@@ -63,7 +63,7 @@ class EnvironmentMasterService {
       required String suhuRuangan,
       required String kebersihanExhaust,
       required DateTime tglInstalasi}) async {
-    late Uri url = UrlService().api('edit-env');
+    late Uri url = UrlService().api('edit-environment');
 
     var headers = {
       'Content-Type': 'application/json',
@@ -93,6 +93,38 @@ class EnvironmentMasterService {
       return EnvironmentMasterModel.fromJson(data);
     } else {
       throw "Edit data env failed";
+    }
+  }
+
+  Future<bool> postFotoEnv(
+      {required int envId,
+      required String urlFoto,
+      required String description}) async {
+    late Uri url = UrlService().api('environment-foto');
+
+    var headers = {
+      'Content-Type': 'application/json',
+      'Authorization': await UserService().getTokenPreference() ?? '',
+    };
+    var request = http.MultipartRequest('POST', url);
+
+    // add headers
+    request.headers.addAll(headers);
+
+    request.fields['env_id'] = envId.toString();
+    request.fields['deskripsi'] = description;
+    request.files.add(await http.MultipartFile.fromPath('fotoFile', urlFoto));
+
+    var response = await request.send();
+
+    var responsed = await http.Response.fromStream(response);
+
+    if (response.statusCode == 200) {
+      var data = jsonDecode(responsed.body)['data'];
+      print(data);
+      return true;
+    } else {
+      throw "Add foto env failed";
     }
   }
 }

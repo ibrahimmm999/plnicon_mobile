@@ -21,7 +21,6 @@ import 'package:plnicon_mobile/pages/recti_page.dart';
 import 'package:plnicon_mobile/providers/images_provider.dart';
 import 'package:plnicon_mobile/providers/pop_provider.dart';
 import 'package:plnicon_mobile/providers/user_provider.dart';
-import 'package:plnicon_mobile/services/master/env_master_service.dart';
 import 'package:plnicon_mobile/services/user_service.dart';
 import 'package:plnicon_mobile/services/pm_service.dart';
 import 'package:plnicon_mobile/theme/theme.dart';
@@ -851,6 +850,7 @@ class _PmDetailPageState extends State<PmDetailPage> {
                                                       builder: (context) =>
                                                           ExAlarmPage(
                                                             exalarm: e,
+                                                            pm: widget.pm,
                                                             title: "Ex Alarm",
                                                           )),
                                                 );

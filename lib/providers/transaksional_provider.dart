@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plnicon_mobile/models/master/environment_master_model.dart';
 import 'package:plnicon_mobile/models/nilai/ac_nilai_model.dart';
 import 'package:plnicon_mobile/models/nilai/baterai_nilai_model.dart';
 import 'package:plnicon_mobile/models/nilai/exalarm_nilai_model.dart';
@@ -24,6 +25,7 @@ class TransaksionalProvider extends ChangeNotifier {
   List<BateraiNilaiModel> _listBaterai = [];
   List<InverterNilaiModel> _listInverter = [];
   List<PdbNilaiModel> _listPdb = [];
+  List<EnvironmentMasterModel> _listEnvironment = [];
   List<GensetNilaiModel> _listGenset = [];
   List<PerangkatNilaiModel> _listPerangkat = [];
   List<ExAlarmNilaiModel> _listExalarm = [];
@@ -33,6 +35,7 @@ class TransaksionalProvider extends ChangeNotifier {
   List<RectNilaiModel> get listRect => _listRect;
   List<BateraiNilaiModel> get listBaterai => _listBaterai;
   List<InverterNilaiModel> get listInverter => _listInverter;
+  List<EnvironmentMasterModel> get listEnvironment => _listEnvironment;
   List<PdbNilaiModel> get listPdb => _listPdb;
   List<GensetNilaiModel> get listGenset => _listGenset;
   List<PerangkatNilaiModel> get listPerangkat => _listPerangkat;
@@ -78,6 +81,8 @@ class TransaksionalProvider extends ChangeNotifier {
   Future<bool> getExalarm(int pmId, int exalarm) async {
     try {
       _listExalarm = await ExAlarmService().getExAlarm();
+      print("TOTOTOT");
+      print(_listExalarm);
       notifyListeners();
       return true;
     } catch (e) {
@@ -119,6 +124,17 @@ class TransaksionalProvider extends ChangeNotifier {
   }
 
   Future<bool> getKwh(int pmId, int kwhId) async {
+    try {
+      _listKwh = await KwhService()
+          .getKwhByPmAndMaster(kwhId: kwhId.toString(), pmId: pmId.toString());
+      notifyListeners();
+      return true;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<bool> getEnv(int pmId, int kwhId) async {
     try {
       _listKwh = await KwhService()
           .getKwhByPmAndMaster(kwhId: kwhId.toString(), pmId: pmId.toString());

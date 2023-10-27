@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:easy_image_viewer/easy_image_viewer.dart';
 import 'package:flutter/material.dart';
 import 'package:plnicon_mobile/models/master/inverter_master_model.dart';
 import 'package:plnicon_mobile/models/nilai/inverter_nilai_model.dart';
@@ -12,6 +15,7 @@ import 'package:plnicon_mobile/services/transaksional/inverter_service.dart';
 import 'package:plnicon_mobile/services/user_service.dart';
 import 'package:plnicon_mobile/theme/theme.dart';
 import 'package:plnicon_mobile/widgets/custom_button.dart';
+import 'package:plnicon_mobile/widgets/custom_popup.dart';
 import 'package:plnicon_mobile/widgets/input_dokumentasi.dart';
 import 'package:plnicon_mobile/widgets/text_input.dart';
 import 'package:provider/provider.dart';
@@ -37,9 +41,9 @@ class _InverterPageState extends State<InverterPage> {
     super.initState();
   }
 
-  String fotoAcOutdoor = "";
-  String fotoAcSuhu = "";
-  String fotoAcIndoor = "";
+  String fotoFullRackInverter = "";
+  String fotoDisplayInverter = "";
+  String fotoInverterTampakDepan = "";
   bool loading = true;
   String hasilUji = "";
   getinit() async {
@@ -63,12 +67,12 @@ class _InverterPageState extends State<InverterPage> {
             String url = element.url.replaceAll("http://localhost",
                 "https://jakban.iconpln.co.id/backend-plnicon/public");
 
-            if (element.deskripsi == "AC Outdoor") {
-              fotoAcOutdoor = url;
-            } else if (element.deskripsi == "AC Indoor") {
-              fotoAcIndoor = url;
-            } else if (element.deskripsi == "Suhu AC") {
-              fotoAcSuhu = url;
+            if (element.deskripsi == "Foto Full Rack Inverter") {
+              fotoFullRackInverter = url;
+            } else if (element.deskripsi == "Foto Inverter Tampak Depan") {
+              fotoInverterTampakDepan = url;
+            } else if (element.deskripsi == "Foto Display Inverter") {
+              fotoDisplayInverter = url;
             }
             imagesProvider.foto[url] = element.deskripsi;
           }
@@ -82,6 +86,20 @@ class _InverterPageState extends State<InverterPage> {
   Widget build(BuildContext context) {
     TransaksionalProvider inverterProvider =
         Provider.of<TransaksionalProvider>(context);
+    ImagesProvider imagesProvider = Provider.of<ImagesProvider>(context);
+    Future<void> handlePicker() async {
+      imagesProvider.setCroppedImageFile = null;
+      await imagesProvider.pickImage();
+      await imagesProvider.cropImage(
+          imageFile: imagesProvider.imageFile, key: "");
+      setState(() {
+        if (imagesProvider.croppedImagePath.isNotEmpty) {
+          contentPath = imagesProvider.croppedImagePath;
+          contentFile = imagesProvider.croppedImageFile;
+        }
+      });
+    }
+
     TextEditingController loadController = TextEditingController(
         text: inverterProvider.listInverter.isEmpty
             ? ""
@@ -112,9 +130,7 @@ class _InverterPageState extends State<InverterPage> {
             ? ""
             : inverterProvider.listInverter.last.rekomendasi);
 
-    ImagesProvider imagesProvider = Provider.of<ImagesProvider>(context);
     PageProvider pageProvider = Provider.of<PageProvider>(context);
-    PopProvider popProvider = Provider.of<PopProvider>(context);
 
     List<String> listHasilPengujian = ["OK", "Not OK"];
     Widget switchContent() {
@@ -214,10 +230,474 @@ class _InverterPageState extends State<InverterPage> {
                 padding: EdgeInsets.symmetric(
                     horizontal: defaultMargin, vertical: 20),
                 children: [
-                  InputDokumentasi(
-                      imagesProvider: imagesProvider,
-                      controller: deskripsiController,
-                      pageName: "inverter"),
+                  Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(defaultRadius),
+                        border: Border.all(
+                          width: 2,
+                          color: neutral500,
+                        )),
+                    height: 360,
+                    width: double.infinity,
+                    child: imagesProvider.foto.isEmpty
+                        ? Center(
+                            child: Text(
+                              "Foto",
+                              style: buttonText.copyWith(color: textDarkColor),
+                            ),
+                          )
+                        : ListView(
+                            scrollDirection: Axis.horizontal,
+                            children: imagesProvider.foto.entries.map((e) {
+                              return Container(
+                                width: 240,
+                                margin:
+                                    const EdgeInsets.symmetric(horizontal: 12),
+                                child: Column(
+                                  children: [
+                                    GestureDetector(
+                                      onTap: () {
+                                        e.key.contains(
+                                                "https://jakban.iconpln.co.id")
+                                            ? showImageViewer(context,
+                                                Image.network(e.key).image,
+                                                swipeDismissible: true,
+                                                doubleTapZoomable: true)
+                                            : showImageViewer(context,
+                                                Image.file(File(e.key)).image,
+                                                swipeDismissible: true,
+                                                doubleTapZoomable: true);
+                                      },
+                                      child: Stack(
+                                        children: [
+                                          e.key.contains(
+                                                  "https://jakban.iconpln.co.id")
+                                              ? Image.network(
+                                                  e.key,
+                                                  height: 240,
+                                                  width: 240,
+                                                  fit: BoxFit.cover,
+                                                )
+                                              : Image.file(
+                                                  File(e.key),
+                                                  height: 240,
+                                                  width: 240,
+                                                  fit: BoxFit.cover,
+                                                ),
+                                          Align(
+                                            alignment: Alignment.topRight,
+                                            child: GestureDetector(
+                                              onTap: () {
+                                                setState(() {
+                                                  imagesProvider.deleteImage(
+                                                      path: e.key);
+                                                  if (e.value ==
+                                                      "Foto Full Rack Inverter") {
+                                                    fotoFullRackInverter = "";
+                                                  } else if (e.value ==
+                                                      "Foto Inverter Tampak Depan") {
+                                                    fotoInverterTampakDepan =
+                                                        "";
+                                                  } else if (e.value ==
+                                                      "Foto Display Inverter") {
+                                                    fotoDisplayInverter = "";
+                                                  }
+                                                });
+                                              },
+                                              child: Container(
+                                                decoration: BoxDecoration(
+                                                  color: const Color.fromARGB(
+                                                      255, 255, 73, 60),
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          180),
+                                                ),
+                                                child: const Icon(
+                                                  Icons.close,
+                                                  size: 24,
+                                                  color: Colors.white,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    Text(
+                                      e.value,
+                                      style: buttonText.copyWith(
+                                          color: textDarkColor),
+                                      overflow: TextOverflow.clip,
+                                    )
+                                  ],
+                                ),
+                              );
+                            }).toList()),
+                  ),
+                  const SizedBox(
+                    height: 28,
+                  ),
+                  Text(
+                    "Foto Full Rack Inverter",
+                    style: buttonText.copyWith(color: textDarkColor),
+                  ),
+                  GestureDetector(
+                    onTap: fotoFullRackInverter.isEmpty
+                        ? () async {
+                            await handlePicker();
+                            if (imagesProvider.croppedImageFile != null) {
+                              imagesProvider.addDeskripsi(
+                                  path: contentPath,
+                                  deskripsi: "Foto Full Rack Inverter");
+                              // imagesProvider.foto[contentPath] =
+                              //     imagesProvider.foto;
+                              fotoFullRackInverter = contentPath;
+                              print(imagesProvider.foto);
+                              deskripsiController.clear();
+                            }
+                          }
+                        : () {},
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 12),
+                      margin: const EdgeInsets.only(bottom: 20, top: 4),
+                      decoration: BoxDecoration(
+                          color: primaryBlue,
+                          borderRadius: BorderRadius.circular(defaultRadius)),
+                      width: double.infinity,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: GestureDetector(
+                              onTap: fotoFullRackInverter.isEmpty
+                                  ? () async {
+                                      await handlePicker();
+                                      if (imagesProvider.croppedImageFile !=
+                                          null) {
+                                        imagesProvider.addDeskripsi(
+                                            path: contentPath,
+                                            deskripsi: "AC Outdoor");
+                                        // imagesProvider.listFoto[contentPath] =
+                                        //     imagesProvider.foto;
+                                        fotoFullRackInverter = contentPath;
+                                        print(imagesProvider.foto);
+                                        deskripsiController.clear();
+                                      }
+                                    }
+                                  : () {
+                                      fotoFullRackInverter.contains(
+                                              "https://jakban.iconpln.co.id")
+                                          ? showImageViewer(
+                                              context,
+                                              Image.network(
+                                                      fotoFullRackInverter)
+                                                  .image,
+                                              swipeDismissible: true,
+                                              doubleTapZoomable: true)
+                                          : showImageViewer(
+                                              context,
+                                              Image.file(File(
+                                                      fotoFullRackInverter))
+                                                  .image,
+                                              swipeDismissible: true,
+                                              doubleTapZoomable: true);
+                                    },
+                              child: Text(
+                                fotoFullRackInverter.isEmpty
+                                    ? "Tambah Foto"
+                                    : fotoFullRackInverter,
+                                style: buttonText,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ),
+                          Visibility(
+                            visible: fotoFullRackInverter.isEmpty,
+                            child: Icon(
+                              Icons.photo_camera_outlined,
+                              color: textLightColor,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  Text(
+                    "Foto Inverter Tampak Depan",
+                    style: buttonText.copyWith(color: textDarkColor),
+                  ),
+                  GestureDetector(
+                    onTap: fotoInverterTampakDepan.isEmpty
+                        ? () async {
+                            await handlePicker();
+                            if (imagesProvider.croppedImageFile != null) {
+                              imagesProvider.addDeskripsi(
+                                  path: contentPath,
+                                  deskripsi: "Foto Inverter Tampak Depan");
+                              // imagesProvider.listFoto[contentPath] =
+                              //     imagesProvider.foto;
+                              fotoInverterTampakDepan = contentPath;
+                              print(imagesProvider.foto);
+                              deskripsiController.clear();
+                            }
+                          }
+                        : () {},
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 12),
+                      margin: const EdgeInsets.only(bottom: 20, top: 4),
+                      decoration: BoxDecoration(
+                          color: primaryBlue,
+                          borderRadius: BorderRadius.circular(defaultRadius)),
+                      width: double.infinity,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: GestureDetector(
+                              onTap: fotoInverterTampakDepan.isEmpty
+                                  ? () async {
+                                      await handlePicker();
+                                      if (imagesProvider.croppedImageFile !=
+                                          null) {
+                                        imagesProvider.addDeskripsi(
+                                            path: contentPath,
+                                            deskripsi:
+                                                "Foto Inverter Tampak Depan");
+                                        // imagesProvider.listFoto[contentPath] =
+                                        //     imagesProvider.foto;
+                                        fotoInverterTampakDepan = contentPath;
+                                        print(imagesProvider.foto);
+                                        deskripsiController.clear();
+                                      }
+                                    }
+                                  : () {
+                                      fotoInverterTampakDepan.contains(
+                                              "https://jakban.iconpln.co.id")
+                                          ? showImageViewer(
+                                              context,
+                                              Image.network(
+                                                      fotoInverterTampakDepan)
+                                                  .image,
+                                              swipeDismissible: true,
+                                              doubleTapZoomable: true)
+                                          : showImageViewer(
+                                              context,
+                                              Image.file(File(
+                                                      fotoInverterTampakDepan))
+                                                  .image,
+                                              swipeDismissible: true,
+                                              doubleTapZoomable: true);
+                                    },
+                              child: Text(
+                                fotoInverterTampakDepan.isEmpty
+                                    ? "Tambah Foto"
+                                    : fotoInverterTampakDepan,
+                                style: buttonText,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ),
+                          GestureDetector(
+                            onTap: fotoInverterTampakDepan.isNotEmpty
+                                ? () {
+                                    setState(() {
+                                      imagesProvider.deleteImage(
+                                          path: fotoInverterTampakDepan);
+                                      fotoInverterTampakDepan = "";
+                                    });
+                                  }
+                                : () async {
+                                    await handlePicker();
+                                    if (imagesProvider.croppedImageFile !=
+                                        null) {
+                                      imagesProvider.addDeskripsi(
+                                          path: contentPath,
+                                          deskripsi:
+                                              "Foto Inverter Tampak Depan");
+                                      // imagesProvider.listFoto[contentPath] =
+                                      //     imagesProvider.foto;
+                                      fotoInverterTampakDepan = contentPath;
+                                      print(imagesProvider.foto);
+                                      deskripsiController.clear();
+                                    }
+                                  },
+                            child: Visibility(
+                              visible: fotoInverterTampakDepan.isEmpty,
+                              child: Icon(
+                                Icons.photo_camera_outlined,
+                                color: textLightColor,
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+                  Text(
+                    "Foto Display Inverter",
+                    style: buttonText.copyWith(color: textDarkColor),
+                  ),
+                  GestureDetector(
+                    onTap: fotoDisplayInverter.isEmpty
+                        ? () async {
+                            await handlePicker();
+                            if (imagesProvider.croppedImageFile != null) {
+                              imagesProvider.addDeskripsi(
+                                  path: contentPath,
+                                  deskripsi: "Foto Display Inverter");
+                              // imagesProvider.listFoto[contentPath] =
+                              //     imagesProvider.foto;
+                              fotoDisplayInverter = contentPath;
+                              print(imagesProvider.foto);
+                              deskripsiController.clear();
+                            }
+                          }
+                        : () {
+                            fotoDisplayInverter
+                                    .contains("https://jakban.iconpln.co.id")
+                                ? showImageViewer(context,
+                                    Image.network(fotoDisplayInverter).image,
+                                    swipeDismissible: true,
+                                    doubleTapZoomable: true)
+                                : showImageViewer(context,
+                                    Image.file(File(fotoDisplayInverter)).image,
+                                    swipeDismissible: true,
+                                    doubleTapZoomable: true);
+                          },
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 12),
+                      margin: const EdgeInsets.only(bottom: 20, top: 4),
+                      decoration: BoxDecoration(
+                          color: primaryBlue,
+                          borderRadius: BorderRadius.circular(defaultRadius)),
+                      width: double.infinity,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: GestureDetector(
+                              onTap: fotoDisplayInverter.isEmpty
+                                  ? () async {
+                                      await handlePicker();
+                                      if (imagesProvider.croppedImageFile !=
+                                          null) {
+                                        imagesProvider.addDeskripsi(
+                                            path: contentPath,
+                                            deskripsi: "Foto Display Inverter");
+                                        // imagesProvider.listFoto[contentPath] =
+                                        //     imagesProvider.foto;
+                                        fotoDisplayInverter = contentPath;
+                                        print(imagesProvider.foto);
+                                        deskripsiController.clear();
+                                      }
+                                    }
+                                  : () {
+                                      fotoDisplayInverter.contains(
+                                              "https://jakban.iconpln.co.id")
+                                          ? showImageViewer(
+                                              context,
+                                              Image.network(fotoDisplayInverter)
+                                                  .image,
+                                              swipeDismissible: true,
+                                              doubleTapZoomable: true)
+                                          : showImageViewer(
+                                              context,
+                                              Image.file(
+                                                      File(fotoDisplayInverter))
+                                                  .image,
+                                              swipeDismissible: true,
+                                              doubleTapZoomable: true);
+                                    },
+                              child: Text(
+                                fotoDisplayInverter.isEmpty
+                                    ? "Tambah Foto"
+                                    : fotoDisplayInverter,
+                                style: buttonText,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ),
+                          Visibility(
+                            visible: fotoDisplayInverter.isEmpty,
+                            child: GestureDetector(
+                              onTap: () async {
+                                await handlePicker();
+                                if (imagesProvider.croppedImageFile != null) {
+                                  imagesProvider.addDeskripsi(
+                                      path: contentPath,
+                                      deskripsi: "Foto Display Inverter");
+                                  // imagesProvider.listFoto[contentPath] =
+                                  //     imagesProvider.foto;
+                                  fotoDisplayInverter = contentPath;
+                                  print(imagesProvider.foto);
+                                  deskripsiController.clear();
+                                }
+                              },
+                              child: Icon(
+                                Icons.photo_camera_outlined,
+                                color: textLightColor,
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+                  Text(
+                    "Foto Tambahan",
+                    style: buttonText.copyWith(color: textDarkColor),
+                  ),
+                  GestureDetector(
+                    onTap: () async {
+                      await handlePicker();
+                      if (imagesProvider.croppedImageFile != null) {
+                        // ignore: use_build_context_synchronously
+                        showDialog(
+                          context: context,
+                          builder: (context) => CustomPopUp(
+                            title: "Deskripsi",
+                            controller: deskripsiController,
+                            add: () {
+                              imagesProvider.addDeskripsi(
+                                  path: contentPath,
+                                  deskripsi: deskripsiController.text);
+                              // imagesProvider.listFoto[contentPath] =
+                              //     imagesProvider.foto;
+                              print(imagesProvider.foto);
+                              deskripsiController.clear();
+                            },
+                          ),
+                        );
+                      }
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 12),
+                      margin: const EdgeInsets.only(bottom: 20, top: 4),
+                      decoration: BoxDecoration(
+                          color: primaryBlue,
+                          borderRadius: BorderRadius.circular(defaultRadius)),
+                      width: double.infinity,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            "Tambah Foto",
+                            style: buttonText,
+                          ),
+                          Icon(
+                            Icons.photo_camera_outlined,
+                            color: textLightColor,
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
                   TextInput(
                     controller: loadController,
                     label: "Load",
