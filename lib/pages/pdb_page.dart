@@ -11,6 +11,7 @@ import 'package:plnicon_mobile/providers/images_provider.dart';
 import 'package:plnicon_mobile/providers/page_provider.dart';
 import 'package:plnicon_mobile/providers/transaksional_provider.dart';
 import 'package:plnicon_mobile/providers/user_provider.dart';
+import 'package:plnicon_mobile/services/master/pdb_master_service.dart';
 import 'package:plnicon_mobile/services/transaksional/pdb_service.dart';
 import 'package:plnicon_mobile/services/user_service.dart';
 import 'package:plnicon_mobile/theme/theme.dart';
@@ -182,7 +183,20 @@ class _PDBPageState extends State<PDBPage> {
                                     )));
                       },
                       color: primaryGreen,
-                      clickColor: clickGreen)
+                      clickColor: clickGreen),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  CustomButton(
+                      text: "Delete",
+                      onPressed: () async {
+                        await PdbMasterService()
+                            .deletePdbMaster(id: widget.pdb.id);
+                        // ignore: use_build_context_synchronously
+                        Navigator.pop(context);
+                      },
+                      color: primaryRed,
+                      clickColor: clickRed),
                 ],
               ),
             );

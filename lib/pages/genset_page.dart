@@ -10,6 +10,7 @@ import 'package:plnicon_mobile/providers/images_provider.dart';
 import 'package:plnicon_mobile/providers/page_provider.dart';
 import 'package:plnicon_mobile/providers/transaksional_provider.dart';
 import 'package:plnicon_mobile/providers/user_provider.dart';
+import 'package:plnicon_mobile/services/master/genset_master_service.dart';
 import 'package:plnicon_mobile/services/transaksional/genset_service.dart';
 import 'package:plnicon_mobile/services/user_service.dart';
 import 'package:plnicon_mobile/theme/theme.dart';
@@ -2067,6 +2068,18 @@ class _GensetPageState extends State<GensetPage> {
                       },
                       color: primaryGreen,
                       clickColor: clickGreen),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  CustomButton(
+                      text: "Delete",
+                      onPressed: () {
+                        GensetMasterService().deleteGensetMaster(
+                            id: widget.gensetMasterModel.id);
+                        Navigator.pop(context);
+                      },
+                      color: primaryRed,
+                      clickColor: clickRed),
                   const SizedBox(
                     height: 32,
                   ),

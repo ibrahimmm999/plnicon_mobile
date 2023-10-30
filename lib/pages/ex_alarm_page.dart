@@ -4,6 +4,7 @@ import 'package:easy_image_viewer/easy_image_viewer.dart';
 import 'package:flutter/material.dart';
 import 'package:plnicon_mobile/models/master/exalarm_master_model.dart';
 import 'package:plnicon_mobile/models/pm_model.dart';
+import 'package:plnicon_mobile/pages/edit_master/edit_exalarm_page.dart';
 import 'package:plnicon_mobile/pages/main_page.dart';
 import 'package:plnicon_mobile/providers/images_provider.dart';
 import 'package:plnicon_mobile/providers/page_provider.dart';
@@ -163,19 +164,32 @@ class _ExAlarmPageState extends State<ExAlarmPage> {
                     height: 20,
                   ),
                   Text(
-                    "Temuan : ${widget.exalarm.temuan}",
+                    "Pln Off : ${widget.exalarm.plnOff}",
                     style: buttonText.copyWith(color: textDarkColor),
                   ),
                   const SizedBox(
                     height: 20,
                   ),
                   Text(
-                    "Rekomendasi : ${widget.exalarm.rekomendasi}",
+                    "Perangkat Ea : ${widget.exalarm.perangkatEa}",
                     style: buttonText.copyWith(color: textDarkColor),
                   ),
                   const SizedBox(
                     height: 20,
                   ),
+                  CustomButton(
+                      text: "Edit",
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => EditExAlarmPage(
+                                    pm: widget.pm,
+                                    exalarm: widget.exalarm,
+                                    title: "Edit Inverter")));
+                      },
+                      color: primaryGreen,
+                      clickColor: clickGreen),
                 ],
               ),
             );

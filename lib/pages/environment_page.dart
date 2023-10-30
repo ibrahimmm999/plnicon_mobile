@@ -3,6 +3,8 @@ import 'dart:io';
 import 'package:easy_image_viewer/easy_image_viewer.dart';
 import 'package:flutter/material.dart';
 import 'package:plnicon_mobile/models/master/environment_master_model.dart';
+import 'package:plnicon_mobile/models/pm_model.dart';
+import 'package:plnicon_mobile/pages/edit_master/edit_environment_page.dart';
 import 'package:plnicon_mobile/pages/main_page.dart';
 import 'package:plnicon_mobile/providers/images_provider.dart';
 import 'package:plnicon_mobile/providers/page_provider.dart';
@@ -22,10 +24,12 @@ class EnvironmentPage extends StatefulWidget {
   const EnvironmentPage({
     super.key,
     required this.environment,
+    required this.pm,
     required this.title,
   });
   final EnvironmentMasterModel environment;
   final String title;
+  final PmModel pm;
 
   @override
   State<EnvironmentPage> createState() => _EnvironmentPageState();
@@ -215,6 +219,22 @@ class _EnvironmentPageState extends State<EnvironmentPage> {
                     "Tanggal Instalasi : -",
                     style: buttonText.copyWith(color: textDarkColor),
                   ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  CustomButton(
+                      text: "Edit",
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => EditEnvPage(
+                                    pm: widget.pm,
+                                    env: widget.environment,
+                                    title: "Edit Environment")));
+                      },
+                      color: primaryGreen,
+                      clickColor: clickGreen),
                   const SizedBox(
                     height: 20,
                   ),

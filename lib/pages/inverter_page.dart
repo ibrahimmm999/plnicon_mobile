@@ -11,6 +11,7 @@ import 'package:plnicon_mobile/providers/page_provider.dart';
 import 'package:plnicon_mobile/providers/pop_provider.dart';
 import 'package:plnicon_mobile/providers/transaksional_provider.dart';
 import 'package:plnicon_mobile/providers/user_provider.dart';
+import 'package:plnicon_mobile/services/master/inverter_master_service.dart';
 import 'package:plnicon_mobile/services/transaksional/inverter_service.dart';
 import 'package:plnicon_mobile/services/user_service.dart';
 import 'package:plnicon_mobile/theme/theme.dart';
@@ -216,6 +217,19 @@ class _InverterPageState extends State<InverterPage> {
                       },
                       color: primaryGreen,
                       clickColor: clickGreen),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  CustomButton(
+                      text: "Delete",
+                      onPressed: () async {
+                        await InverterMasterService()
+                            .deleteInverterMaster(id: widget.inverter.id);
+                        // ignore: use_build_context_synchronously
+                        Navigator.pop(context);
+                      },
+                      color: primaryRed,
+                      clickColor: clickRed),
                   const SizedBox(
                     height: 32,
                   )

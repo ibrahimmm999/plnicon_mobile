@@ -2,7 +2,6 @@
 
 import 'dart:convert';
 
-import 'package:intl/intl.dart';
 import 'package:plnicon_mobile/models/master/kwh_master_model.dart';
 import 'package:plnicon_mobile/services/url_service.dart';
 import 'package:http/http.dart' as http;
@@ -70,6 +69,33 @@ class KwhMasterService {
       return KwhMasterModel.fromJson(data);
     } else {
       throw "Post data kwh failed";
+    }
+  }
+
+  Future<KwhMasterModel> deleteKwhMaster({required int id}) async {
+    late Uri url = UrlService().api('delete-kwh-meter');
+
+    var headers = {
+      'Content-Type': 'application/json',
+      'Authorization': await UserService().getTokenPreference() ?? '',
+    };
+    var body = {
+      'id': id,
+    };
+    try {
+      var response = await http.post(
+        url,
+        headers: headers,
+        body: jsonEncode(body),
+      );
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body)['data'];
+        return KwhMasterModel.fromJson(data);
+      } else {
+        throw "Delete data kwh failed";
+      }
+    } catch (e) {
+      rethrow;
     }
   }
 

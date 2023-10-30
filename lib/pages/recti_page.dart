@@ -9,6 +9,7 @@ import 'package:plnicon_mobile/providers/images_provider.dart';
 import 'package:plnicon_mobile/providers/page_provider.dart';
 import 'package:plnicon_mobile/providers/transaksional_provider.dart';
 import 'package:plnicon_mobile/providers/user_provider.dart';
+import 'package:plnicon_mobile/services/master/rect_master_service.dart';
 import 'package:plnicon_mobile/services/transaksional/rect_service.dart';
 import 'package:plnicon_mobile/services/user_service.dart';
 import 'package:plnicon_mobile/theme/theme.dart';
@@ -217,8 +218,21 @@ class _RectiPageState extends State<RectiPage> {
                                 builder: (context) => EditRectiPage(
                                     pm: widget.pm, rect: widget.rect)));
                       },
-                      color: primaryBlue,
-                      clickColor: clickBlue),
+                      color: primaryGreen,
+                      clickColor: clickGreen),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  CustomButton(
+                      text: "Delete",
+                      onPressed: () async {
+                        await RectMasterService()
+                            .deleteRectMaster(id: widget.rect.id);
+                        // ignore: use_build_context_synchronously
+                        Navigator.pop(context);
+                      },
+                      color: primaryRed,
+                      clickColor: clickRed),
                   const SizedBox(
                     height: 32,
                   )

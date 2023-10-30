@@ -50,6 +50,33 @@ class RectMasterService {
     }
   }
 
+  Future<RectMasterModel> deleteRectMaster({required int id}) async {
+    late Uri url = UrlService().api('delete-rect');
+
+    var headers = {
+      'Content-Type': 'application/json',
+      'Authorization': await UserService().getTokenPreference() ?? '',
+    };
+    var body = {
+      'id': id,
+    };
+    try {
+      var response = await http.post(
+        url,
+        headers: headers,
+        body: jsonEncode(body),
+      );
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body)['data'];
+        return RectMasterModel.fromJson(data);
+      } else {
+        throw "Delete data rect failed";
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future<RectMasterModel> editRectMaster({
     required int rectId,
     required String sn,

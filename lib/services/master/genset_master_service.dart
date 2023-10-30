@@ -60,6 +60,33 @@ class GensetMasterService {
     }
   }
 
+  Future<GensetMasterModel> deleteGensetMaster({required int id}) async {
+    late Uri url = UrlService().api('delete-genset');
+
+    var headers = {
+      'Content-Type': 'application/json',
+      'Authorization': await UserService().getTokenPreference() ?? '',
+    };
+    var body = {
+      'id': id,
+    };
+    try {
+      var response = await http.post(
+        url,
+        headers: headers,
+        body: jsonEncode(body),
+      );
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body)['data'];
+        return GensetMasterModel.fromJson(data);
+      } else {
+        throw "Delete data genset failed";
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future<GensetMasterModel> editGensetMaster({
     required int gensetId,
     required int popId,

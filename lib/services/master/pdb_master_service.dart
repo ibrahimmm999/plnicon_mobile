@@ -46,6 +46,33 @@ class PdbMasterService {
     }
   }
 
+  Future<PdbMasterModel> deletePdbMaster({required int id}) async {
+    late Uri url = UrlService().api('delete-pdb');
+
+    var headers = {
+      'Content-Type': 'application/json',
+      'Authorization': await UserService().getTokenPreference() ?? '',
+    };
+    var body = {
+      'id': id,
+    };
+    try {
+      var response = await http.post(
+        url,
+        headers: headers,
+        body: jsonEncode(body),
+      );
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body)['data'];
+        return PdbMasterModel.fromJson(data);
+      } else {
+        throw "Delete data pdb failed";
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future<PdbMasterModel> editPdbMaster({
     required int pdbId,
     required String nama,

@@ -6,17 +6,15 @@ import 'package:plnicon_mobile/models/master/kwh_master_model.dart';
 import 'package:plnicon_mobile/models/nilai/kwh_nilai_model.dart';
 import 'package:plnicon_mobile/models/pm_model.dart';
 import 'package:plnicon_mobile/pages/edit_master/edit_kwh_page.dart';
-import 'package:plnicon_mobile/pages/main_page.dart';
-import 'package:plnicon_mobile/pages/photo_view_page.dart';
 import 'package:plnicon_mobile/providers/images_provider.dart';
 import 'package:plnicon_mobile/providers/page_provider.dart';
 import 'package:plnicon_mobile/providers/transaksional_provider.dart';
 import 'package:plnicon_mobile/providers/user_provider.dart';
+import 'package:plnicon_mobile/services/master/kwh_master_service.dart';
 import 'package:plnicon_mobile/services/transaksional/kwh_service.dart';
 import 'package:plnicon_mobile/services/user_service.dart';
 import 'package:plnicon_mobile/theme/theme.dart';
 import 'package:plnicon_mobile/widgets/custom_button.dart';
-import 'package:plnicon_mobile/widgets/custom_popup.dart';
 import 'package:plnicon_mobile/widgets/input_dokumentasi.dart';
 import 'package:plnicon_mobile/widgets/text_input.dart';
 import 'package:provider/provider.dart';
@@ -581,8 +579,19 @@ class _KWHPageState extends State<KWHPage> {
                                 builder: (context) => EditKwhPage(
                                     kwh: widget.kwh, title: "Edit KWH")));
                       },
-                      color: primaryBlue,
-                      clickColor: clickBlue)
+                      color: primaryGreen,
+                      clickColor: clickGreen),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  CustomButton(
+                      text: "Delete",
+                      onPressed: () {
+                        KwhMasterService().deleteKwhMaster(id: widget.kwh.id);
+                        Navigator.pop(context);
+                      },
+                      color: primaryRed,
+                      clickColor: clickRed),
                 ],
               ),
             );

@@ -6,6 +6,7 @@ import 'package:plnicon_mobile/pages/add_master/add_ats_page.dart';
 import 'package:plnicon_mobile/pages/add_master/add_inverter_page.dart';
 import 'package:plnicon_mobile/pages/add_master/add_kwh_page.dart';
 import 'package:plnicon_mobile/pages/add_master/add_recti_page.dart';
+import 'package:plnicon_mobile/pages/ats_page.dart';
 import 'package:plnicon_mobile/pages/baterai_page.dart';
 import 'package:plnicon_mobile/pages/environment_page.dart';
 import 'package:plnicon_mobile/pages/ex_alarm_page.dart';
@@ -333,11 +334,11 @@ class _PmDetailPageState extends State<PmDetailPage> {
                               child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: popProvider
-                                          .listPop.first.listGenset.isNotEmpty
-                                      ? popProvider.listPop.first.listGenset
+                                          .listPop.first.listAts.isNotEmpty
+                                      ? popProvider.listPop.first.listAts
                                           .map((e) {
                                           var index = popProvider
-                                                  .listPop.first.listGenset
+                                                  .listPop.first.listAts
                                                   .indexOf(e) +
                                               1;
                                           return GestureDetector(
@@ -347,10 +348,8 @@ class _PmDetailPageState extends State<PmDetailPage> {
                                                   context,
                                                   MaterialPageRoute(
                                                       builder: (context) =>
-                                                          GensetPage(
-                                                            pm: widget.pm,
-                                                            gensetMasterModel:
-                                                                e,
+                                                          AtsPage(
+                                                            ats: e,
                                                             title: "ATS $index",
                                                           )),
                                                 );
@@ -1020,6 +1019,7 @@ class _PmDetailPageState extends State<PmDetailPage> {
                                                   MaterialPageRoute(
                                                       builder: (context) =>
                                                           EnvironmentPage(
+                                                            pm: widget.pm,
                                                             environment: e,
                                                             title:
                                                                 "Environment",

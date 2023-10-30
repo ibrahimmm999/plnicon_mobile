@@ -46,6 +46,33 @@ class InverterMasterService {
     }
   }
 
+  Future<InverterMasterModel> deleteInverterMaster({required int id}) async {
+    late Uri url = UrlService().api('delete-inverter');
+
+    var headers = {
+      'Content-Type': 'application/json',
+      'Authorization': await UserService().getTokenPreference() ?? '',
+    };
+    var body = {
+      'id': id,
+    };
+    try {
+      var response = await http.post(
+        url,
+        headers: headers,
+        body: jsonEncode(body),
+      );
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body)['data'];
+        return InverterMasterModel.fromJson(data);
+      } else {
+        throw "Delete data inverter failed";
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future<InverterMasterModel> editInverterMaster({
     required int inverterId,
     required int popId,
