@@ -2,6 +2,7 @@
 
 import 'dart:convert';
 
+import 'package:plnicon_mobile/models/foto_model.dart';
 import 'package:plnicon_mobile/models/nilai/pdb_nilai_model.dart';
 import 'package:plnicon_mobile/services/url_service.dart';
 import 'package:http/http.dart' as http;
@@ -32,8 +33,8 @@ class PdbService {
     }
   }
 
-  Future<List<PdbNilaiModel>> getAcByPmAndMaster(
-      {required int pmId, required int pdbId}) async {
+  Future<List<PdbNilaiModel>> getPdbByPmAndMaster(
+      {required String pmId, required String pdbId}) async {
     var url = UrlService().api('pdb-nilai?pm_id=$pmId&pdb_id=$pdbId');
     var headers = {
       'Content-Type': 'application/json',
@@ -92,6 +93,43 @@ class PdbService {
     }
   }
 
+  Future<PdbNilaiModel> editPdb(
+      {required int id,
+      required int pdbId,
+      required int pmId,
+      required String aresterWarna,
+      required String temuan,
+      required List<FotoModel> foto,
+      required String rekomendasi}) async {
+    late Uri url = UrlService().api('edit-pdb-nilai');
+
+    var headers = {
+      'Content-Type': 'application/json',
+      'Authorization': await UserService().getTokenPreference() ?? '',
+    };
+    var body = {
+      'id': id,
+      'pdb_id': pdbId,
+      'pm_id': pmId,
+      'arester_warna': aresterWarna,
+      'temuan': temuan,
+      'rekomendasi': rekomendasi,
+    };
+
+    var response = await http.post(
+      url,
+      headers: headers,
+      body: jsonEncode(body),
+    );
+
+    if (response.statusCode == 200) {
+      var data = jsonDecode(response.body)['data'];
+      return PdbNilaiModel.fromJson(data);
+    } else {
+      throw "Edit data pdb failed";
+    }
+  }
+
   Future<bool> postFotoPdb(
       {required int pdbNilaiId,
       required String urlFoto,
@@ -121,6 +159,31 @@ class PdbService {
       return true;
     } else {
       throw "Add foto pdb failed";
+    }
+  }
+
+  Future<bool> deleteImage({required int imageId}) async {
+    late Uri url = UrlService().api('delete-pdb-foto');
+    var headers = {
+      'Content-Type': 'application/json',
+      'Authorization': await UserService().getTokenPreference() ?? '',
+    };
+
+    var body = {
+      'id': imageId,
+    };
+
+    var response = await http.post(
+      url,
+      headers: headers,
+      body: jsonEncode(body),
+    );
+    print(body);
+
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      throw "Delete image failed";
     }
   }
 }

@@ -428,6 +428,7 @@ class _PmDetailPageState extends State<PmDetailPage> {
                                                   MaterialPageRoute(
                                                       builder: (context) =>
                                                           PDBPage(
+                                                            pm: widget.pm,
                                                             pdb: e,
                                                             title: "PDB $index",
                                                           )),

@@ -15,6 +15,7 @@ import 'package:plnicon_mobile/services/transaksional/baterai_service.dart';
 import 'package:plnicon_mobile/services/transaksional/genset_service.dart';
 import 'package:plnicon_mobile/services/transaksional/inverter_service.dart';
 import 'package:plnicon_mobile/services/transaksional/kwh_service.dart';
+import 'package:plnicon_mobile/services/transaksional/pdb_service.dart';
 import 'package:plnicon_mobile/services/transaksional/rect_service.dart';
 
 class TransaksionalProvider extends ChangeNotifier {
@@ -138,6 +139,17 @@ class TransaksionalProvider extends ChangeNotifier {
     try {
       _listKwh = await KwhService()
           .getKwhByPmAndMaster(kwhId: kwhId.toString(), pmId: pmId.toString());
+      notifyListeners();
+      return true;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<bool> getPdb(int pmId, int pdbId) async {
+    try {
+      _listPdb = await PdbService()
+          .getPdbByPmAndMaster(pdbId: pdbId.toString(), pmId: pmId.toString());
       notifyListeners();
       return true;
     } catch (e) {
