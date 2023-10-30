@@ -65,7 +65,7 @@ class EditEnvPage extends StatelessWidget {
             height: 20,
           ),
           Text(
-            "Lampu",
+            "Jumlah Lampu Menyala",
             style: buttonText.copyWith(color: textDarkColor),
           ),
           TextInput(controller: lampuController),
