@@ -51,7 +51,7 @@ class AcMasterService {
     }
   }
 
-  Future<AcMasterModel> deleteAcMaster({required int id}) async {
+  Future<bool> deleteAcMaster({required int id}) async {
     late Uri url = UrlService().api('delete-air-conditioner');
 
     var headers = {
@@ -68,8 +68,7 @@ class AcMasterService {
         body: jsonEncode(body),
       );
       if (response.statusCode == 200) {
-        var data = jsonDecode(response.body)['data'];
-        return AcMasterModel.fromJson(data);
+        return true;
       } else {
         throw "Delete data ac failed";
       }

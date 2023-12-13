@@ -44,7 +44,11 @@ class _PmDetailPageState extends State<PmDetailPage> {
     super.initState();
   }
 
+  bool isLoading = false;
   getinit() async {
+    setState(() {
+      isLoading = true;
+    });
     UserProvider userProvider =
         Provider.of<UserProvider>(context, listen: false);
     PopProvider popProvider = Provider.of<PopProvider>(context, listen: false);
@@ -56,6 +60,9 @@ class _PmDetailPageState extends State<PmDetailPage> {
         await popProvider.getDataPop(id: widget.pm.popId);
       }
     }
+    setState(() {
+      isLoading = false;
+    });
   }
 
   @override
@@ -101,7 +108,7 @@ class _PmDetailPageState extends State<PmDetailPage> {
             ),
           ),
         ),
-        body: popProvider.listPop.isEmpty
+        body: isLoading
             ? Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [

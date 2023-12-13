@@ -8,6 +8,7 @@ import 'package:plnicon_mobile/models/master/ac_master_model.dart';
 import 'package:plnicon_mobile/models/nilai/ac_nilai_model.dart';
 import 'package:plnicon_mobile/models/pm_model.dart';
 import 'package:plnicon_mobile/pages/edit_master/edit_ac_page.dart';
+import 'package:plnicon_mobile/pages/pm_detail_page.dart';
 import 'package:plnicon_mobile/providers/images_provider.dart';
 import 'package:plnicon_mobile/providers/page_provider.dart';
 import 'package:plnicon_mobile/providers/transaksional_provider.dart';
@@ -219,7 +220,13 @@ class _AcPageState extends State<AcPage> {
                       onPressed: () async {
                         await AcMasterService()
                             .deleteAcMaster(id: widget.acMaster.id);
-                        Navigator.pop(context);
+                        // ignore: use_build_context_synchronously
+                        Navigator.pushAndRemoveUntil(
+                            context,
+                            MaterialPageRoute(
+                                builder: ((context) =>
+                                    PmDetailPage(pm: widget.pm))),
+                            (route) => false);
                       },
                       color: primaryRed,
                       clickColor: clickRed),
@@ -814,15 +821,34 @@ class _AcPageState extends State<AcPage> {
                                 temuan: temuanController.text,
                                 rekomendasi: rekomendasiController.text);
                             if (acProvider.listAc.isNotEmpty) {
+                              print(acProvider.listAc.last.foto);
                               for (var item in acProvider.listAc.last.foto!) {
-                                await AcService().deleteImage(imageId: item.id);
+                                bool isDelete = true;
+                                for (var itemImagesProvider
+                                    in imagesProvider.foto.entries) {
+                                  String url = item.url.replaceAll(
+                                      "http://localhost",
+                                      "https://jakban.iconpln.co.id/backend-plnicon/public");
+                                  if (url == itemImagesProvider.key) {
+                                    isDelete = false;
+                                  }
+                                }
+                                if (isDelete) {
+                                  await AcService()
+                                      .deleteImage(imageId: item.id);
+                                }
                               }
                             }
+                            print("ISI IMAGE PROVIDER");
+                            print(imagesProvider.foto);
                             imagesProvider.foto.forEach((key, value) async {
-                              await AcService().postFotoAc(
-                                  acNilaiId: ac.id,
-                                  urlFoto: key,
-                                  description: value);
+                              if (!(key
+                                  .contains("https://jakban.iconpln.co.id"))) {
+                                await AcService().postFotoAc(
+                                    acNilaiId: ac.id,
+                                    urlFoto: key,
+                                    description: value);
+                              }
                             });
                             // ignore: use_build_context_synchronously
                             Navigator.pop(context);

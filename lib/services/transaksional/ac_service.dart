@@ -149,6 +149,7 @@ class AcService {
 
     request.fields['ac_nilai_id'] = acNilaiId.toString();
     request.fields['deskripsi'] = description;
+
     request.files.add(await http.MultipartFile.fromPath('fotoFile', urlFoto));
 
     var response = await request.send();
