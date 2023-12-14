@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:io';
 
 import 'package:easy_image_viewer/easy_image_viewer.dart';
@@ -7,6 +9,7 @@ import 'package:plnicon_mobile/models/master/pdb_master_model.dart';
 import 'package:plnicon_mobile/models/nilai/pdb_nilai_model.dart';
 import 'package:plnicon_mobile/models/pm_model.dart';
 import 'package:plnicon_mobile/pages/edit_master/edit_pdb_page.dart';
+import 'package:plnicon_mobile/pages/pm_detail_page.dart';
 import 'package:plnicon_mobile/providers/images_provider.dart';
 import 'package:plnicon_mobile/providers/page_provider.dart';
 import 'package:plnicon_mobile/providers/transaksional_provider.dart';
@@ -61,7 +64,7 @@ class _PDBPageState extends State<PDBPage> {
     } else {
       if (await userProvider.getUser(token: token)) {
         await pdbProvider.getPdb(widget.pm.id, widget.pdb.id);
-        aresterWarna = pdbProvider.listAc.isEmpty
+        aresterWarna = pdbProvider.listPdb.isEmpty
             ? ""
             : pdbProvider.listPdb.first.aresterWarna;
 
@@ -165,7 +168,7 @@ class _PDBPageState extends State<PDBPage> {
                     height: 20,
                   ),
                   Text(
-                    "Tanggal Instalasi : -",
+                    "Tanggal Instalasi : ${widget.pdb.tanggalInstalasi}",
                     style: buttonText.copyWith(color: textDarkColor),
                   ),
                   const SizedBox(
@@ -178,6 +181,7 @@ class _PDBPageState extends State<PDBPage> {
                             context,
                             MaterialPageRoute(
                                 builder: (context) => EditPdbPage(
+                                      pm: widget.pm,
                                       pdb: widget.pdb,
                                       title: "Edit PDB",
                                     )));
@@ -192,8 +196,12 @@ class _PDBPageState extends State<PDBPage> {
                       onPressed: () async {
                         await PdbMasterService()
                             .deletePdbMaster(id: widget.pdb.id);
-                        // ignore: use_build_context_synchronously
-                        Navigator.pop(context);
+                        Navigator.pushAndRemoveUntil(
+                            context,
+                            MaterialPageRoute(
+                                builder: ((context) =>
+                                    PmDetailPage(pm: widget.pm))),
+                            (route) => false);
                       },
                       color: primaryRed,
                       clickColor: clickRed),
@@ -513,7 +521,6 @@ class _PDBPageState extends State<PDBPage> {
                     onTap: () async {
                       await handlePicker();
                       if (imagesProvider.croppedImageFile != null) {
-                        // ignore: use_build_context_synchronously
                         showDialog(
                           context: context,
                           builder: (context) => CustomPopUp(
@@ -613,7 +620,7 @@ class _PDBPageState extends State<PDBPage> {
                     child: CustomButton(
                         text: "Save",
                         onPressed: () async {
-                          if (pdbProvider.listAc.isEmpty) {
+                          if (pdbProvider.listPdb.isEmpty) {
                             if (aresterWarna.isNotEmpty) {
                               PdbNilaiModel pdb = await PdbService().postPdb(
                                   pdbId: widget.pdb.id,
@@ -635,7 +642,7 @@ class _PDBPageState extends State<PDBPage> {
                                 SnackBar(
                                   backgroundColor: primaryRed,
                                   content: const Text(
-                                    'Isi data suhu, pengujian, serta foto dengan lengkap',
+                                    'Isi foto dengan lengkap',
                                     textAlign: TextAlign.center,
                                   ),
                                 ),
@@ -669,7 +676,6 @@ class _PDBPageState extends State<PDBPage> {
                                     urlFoto: key,
                                     description: value);
                               });
-                              // ignore: use_build_context_synchronously
                               Navigator.pop(context);
                             } else {
                               ScaffoldMessenger.of(context)
@@ -678,7 +684,7 @@ class _PDBPageState extends State<PDBPage> {
                                 SnackBar(
                                   backgroundColor: primaryRed,
                                   content: const Text(
-                                    'Isi data suhu, pengujian, serta foto dengan lengkap',
+                                    'Isi foto dengan lengkap',
                                     textAlign: TextAlign.center,
                                   ),
                                 ),

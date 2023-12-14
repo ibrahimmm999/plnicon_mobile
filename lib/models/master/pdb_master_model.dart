@@ -8,8 +8,8 @@ class PdbMasterModel extends Equatable {
   final String tipe;
   final String arester;
   final String aresterTipe;
-  final List<McbMasterModel> listMcb;
-  // final DateTime tanggalInstalasi;
+  // final List<McbMasterModel> listMcb;
+  final String tanggalInstalasi;
   final DateTime createdAt;
   final DateTime updatedAt;
 
@@ -20,9 +20,9 @@ class PdbMasterModel extends Equatable {
     required this.arester,
     required this.aresterTipe,
     required this.tipe,
-    required this.listMcb,
+    // required this.listMcb,
     required this.createdAt,
-    // required this.tanggalInstalasi,
+    required this.tanggalInstalasi,
     required this.updatedAt,
   });
 
@@ -33,12 +33,12 @@ class PdbMasterModel extends Equatable {
       nama: json['nama'],
       arester: json['arester'],
       tipe: json['tipe'],
-      listMcb: json['mcb'] != null
-          ? List<McbMasterModel>.from(
-              json['mcb'].map((x) => McbMasterModel.fromJson(x)))
-          : [],
+      // listMcb: json['mcb'] != null
+      //     ? List<McbMasterModel>.from(
+      //         json['mcb'].map((x) => McbMasterModel.fromJson(x)))
+      //     : [],
       aresterTipe: json['arester_tipe'],
-      // tanggalInstalasi: DateTime.parse(json['tgl_instalasi']),
+      tanggalInstalasi: json['tgl_instalasi'],
       createdAt: DateTime.parse(json['created_at']),
       updatedAt: DateTime.parse(json['created_at']),
     );
@@ -52,8 +52,8 @@ class PdbMasterModel extends Equatable {
         tipe,
         aresterTipe,
         arester,
-        listMcb,
-        // tanggalInstalasi,
+        // listMcb,
+        tanggalInstalasi,
         createdAt,
         updatedAt,
       ];

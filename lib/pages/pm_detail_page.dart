@@ -6,6 +6,7 @@ import 'package:plnicon_mobile/pages/add_master/add_ats_page.dart';
 import 'package:plnicon_mobile/pages/add_master/add_genset_page.dart';
 import 'package:plnicon_mobile/pages/add_master/add_inverter_page.dart';
 import 'package:plnicon_mobile/pages/add_master/add_kwh_page.dart';
+import 'package:plnicon_mobile/pages/add_master/add_pdb_page.dart';
 import 'package:plnicon_mobile/pages/add_master/add_recti_page.dart';
 import 'package:plnicon_mobile/pages/ats_page.dart';
 import 'package:plnicon_mobile/pages/baterai_page.dart';
@@ -415,7 +416,16 @@ class _PmDetailPageState extends State<PmDetailPage> {
                                     style: buttonText.copyWith(
                                         color: textDarkColor),
                                   ),
-                                  const Icon(Icons.add)
+                                  GestureDetector(
+                                      onTap: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) => AddPdbPage(
+                                                  popId: widget.pm.popId)),
+                                        );
+                                      },
+                                      child: const Icon(Icons.add))
                                 ],
                               ),
                             ),
@@ -1140,81 +1150,81 @@ class _PmDetailPageState extends State<PmDetailPage> {
                     ),
 
                     // Mcb
-                    Container(
-                        width: double.infinity,
-                        decoration: BoxDecoration(
-                            boxShadow: const [
-                              BoxShadow(
-                                  color: Color.fromARGB(30, 0, 0, 0),
-                                  offset: Offset(0, 4),
-                                  blurRadius: 4)
-                            ],
-                            color: primaryBlue,
-                            borderRadius: BorderRadius.circular(defaultRadius)),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Padding(
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: defaultMargin, vertical: 12),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    "MCB",
-                                    style: buttonText.copyWith(
-                                        color: textDarkColor),
-                                  ),
-                                  const Icon(Icons.add)
-                                ],
-                              ),
-                            ),
-                            Container(
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: defaultMargin, vertical: 8),
-                              decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.vertical(
-                                      bottom: Radius.circular(defaultRadius))),
-                              width: double.infinity,
-                              child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: popProvider.listPop.first.listPdb
-                                              .isNotEmpty &&
-                                          popProvider.listPop.first.listPdb
-                                              .first.listMcb.isNotEmpty
-                                      ? popProvider
-                                          .listPop.first.listPdb.first.listMcb
-                                          .map((e) {
-                                          var index = popProvider.listPop.first
-                                                  .listPdb.first.listMcb
-                                                  .indexOf(e) +
-                                              1;
-                                          return GestureDetector(
-                                              onTap: () {
-                                                imagesProvider.clearList();
-                                                Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          McbPage(
-                                                            mcb: e,
-                                                            title: "MCB $index",
-                                                          )),
-                                                );
-                                              },
-                                              child: card("MCB $index"));
-                                        }).toList()
-                                      : [
-                                          Text(
-                                            "N/A",
-                                            style: body,
-                                          )
-                                        ]),
-                            ),
-                          ],
-                        )),
+                    // Container(
+                    //     width: double.infinity,
+                    //     decoration: BoxDecoration(
+                    //         boxShadow: const [
+                    //           BoxShadow(
+                    //               color: Color.fromARGB(30, 0, 0, 0),
+                    //               offset: Offset(0, 4),
+                    //               blurRadius: 4)
+                    //         ],
+                    //         color: primaryBlue,
+                    //         borderRadius: BorderRadius.circular(defaultRadius)),
+                    //     child: Column(
+                    //       crossAxisAlignment: CrossAxisAlignment.start,
+                    //       children: [
+                    //         Padding(
+                    //           padding: EdgeInsets.symmetric(
+                    //               horizontal: defaultMargin, vertical: 12),
+                    //           child: Row(
+                    //             mainAxisAlignment:
+                    //                 MainAxisAlignment.spaceBetween,
+                    //             children: [
+                    //               Text(
+                    //                 "MCB",
+                    //                 style: buttonText.copyWith(
+                    //                     color: textDarkColor),
+                    //               ),
+                    //               const Icon(Icons.add)
+                    //             ],
+                    //           ),
+                    //         ),
+                    //         Container(
+                    //           padding: EdgeInsets.symmetric(
+                    //               horizontal: defaultMargin, vertical: 8),
+                    //           decoration: BoxDecoration(
+                    //               color: Colors.white,
+                    //               borderRadius: BorderRadius.vertical(
+                    //                   bottom: Radius.circular(defaultRadius))),
+                    //           width: double.infinity,
+                    //           child: Column(
+                    //               crossAxisAlignment: CrossAxisAlignment.start,
+                    //               children: popProvider.listPop.first.listPdb
+                    //                           .isNotEmpty &&
+                    //                       popProvider.listPop.first.listPdb
+                    //                           .first.listMcb.isNotEmpty
+                    //                   ? popProvider
+                    //                       .listPop.first.listPdb.first.listMcb
+                    //                       .map((e) {
+                    //                       var index = popProvider.listPop.first
+                    //                               .listPdb.first.listMcb
+                    //                               .indexOf(e) +
+                    //                           1;
+                    //                       return GestureDetector(
+                    //                           onTap: () {
+                    //                             imagesProvider.clearList();
+                    //                             Navigator.push(
+                    //                               context,
+                    //                               MaterialPageRoute(
+                    //                                   builder: (context) =>
+                    //                                       McbPage(
+                    //                                         mcb: e,
+                    //                                         title: "MCB $index",
+                    //                                       )),
+                    //                             );
+                    //                           },
+                    //                           child: card("MCB $index"));
+                    //                     }).toList()
+                    //                   : [
+                    //                       Text(
+                    //                         "N/A",
+                    //                         style: body,
+                    //                       )
+                    //                     ]),
+                    //         ),
+                    //       ],
+                    //     )),
 
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 28),
