@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:plnicon_mobile/providers/pop_provider.dart';
 import 'package:plnicon_mobile/services/master/ac_master_service.dart';
 import 'package:plnicon_mobile/theme/theme.dart';
@@ -7,9 +8,25 @@ import 'package:plnicon_mobile/widgets/custom_button.dart';
 import 'package:plnicon_mobile/widgets/text_input.dart';
 import 'package:provider/provider.dart';
 
-class AddAcPage extends StatelessWidget {
+class AddAcPage extends StatefulWidget {
   const AddAcPage({super.key, required this.popId});
   final int popId;
+
+  @override
+  State<AddAcPage> createState() => _AddAcPageState();
+}
+
+String tglInstalasi = '';
+
+class _AddAcPageState extends State<AddAcPage> {
+  @override
+  void initState() {
+    super.initState();
+    setState(() {
+      tglInstalasi = DateFormat('yyyy-MM-dd hh:mm:ss').format(DateTime.now());
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     PopProvider popProvider = Provider.of<PopProvider>(context);
@@ -72,10 +89,42 @@ class AddAcPage extends StatelessWidget {
           const SizedBox(
             height: 20,
           ),
-          Text(
-            "Tanggal Instalasi :",
-            style: buttonText.copyWith(color: textDarkColor),
-          ),
+          // Text(
+          //   "Tanggal Instalasi",
+          //   style: buttonText.copyWith(color: textDarkColor),
+          // ),
+          // GestureDetector(
+          //     onTap: () async {
+          //       DateTime? pickedDate = await showDatePicker(
+          //           context: context,
+          //           cancelText: "Cancel",
+          //           currentDate: DateTime.now(),
+          //           confirmText: "Set",
+          //           initialDate: DateTime.now(),
+          //           firstDate: DateTime(1945),
+          //           lastDate: DateTime.now());
+          //       if (pickedDate != null) {
+          //         String formattedDate =
+          //             DateFormat('yyyy-MM-dd hh:mm:ss').format(pickedDate);
+          //         setState(() {
+          //           tglInstalasi = formattedDate;
+          //         });
+          //       }
+          //     },
+          //     child: Container(
+          //       padding: EdgeInsets.all(defaultMargin),
+          //       decoration: BoxDecoration(
+          //           color: primaryBlue,
+          //           borderRadius: BorderRadius.circular(defaultRadius)),
+          //       child: Row(
+          //         children: [
+          //           Text(
+          //             tglInstalasi,
+          //             style: buttonText,
+          //           )
+          //         ],
+          //       ),
+          //     )),
           const SizedBox(
             height: 32,
           ),
@@ -84,14 +133,15 @@ class AddAcPage extends StatelessWidget {
               onPressed: () async {
                 await AcMasterService().postAcMaster(
                   nama: namaAcController.text,
+                  tglInstalasi: tglInstalasi,
                   kondisi: kondisiController.text,
                   merk: merkController.text,
                   kapasitas: kapasitasController.text,
                   tekananFreon: tekananFreonController.text,
                   modeHidup: modeHidupController.text,
-                  popId: popId,
+                  popId: widget.popId,
                 );
-                popProvider.getDataPop(id: popId);
+                popProvider.getDataPop(id: widget.popId);
                 Navigator.pop(context);
               },
               color: primaryGreen,

@@ -19,6 +19,7 @@ import 'package:plnicon_mobile/services/user_service.dart';
 import 'package:plnicon_mobile/theme/theme.dart';
 import 'package:plnicon_mobile/widgets/custom_appbar.dart';
 import 'package:plnicon_mobile/widgets/custom_button.dart';
+import 'package:plnicon_mobile/widgets/custom_button_loading.dart';
 import 'package:plnicon_mobile/widgets/custom_popup.dart';
 import 'package:plnicon_mobile/widgets/input_dokumentasi.dart';
 import 'package:plnicon_mobile/widgets/text_input.dart';
@@ -764,112 +765,149 @@ class _AcPageState extends State<AcPage> {
                 Padding(
                   padding: EdgeInsets.symmetric(
                       horizontal: defaultMargin + 32, vertical: 40),
-                  child: CustomButton(
-                      text: "Save",
-                      onPressed: () async {
-                        if (acProvider.listAc.isEmpty) {
-                          if (suhuController.text.isNotEmpty &&
-                              pengujian.isNotEmpty &&
-                              fotoAcIndoor.isNotEmpty &&
-                              fotoAcOutdoor.isNotEmpty &&
-                              fotoAcSuhu.isNotEmpty) {
-                            AcNilaiModel ac = await AcService().postAc(
-                                acId: widget.acMaster.id,
-                                pmId: widget.pm.id,
-                                suhuAc: int.parse(suhuController.text),
-                                hasilPengujian: pengujian,
-                                temuan: temuanController.text,
-                                rekomendasi: rekomendasiController.text);
-                            imagesProvider.foto.forEach((key, value) async {
-                              await AcService().postFotoAc(
-                                  acNilaiId: ac.id,
-                                  urlFoto: key,
-                                  description: value);
+                  child: isLoading
+                      ? CustomButtonLoading(color: primaryGreen)
+                      : CustomButton(
+                          text: "Save",
+                          onPressed: () async {
+                            setState(() {
+                              isLoading = true;
                             });
-                            Navigator.pop(context);
-                          } else {
-                            ScaffoldMessenger.of(context)
-                                .removeCurrentSnackBar();
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                backgroundColor: primaryRed,
-                                content: const Text(
-                                  'Isi data suhu, pengujian, serta foto dengan lengkap',
-                                  textAlign: TextAlign.center,
-                                ),
-                              ),
-                            );
-                          }
-                        } else {
-                          if (suhuController.text.isNotEmpty &&
-                              pengujian.isNotEmpty &&
-                              fotoAcIndoor.isNotEmpty &&
-                              fotoAcOutdoor.isNotEmpty &&
-                              fotoAcSuhu.isNotEmpty) {
-                            AcNilaiModel ac = await AcService().editAc(
-                                foto: [
-                                  const FotoModel(
-                                      id: 99,
-                                      url: "url",
-                                      deskripsi: "deskripsi")
-                                ],
-                                id: acProvider.listAc.last.id,
-                                acId: widget.acMaster.id,
-                                pmId: widget.pm.id,
-                                suhuAc: int.parse(suhuController.text),
-                                hasilPengujian: pengujian,
-                                temuan: temuanController.text,
-                                rekomendasi: rekomendasiController.text);
-                            if (acProvider.listAc.isNotEmpty) {
-                              print(acProvider.listAc.last.foto);
-                              for (var item in acProvider.listAc.last.foto!) {
-                                bool isDelete = true;
-                                for (var itemImagesProvider
-                                    in imagesProvider.foto.entries) {
-                                  String url = item.url.replaceAll(
-                                      "http://localhost",
-                                      "https://jakban.iconpln.co.id/backend-plnicon/public");
-                                  if (url == itemImagesProvider.key) {
-                                    isDelete = false;
+                            if (acProvider.listAc.isEmpty) {
+                              if (suhuController.text.isNotEmpty &&
+                                  pengujian.isNotEmpty &&
+                                  fotoAcIndoor.isNotEmpty &&
+                                  fotoAcOutdoor.isNotEmpty &&
+                                  fotoAcSuhu.isNotEmpty) {
+                                AcNilaiModel ac = await AcService().postAc(
+                                    acId: widget.acMaster.id,
+                                    pmId: widget.pm.id,
+                                    suhuAc: int.parse(suhuController.text),
+                                    hasilPengujian: pengujian,
+                                    temuan: temuanController.text,
+                                    rekomendasi: rekomendasiController.text);
+
+                                await Future.forEach(
+                                    imagesProvider.foto.entries,
+                                    (element) async {
+                                  await AcService().postFotoAc(
+                                      acNilaiId: ac.id,
+                                      urlFoto: element.key,
+                                      description: element.value);
+                                });
+                                setState(() {
+                                  isLoading = false;
+                                });
+                                // ignore: use_build_context_synchronously
+                                Navigator.pushAndRemoveUntil(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            PmDetailPage(pm: widget.pm)),
+                                    (route) => false);
+                              } else {
+                                setState(() {
+                                  isLoading = false;
+                                });
+                                ScaffoldMessenger.of(context)
+                                    .removeCurrentSnackBar();
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    backgroundColor: primaryRed,
+                                    content: const Text(
+                                      'Isi data suhu, pengujian, serta foto dengan lengkap',
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
+                                );
+                              }
+                            } else {
+                              if (suhuController.text.isNotEmpty &&
+                                  pengujian.isNotEmpty &&
+                                  fotoAcIndoor.isNotEmpty &&
+                                  fotoAcOutdoor.isNotEmpty &&
+                                  fotoAcSuhu.isNotEmpty) {
+                                setState(() {
+                                  isLoading = true;
+                                });
+                                AcNilaiModel ac = await AcService().editAc(
+                                    foto: [
+                                      const FotoModel(
+                                          id: 99,
+                                          url: "url",
+                                          deskripsi: "deskripsi")
+                                    ],
+                                    id: acProvider.listAc.last.id,
+                                    acId: widget.acMaster.id,
+                                    pmId: widget.pm.id,
+                                    suhuAc: int.parse(suhuController.text),
+                                    hasilPengujian: pengujian,
+                                    temuan: temuanController.text,
+                                    rekomendasi: rekomendasiController.text);
+                                if (acProvider.listAc.isNotEmpty) {
+                                  // print(acProvider.listAc.last.foto);
+                                  for (var item
+                                      in acProvider.listAc.last.foto!) {
+                                    bool isDelete = true;
+                                    for (var itemImagesProvider
+                                        in imagesProvider.foto.entries) {
+                                      String url = item.url.replaceAll(
+                                          "http://localhost",
+                                          "https://jakban.iconpln.co.id/backend-plnicon/public");
+                                      if (url == itemImagesProvider.key) {
+                                        isDelete = false;
+                                      }
+                                    }
+                                    if (isDelete) {
+                                      await AcService()
+                                          .deleteImage(imageId: item.id);
+                                    }
                                   }
                                 }
-                                if (isDelete) {
-                                  await AcService()
-                                      .deleteImage(imageId: item.id);
-                                }
+                                // print("ISI IMAGE PROVIDER");
+                                // print(imagesProvider.foto);
+                                await Future.forEach(
+                                    imagesProvider.foto.entries,
+                                    (element) async {
+                                  if (!(element.key.contains(
+                                      "https://jakban.iconpln.co.id"))) {
+                                    await AcService().postFotoAc(
+                                        acNilaiId: ac.id,
+                                        urlFoto: element.key,
+                                        description: element.value);
+                                  }
+                                });
+                                setState(() {
+                                  isLoading = false;
+                                });
+                                // ignore: use_build_context_synchronously
+                                Navigator.pushAndRemoveUntil(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            PmDetailPage(pm: widget.pm)),
+                                    (route) => false);
+                              } else {
+                                setState(() {
+                                  isLoading = false;
+                                });
+                                ScaffoldMessenger.of(context)
+                                    .removeCurrentSnackBar();
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    backgroundColor: primaryRed,
+                                    content: const Text(
+                                      'Isi data suhu, pengujian, serta foto dengan lengkap',
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
+                                );
                               }
                             }
-                            print("ISI IMAGE PROVIDER");
-                            print(imagesProvider.foto);
-                            imagesProvider.foto.forEach((key, value) async {
-                              if (!(key
-                                  .contains("https://jakban.iconpln.co.id"))) {
-                                await AcService().postFotoAc(
-                                    acNilaiId: ac.id,
-                                    urlFoto: key,
-                                    description: value);
-                              }
-                            });
                             // ignore: use_build_context_synchronously
-                            Navigator.pop(context);
-                          } else {
-                            ScaffoldMessenger.of(context)
-                                .removeCurrentSnackBar();
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                backgroundColor: primaryRed,
-                                content: const Text(
-                                  'Isi data suhu, pengujian, serta foto dengan lengkap',
-                                  textAlign: TextAlign.center,
-                                ),
-                              ),
-                            );
-                          }
-                        }
-                        // ignore: use_build_context_synchronously
-                      },
-                      color: primaryGreen,
-                      clickColor: clickGreen),
+                          },
+                          color: primaryGreen,
+                          clickColor: clickGreen),
                 )
               ],
             ));

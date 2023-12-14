@@ -2,6 +2,7 @@
 
 import 'dart:convert';
 
+import 'package:intl/intl.dart';
 import 'package:plnicon_mobile/models/master/ac_master_model.dart';
 import 'package:plnicon_mobile/services/url_service.dart';
 import 'package:http/http.dart' as http;
@@ -15,6 +16,7 @@ class AcMasterService {
     required String kapasitas,
     required String tekananFreon,
     required String modeHidup,
+    String? tglInstalasi,
     required int popId,
   }) async {
     late Uri url = UrlService().api('air-conditioner');
@@ -31,7 +33,8 @@ class AcMasterService {
       'kapasitas': kapasitas,
       'tekanan_freon': tekananFreon,
       'mode_hidup': modeHidup,
-      'tgl_instalasi': "2023-08-08 00:00:00"
+      'tgl_instalasi': tglInstalasi ??
+          DateFormat('yyyy-MM-dd hh:mm:ss').format(DateTime.now())
     };
     try {
       var response = await http.post(
@@ -86,6 +89,7 @@ class AcMasterService {
     required String kapasitas,
     required String tekananFreon,
     required String modeHidup,
+    String? tglInstalasi,
   }) async {
     late Uri url = UrlService().api('edit-air-conditioner');
 
@@ -102,6 +106,8 @@ class AcMasterService {
       'kapasitas': kapasitas,
       'tekanan_freon': tekananFreon,
       'mode_hidup': modeHidup,
+      'tgl_instalasi': tglInstalasi ??
+          DateFormat('yyyy-MM-dd hh:mm:ss').format(DateTime.now())
     };
 
     var response = await http.post(

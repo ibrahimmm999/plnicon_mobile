@@ -118,8 +118,11 @@ class _PmDetailPageState extends State<PmDetailPage> {
                 ],
               )
             : ListView(
-                padding: EdgeInsets.symmetric(
-                    horizontal: defaultMargin, vertical: 20),
+                padding: EdgeInsets.only(
+                    left: defaultMargin,
+                    top: 20,
+                    right: defaultMargin,
+                    bottom: 60),
                 children: [
                     // KWH
                     Container(

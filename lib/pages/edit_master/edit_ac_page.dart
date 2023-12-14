@@ -1,4 +1,6 @@
+import 'package:calendar_date_picker2/calendar_date_picker2.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:plnicon_mobile/models/master/ac_master_model.dart';
 import 'package:plnicon_mobile/models/pm_model.dart';
 import 'package:plnicon_mobile/providers/pop_provider.dart';
@@ -7,10 +9,12 @@ import 'package:plnicon_mobile/services/master/ac_master_service.dart';
 import 'package:plnicon_mobile/theme/theme.dart';
 import 'package:plnicon_mobile/widgets/custom_appbar.dart';
 import 'package:plnicon_mobile/widgets/custom_button.dart';
+import 'package:plnicon_mobile/widgets/custom_button_loading.dart';
+import 'package:plnicon_mobile/widgets/custom_popup.dart';
 import 'package:plnicon_mobile/widgets/text_input.dart';
 import 'package:provider/provider.dart';
 
-class EditAcPage extends StatelessWidget {
+class EditAcPage extends StatefulWidget {
   const EditAcPage(
       {super.key,
       required this.acMaster,
@@ -21,24 +25,40 @@ class EditAcPage extends StatelessWidget {
   final String title;
 
   @override
+  State<EditAcPage> createState() => _EditAcPageState();
+}
+
+String tglInstalasi = "";
+
+class _EditAcPageState extends State<EditAcPage> {
+  @override
+  void initState() {
+    super.initState();
+    setState(() {
+      tglInstalasi = widget.acMaster.tanggalInstalasi;
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
+    bool isLoading = false;
     TransaksionalProvider acProvider =
         Provider.of<TransaksionalProvider>(context);
     PopProvider popProvider = Provider.of<PopProvider>(context);
     TextEditingController namaAcController =
-        TextEditingController(text: acMaster.nama);
+        TextEditingController(text: widget.acMaster.nama);
     TextEditingController kondisiController =
-        TextEditingController(text: acMaster.kondisi);
+        TextEditingController(text: widget.acMaster.kondisi);
     TextEditingController merkController =
-        TextEditingController(text: acMaster.merk);
+        TextEditingController(text: widget.acMaster.merk);
     TextEditingController kapasitasController =
-        TextEditingController(text: acMaster.kapasitas);
+        TextEditingController(text: widget.acMaster.kapasitas);
     TextEditingController tekananFreonController =
-        TextEditingController(text: acMaster.tekananFreon);
+        TextEditingController(text: widget.acMaster.tekananFreon);
     TextEditingController modeHidupController =
-        TextEditingController(text: acMaster.modeHidup);
+        TextEditingController(text: widget.acMaster.modeHidup);
     return Scaffold(
-      appBar: CustomAppBar(isMainPage: false, title: title),
+      appBar: CustomAppBar(isMainPage: false, title: widget.title),
       body: ListView(
         padding: EdgeInsets.all(defaultMargin),
         children: [
@@ -90,25 +110,71 @@ class EditAcPage extends StatelessWidget {
           const SizedBox(
             height: 20,
           ),
+          Text(
+            "Tanggal Instalasi",
+            style: buttonText.copyWith(color: textDarkColor),
+          ),
+          GestureDetector(
+              onTap: () async {
+                DateTime? pickedDate = await showDatePicker(
+                    context: context,
+                    cancelText: "Cancel",
+                    currentDate: DateTime.now(),
+                    confirmText: "Set",
+                    initialDate: DateTime.now(),
+                    firstDate: DateTime(1945),
+                    lastDate: DateTime.now());
+                if (pickedDate != null) {
+                  String formattedDate =
+                      DateFormat('yyyy-MM-dd hh:mm:ss').format(pickedDate);
+                  print(formattedDate);
+                  setState(() {
+                    tglInstalasi = formattedDate;
+                  });
+                  print(tglInstalasi);
+                } else {
+                  print("Date is not selected");
+                }
+              },
+              child: Container(
+                padding: EdgeInsets.all(defaultMargin),
+                decoration: BoxDecoration(
+                    color: primaryBlue,
+                    borderRadius: BorderRadius.circular(defaultRadius)),
+                child: Row(
+                  children: [
+                    Text(
+                      tglInstalasi,
+                      style: buttonText,
+                    )
+                  ],
+                ),
+              )),
           const SizedBox(
-            height: 32,
+            height: 52,
           ),
           CustomButton(
               text: "Save",
               onPressed: () async {
+                setState(() {
+                  isLoading = true;
+                });
                 await AcMasterService().editAcMaster(
-                  popId: acMaster.popId,
-                  acId: acMaster.id,
-                  nama: namaAcController.text,
-                  kondisi: kondisiController.text,
-                  merk: merkController.text,
-                  kapasitas: kapasitasController.text,
-                  tekananFreon: tekananFreonController.text,
-                  modeHidup: modeHidupController.text,
-                );
+                    popId: widget.acMaster.popId,
+                    acId: widget.acMaster.id,
+                    nama: namaAcController.text,
+                    kondisi: kondisiController.text,
+                    merk: merkController.text,
+                    kapasitas: kapasitasController.text,
+                    tekananFreon: tekananFreonController.text,
+                    modeHidup: modeHidupController.text,
+                    tglInstalasi: tglInstalasi);
 
-                await popProvider.getDataPop(id: acMaster.popId);
-                await acProvider.getAc(pm.id, acMaster.id);
+                await popProvider.getDataPop(id: widget.acMaster.popId);
+                await acProvider.getAc(widget.pm.id, widget.acMaster.id);
+                setState(() {
+                  isLoading = false;
+                });
                 Navigator.pop(context);
                 Navigator.pop(context);
               },
