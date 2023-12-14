@@ -166,30 +166,6 @@ class AcService {
     }
   }
 
-  Future<List<FotoModel>> getFoto({required int acNilaiId}) async {
-    var url = UrlService().api('air-conditioner-foto');
-    var headers = {
-      'Content-Type': 'application/json',
-      'Authorization': await UserService().getTokenPreference() ?? '',
-    };
-
-    var response = await http.get(
-      url,
-      headers: headers,
-    );
-
-    if (response.statusCode == 200) {
-      var data = jsonDecode(response.body)['data'] as List;
-
-      List<FotoModel> ac = List<FotoModel>.from(
-        data.map((e) => FotoModel.fromJson(e)),
-      );
-      return ac;
-    } else {
-      throw "Get data ac failed";
-    }
-  }
-
   Future<bool> deleteImage({required int imageId}) async {
     late Uri url = UrlService().api('delete-air-conditioner-foto');
     var headers = {

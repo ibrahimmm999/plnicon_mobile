@@ -654,8 +654,6 @@ class _AcPageState extends State<AcPage> {
                             imagesProvider.addDeskripsi(
                                 path: contentPath,
                                 deskripsi: deskripsiController.text);
-                            // imagesProvider.listFoto[contentPath] =
-                            //     imagesProvider.foto;
                             print(imagesProvider.foto);
                             deskripsiController.clear();
                           },
@@ -845,7 +843,6 @@ class _AcPageState extends State<AcPage> {
                                     temuan: temuanController.text,
                                     rekomendasi: rekomendasiController.text);
                                 if (acProvider.listAc.isNotEmpty) {
-                                  // print(acProvider.listAc.last.foto);
                                   for (var item
                                       in acProvider.listAc.last.foto!) {
                                     bool isDelete = true;

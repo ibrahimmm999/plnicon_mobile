@@ -39,7 +39,7 @@ class KwhNilaiModel extends Equatable {
       required this.rekomendasi,
       required this.createdAt,
       required this.updatedAt,
-      required this.foto});
+      this.foto});
 
   factory KwhNilaiModel.fromJson(Map<String, dynamic> json) {
     return KwhNilaiModel(

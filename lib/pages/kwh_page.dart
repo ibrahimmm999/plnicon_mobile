@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:easy_image_viewer/easy_image_viewer.dart';
 import 'package:flutter/material.dart';
+import 'package:plnicon_mobile/models/foto_model.dart';
 import 'package:plnicon_mobile/models/master/kwh_master_model.dart';
 import 'package:plnicon_mobile/models/nilai/kwh_nilai_model.dart';
 import 'package:plnicon_mobile/models/pm_model.dart';
@@ -18,6 +19,8 @@ import 'package:plnicon_mobile/services/transaksional/kwh_service.dart';
 import 'package:plnicon_mobile/services/user_service.dart';
 import 'package:plnicon_mobile/theme/theme.dart';
 import 'package:plnicon_mobile/widgets/custom_button.dart';
+import 'package:plnicon_mobile/widgets/custom_button_loading.dart';
+import 'package:plnicon_mobile/widgets/custom_popup.dart';
 import 'package:plnicon_mobile/widgets/input_dokumentasi.dart';
 import 'package:plnicon_mobile/widgets/text_input.dart';
 import 'package:provider/provider.dart';
@@ -308,111 +311,163 @@ class _KWHPageState extends State<KWHPage> {
           Padding(
             padding: EdgeInsets.symmetric(
                 horizontal: defaultMargin + 32, vertical: 40),
-            child: CustomButton(
-                text: "Save",
-                onPressed: () async {
-                  if (kwhProvider.listKwh.isEmpty) {
-                    if (fotoKwh.isNotEmpty &&
-                        fotoLoadR.isNotEmpty &&
-                        fotoLoadS.isNotEmpty &&
-                        fotoLoadT.isNotEmpty &&
-                        fotoVng.isNotEmpty &&
-                        fotoVrn.isNotEmpty &&
-                        fotoVrs.isNotEmpty &&
-                        fotoVrt.isNotEmpty &&
-                        fotoVsn.isNotEmpty &&
-                        fotoVst.isNotEmpty &&
-                        fotoVtn.isNotEmpty) {
-                      KwhNilaiModel kwhInput = await KwhService().postKwh(
-                          kwhId: widget.kwh.id,
-                          pmId: widget.pm.id,
-                          loadr: loadPhasaR.text,
-                          loads: loadPhasaS.text,
-                          loadt: loadPhasaT.text,
-                          vrs: rsVoltageController.text,
-                          vrt: rtVoltageController.text,
-                          vst: stVoltageController.text,
-                          vng: ngVoltageController.text,
-                          vrn: teganganPhasaRController.text,
-                          vsn: teganganPhasaSController.text,
-                          vtn: teganganPhasaTController.text,
-                          temuan: temuanController.text,
-                          rekomendasi: rekomendasiController.text);
-                      imagesProvider.foto.forEach((key, value) async {
-                        await KwhService().postFotoKwh(
-                            kwhNilaiId: int.parse(kwhInput.id),
-                            urlFoto: key,
-                            description: deskripsiController.text);
-                        Navigator.pop(context);
-                      });
-                    } else {
-                      ScaffoldMessenger.of(context).removeCurrentSnackBar();
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          backgroundColor: primaryRed,
-                          content: const Text(
-                            'Isi foto dengan lengkap',
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                      );
-                    }
-                  } else {
-                    if (fotoKwh.isNotEmpty &&
-                        fotoLoadR.isNotEmpty &&
-                        fotoLoadS.isNotEmpty &&
-                        fotoLoadT.isNotEmpty &&
-                        fotoVng.isNotEmpty &&
-                        fotoVrn.isNotEmpty &&
-                        fotoVrs.isNotEmpty &&
-                        fotoVrt.isNotEmpty &&
-                        fotoVsn.isNotEmpty &&
-                        fotoVst.isNotEmpty &&
-                        fotoVtn.isNotEmpty) {
-                      KwhNilaiModel kwhInput = await KwhService().editKwh(
-                          id: int.parse(kwhProvider.listKwh.last.id),
-                          kwhId: widget.kwh.id,
-                          pmId: widget.pm.id,
-                          loadr: double.parse(loadPhasaR.text),
-                          loads: double.parse(loadPhasaS.text),
-                          loadt: double.parse(loadPhasaT.text),
-                          vrs: double.parse(rsVoltageController.text),
-                          vrt: double.parse(rtVoltageController.text),
-                          vst: double.parse(stVoltageController.text),
-                          vng: double.parse(ngVoltageController.text),
-                          vrn: double.parse(teganganPhasaRController.text),
-                          vsn: double.parse(teganganPhasaSController.text),
-                          vtn: double.parse(teganganPhasaTController.text),
-                          temuan: temuanController.text,
-                          rekomendasi: rekomendasiController.text);
-                      //  if (acProvider.listKwh.isNotEmpty) {
-                      //   for (var item in acProvider.listKwh.last.foto!) {
-                      //     await AcService().deleteImage(imageId: item.id);
-                      //   }
-                      // }
-                      imagesProvider.foto.forEach((key, value) async {
-                        await KwhService().postFotoKwh(
-                            kwhNilaiId: int.parse(kwhInput.id),
-                            urlFoto: key,
-                            description: deskripsiController.text);
-                      });
-                      Navigator.pop(context);
-                    } else {
-                      ScaffoldMessenger.of(context).removeCurrentSnackBar();
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          backgroundColor: primaryRed,
-                          content: const Text(
-                            'Isi foto dengan lengkap',
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                      );
-                    }
-                  }
-                },
-                color: primaryBlue,
-                clickColor: clickBlue),
+            child: isLoading
+                ? CustomButtonLoading(color: primaryGreen)
+                : CustomButton(
+                    text: "Save",
+                    onPressed: () async {
+                      if (kwhProvider.listKwh.isEmpty) {
+                        setState(() {
+                          isLoading = true;
+                        });
+                        if (fotoKwh.isNotEmpty &&
+                            fotoLoadR.isNotEmpty &&
+                            fotoLoadS.isNotEmpty &&
+                            fotoLoadT.isNotEmpty &&
+                            fotoVng.isNotEmpty &&
+                            fotoVrn.isNotEmpty &&
+                            fotoVrs.isNotEmpty &&
+                            fotoVrt.isNotEmpty &&
+                            fotoVsn.isNotEmpty &&
+                            fotoVst.isNotEmpty &&
+                            fotoVtn.isNotEmpty) {
+                          KwhNilaiModel kwhInput = await KwhService().postKwh(
+                              kwhId: widget.kwh.id,
+                              pmId: widget.pm.id,
+                              loadr: loadPhasaR.text,
+                              loads: loadPhasaS.text,
+                              loadt: loadPhasaT.text,
+                              vrs: rsVoltageController.text,
+                              vrt: rtVoltageController.text,
+                              vst: stVoltageController.text,
+                              vng: ngVoltageController.text,
+                              vrn: teganganPhasaRController.text,
+                              vsn: teganganPhasaSController.text,
+                              vtn: teganganPhasaTController.text,
+                              temuan: temuanController.text,
+                              rekomendasi: rekomendasiController.text);
+                          await Future.forEach(imagesProvider.foto.entries,
+                              (element) async {
+                            await KwhService().postFotoKwh(
+                                kwhNilaiId: int.parse(kwhInput.id),
+                                urlFoto: element.key,
+                                description: element.value);
+                          });
+                          setState(() {
+                            isLoading = false;
+                          });
+                          Navigator.pushAndRemoveUntil(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      PmDetailPage(pm: widget.pm)),
+                              (route) => false);
+                        } else {
+                          setState(() {
+                            isLoading = false;
+                          });
+                          ScaffoldMessenger.of(context).removeCurrentSnackBar();
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              backgroundColor: primaryRed,
+                              content: const Text(
+                                'Isi foto dengan lengkap',
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                          );
+                        }
+                      } else {
+                        if (fotoKwh.isNotEmpty &&
+                            fotoLoadR.isNotEmpty &&
+                            fotoLoadS.isNotEmpty &&
+                            fotoLoadT.isNotEmpty &&
+                            fotoVng.isNotEmpty &&
+                            fotoVrn.isNotEmpty &&
+                            fotoVrs.isNotEmpty &&
+                            fotoVrt.isNotEmpty &&
+                            fotoVsn.isNotEmpty &&
+                            fotoVst.isNotEmpty &&
+                            fotoVtn.isNotEmpty) {
+                          setState(() {
+                            isLoading = true;
+                          });
+                          KwhNilaiModel kwhInput = await KwhService().editKwh(
+                              foto: [
+                                const FotoModel(
+                                    id: 99, url: "url", deskripsi: "deskripsi")
+                              ],
+                              id: int.parse(kwhProvider.listKwh.last.id),
+                              kwhId: widget.kwh.id,
+                              pmId: widget.pm.id,
+                              loadr: double.parse(loadPhasaR.text),
+                              loads: double.parse(loadPhasaS.text),
+                              loadt: double.parse(loadPhasaT.text),
+                              vrs: double.parse(rsVoltageController.text),
+                              vrt: double.parse(rtVoltageController.text),
+                              vst: double.parse(stVoltageController.text),
+                              vng: double.parse(ngVoltageController.text),
+                              vrn: double.parse(teganganPhasaRController.text),
+                              vsn: double.parse(teganganPhasaSController.text),
+                              vtn: double.parse(teganganPhasaTController.text),
+                              temuan: temuanController.text,
+                              rekomendasi: rekomendasiController.text);
+                          if (kwhProvider.listKwh.isNotEmpty) {
+                            for (var item in kwhProvider.listKwh.last.foto!) {
+                              bool isDelete = true;
+                              for (var itemImagesProvider
+                                  in imagesProvider.foto.entries) {
+                                String url = item.url.replaceAll(
+                                    "http://localhost",
+                                    "https://jakban.iconpln.co.id/backend-plnicon/public");
+                                if (url == itemImagesProvider.key) {
+                                  isDelete = false;
+                                }
+                              }
+                              if (isDelete) {
+                                await KwhService()
+                                    .deleteImage(imageId: item.id);
+                              }
+                            }
+                          }
+                          await Future.forEach(imagesProvider.foto.entries,
+                              (element) async {
+                            if (!(element.key
+                                .contains("https://jakban.iconpln.co.id"))) {
+                              await KwhService().postFotoKwh(
+                                  kwhNilaiId: int.parse(kwhInput.id),
+                                  urlFoto: element.key,
+                                  description: element.value);
+                            }
+                          });
+                          setState(() {
+                            isLoading = false;
+                          });
+                          Navigator.pushAndRemoveUntil(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      PmDetailPage(pm: widget.pm)),
+                              (route) => false);
+                        } else {
+                          setState(() {
+                            isLoading = false;
+                          });
+                          ScaffoldMessenger.of(context).removeCurrentSnackBar();
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              backgroundColor: primaryRed,
+                              content: const Text(
+                                'Isi foto dengan lengkap',
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                          );
+                        }
+                      }
+                    },
+                    color: primaryGreen,
+                    clickColor: clickGreen),
           )
         ],
       );
@@ -697,34 +752,34 @@ class _KWHPageState extends State<KWHPage> {
                                                               "Foto KWH") {
                                                             fotoKwh = "";
                                                           } else if (e.value ==
-                                                              "Foto Load R") {
+                                                              "Load Phasa R") {
                                                             fotoLoadR = "";
                                                           } else if (e.value ==
-                                                              "Foto Load S") {
+                                                              "Load Phasa S") {
                                                             fotoLoadS = "";
                                                           } else if (e.value ==
-                                                              "Foto Load T") {
+                                                              "Load Phasa T") {
                                                             fotoLoadT = "";
                                                           } else if (e.value ==
-                                                              "Foto Tegangan N-G") {
+                                                              "Tegangan N-G") {
                                                             fotoVng = "";
                                                           } else if (e.value ==
-                                                              "Foto Tegangan Phasa R") {
+                                                              "Tegangan Phasa R") {
                                                             fotoVrn = "";
                                                           } else if (e.value ==
-                                                              "Foto Tegangan R-S") {
+                                                              "Tegangan R-S") {
                                                             fotoVrs = "";
                                                           } else if (e.value ==
-                                                              "Foto Tegangan R-T") {
+                                                              "Tegangan R-T") {
                                                             fotoVrt = "";
                                                           } else if (e.value ==
-                                                              "Foto Tegangan Phasa S") {
+                                                              "Tegangan Phasa S") {
                                                             fotoVsn = "";
                                                           } else if (e.value ==
-                                                              "Foto Tegangan S-T") {
+                                                              "Tegangan S-T") {
                                                             fotoVst = "";
                                                           } else if (e.value ==
-                                                              "Foto Tegangan Phasa T") {
+                                                              "Tegangan Phasa T") {
                                                             fotoVtn = "";
                                                           }
                                                         });
@@ -1018,7 +1073,7 @@ class _KWHPageState extends State<KWHPage> {
                             style: buttonText.copyWith(color: textDarkColor),
                           ),
                           GestureDetector(
-                            onTap: fotoVst.isEmpty
+                            onTap: fotoVtn.isEmpty
                                 ? () async {
                                     await handlePicker();
                                     if (imagesProvider.croppedImageFile !=
@@ -1026,7 +1081,7 @@ class _KWHPageState extends State<KWHPage> {
                                       imagesProvider.addDeskripsi(
                                           path: contentPath,
                                           deskripsi: "Tegangan Phasa T");
-                                      fotoVst = contentPath;
+                                      fotoVtn = contentPath;
                                       deskripsiController.clear();
                                     }
                                   }
@@ -1046,7 +1101,7 @@ class _KWHPageState extends State<KWHPage> {
                                 children: [
                                   Expanded(
                                     child: GestureDetector(
-                                      onTap: fotoVst.isEmpty
+                                      onTap: fotoVtn.isEmpty
                                           ? () async {
                                               await handlePicker();
                                               if (imagesProvider
@@ -1056,37 +1111,37 @@ class _KWHPageState extends State<KWHPage> {
                                                     path: contentPath,
                                                     deskripsi:
                                                         "Tegangan Phasa T");
-                                                fotoVst = contentPath;
+                                                fotoVtn = contentPath;
                                                 deskripsiController.clear();
                                               }
                                             }
                                           : () {
-                                              fotoVst.contains(
+                                              fotoVtn.contains(
                                                       "https://jakban.iconpln.co.id")
                                                   ? showImageViewer(
                                                       context,
-                                                      Image.network(fotoVst)
+                                                      Image.network(fotoVtn)
                                                           .image,
                                                       swipeDismissible: true,
                                                       doubleTapZoomable: true)
                                                   : showImageViewer(
                                                       context,
-                                                      Image.file(File(fotoVst))
+                                                      Image.file(File(fotoVtn))
                                                           .image,
                                                       swipeDismissible: true,
                                                       doubleTapZoomable: true);
                                             },
                                       child: Text(
-                                        fotoVst.isEmpty
+                                        fotoVtn.isEmpty
                                             ? "Tambah Foto"
-                                            : fotoVst,
+                                            : fotoVtn,
                                         style: buttonText,
                                         overflow: TextOverflow.ellipsis,
                                       ),
                                     ),
                                   ),
                                   Visibility(
-                                    visible: fotoVst.isEmpty,
+                                    visible: fotoVtn.isEmpty,
                                     child: Icon(
                                       Icons.photo_camera_outlined,
                                       color: textLightColor,
@@ -1673,13 +1728,61 @@ class _KWHPageState extends State<KWHPage> {
                               ),
                             ),
                           ),
+                          Text(
+                            "Foto Tambahan",
+                            style: buttonText.copyWith(color: textDarkColor),
+                          ),
+                          GestureDetector(
+                            onTap: () async {
+                              await handlePicker();
+                              if (imagesProvider.croppedImageFile != null) {
+                                showDialog(
+                                  context: context,
+                                  builder: (context) => CustomPopUp(
+                                    title: "Deskripsi",
+                                    controller: deskripsiController,
+                                    add: () {
+                                      imagesProvider.addDeskripsi(
+                                          path: contentPath,
+                                          deskripsi: deskripsiController.text);
+                                      deskripsiController.clear();
+                                    },
+                                  ),
+                                );
+                              }
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 16, vertical: 12),
+                              margin: const EdgeInsets.only(bottom: 20, top: 4),
+                              decoration: BoxDecoration(
+                                  color: primaryBlue,
+                                  borderRadius:
+                                      BorderRadius.circular(defaultRadius)),
+                              width: double.infinity,
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    "Tambah Foto",
+                                    style: buttonText,
+                                  ),
+                                  Icon(
+                                    Icons.photo_camera_outlined,
+                                    color: textLightColor,
+                                  )
+                                ],
+                              ),
+                            ),
+                          ),
                           input()
                         ]),
             );
           }
         default:
           {
-            return Scaffold();
+            return const Scaffold();
           }
       }
     }

@@ -2,6 +2,7 @@
 
 import 'dart:convert';
 
+import 'package:plnicon_mobile/models/foto_model.dart';
 import 'package:plnicon_mobile/models/nilai/kwh_nilai_model.dart';
 import 'package:plnicon_mobile/services/url_service.dart';
 import 'package:http/http.dart' as http;
@@ -125,6 +126,7 @@ class KwhService {
       required double vrt,
       required double vst,
       required String temuan,
+      required List<FotoModel> foto,
       required String rekomendasi}) async {
     late Uri url = UrlService().api('edit-kwh-meter-nilai');
     var headers = {
@@ -169,7 +171,7 @@ class KwhService {
       {required int kwhNilaiId,
       required String urlFoto,
       required String description}) async {
-    late Uri url = UrlService().api('kwh-meter-foto');
+    late Uri url = UrlService().api('kwh-foto');
 
     var headers = {
       'Content-Type': 'application/json',
@@ -186,13 +188,40 @@ class KwhService {
 
     var response = await request.send();
 
+    print(response.statusCode);
     var responsed = await http.Response.fromStream(response);
 
     if (response.statusCode == 200) {
       var data = jsonDecode(responsed.body)['data'];
+      print(data);
       return true;
     } else {
       throw "Add foto kwh failed";
+    }
+  }
+
+  Future<bool> deleteImage({required int imageId}) async {
+    late Uri url = UrlService().api('delete-kwh-foto');
+    var headers = {
+      'Content-Type': 'application/json',
+      'Authorization': await UserService().getTokenPreference() ?? '',
+    };
+
+    var body = {
+      'id': imageId,
+    };
+
+    var response = await http.post(
+      url,
+      headers: headers,
+      body: jsonEncode(body),
+    );
+    print(body);
+
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      throw "Delete image failed";
     }
   }
 }
