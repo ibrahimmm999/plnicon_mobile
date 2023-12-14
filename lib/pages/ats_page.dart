@@ -54,7 +54,7 @@ class AtsPage extends StatelessWidget {
             height: 20,
           ),
           Text(
-            "Tanggal instalasi : -",
+            "Tanggal instalasi : ${ats.tanggalInstalasi}",
             style: buttonText.copyWith(color: textDarkColor),
           ),
           const SizedBox(

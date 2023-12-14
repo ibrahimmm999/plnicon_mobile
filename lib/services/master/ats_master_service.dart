@@ -14,6 +14,7 @@ class AtsMasterService {
     required String sn,
     required String merk,
     required String tipe,
+    String? tglInstalasi,
     required int popId,
   }) async {
     late Uri url = UrlService().api('ats');
@@ -28,8 +29,8 @@ class AtsMasterService {
       'sn': sn,
       'merk': merk,
       'tipe': tipe,
-      'tgl_instalasi': DateFormat("yyyy-MM-dd'T'HH:mm:ss.ssssssZ")
-          .parse("2021-01-03T18:42:49.608466Z")
+      'tgl_instalasi': tglInstalasi ??
+          DateFormat('yyyy-MM-dd hh:mm:ss').format(DateTime.now())
     };
     try {
       var response = await http.post(
@@ -37,7 +38,6 @@ class AtsMasterService {
         headers: headers,
         body: jsonEncode(body),
       );
-      print(response.statusCode);
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body)['data'];
         return AtsMasterModel.fromJson(data);
@@ -56,6 +56,7 @@ class AtsMasterService {
     required String sn,
     required String merk,
     required String tipe,
+    String? tglInstalasi,
   }) async {
     late Uri url = UrlService().api('edit-ats');
 
@@ -70,6 +71,8 @@ class AtsMasterService {
       'sn': sn,
       'merk': merk,
       'tipe': tipe,
+      'tgl_instalasi': tglInstalasi ??
+          DateFormat('yyyy-MM-dd hh:mm:ss').format(DateTime.now())
     };
 
     var response = await http.post(
@@ -83,6 +86,32 @@ class AtsMasterService {
       return AtsMasterModel.fromJson(data);
     } else {
       throw "Edit data ats failed";
+    }
+  }
+
+  Future<bool> deleteAts({required int id}) async {
+    late Uri url = UrlService().api('delete-ats');
+
+    var headers = {
+      'Content-Type': 'application/json',
+      'Authorization': await UserService().getTokenPreference() ?? '',
+    };
+    var body = {
+      'id': id,
+    };
+    try {
+      var response = await http.post(
+        url,
+        headers: headers,
+        body: jsonEncode(body),
+      );
+      if (response.statusCode == 200) {
+        return true;
+      } else {
+        throw "Delete data ats failed";
+      }
+    } catch (e) {
+      rethrow;
     }
   }
 }

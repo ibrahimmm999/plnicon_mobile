@@ -7,7 +7,7 @@ class AtsMasterModel extends Equatable {
   final String tipe;
   final String sn;
   final String status;
-  // final DateTime tanggalInstalasi;
+  final String tanggalInstalasi;
   final DateTime createdAt;
   final DateTime updatedAt;
 
@@ -18,7 +18,7 @@ class AtsMasterModel extends Equatable {
     required this.merk,
     required this.sn,
     required this.status,
-    // required this.tanggalInstalasi,
+    required this.tanggalInstalasi,
     required this.createdAt,
     required this.updatedAt,
   });
@@ -31,7 +31,7 @@ class AtsMasterModel extends Equatable {
       status: json['status'],
       sn: json['sn'],
       merk: json['merk'],
-      // tanggalInstalasi: DateTime.parse(json['tgl_instalasi']),
+      tanggalInstalasi: json['tgl_instalasi'],
       createdAt: DateTime.parse(json['created_at']),
       updatedAt: DateTime.parse(json['created_at']),
     );
@@ -45,7 +45,7 @@ class AtsMasterModel extends Equatable {
         merk,
         sn,
         status,
-        // tanggalInstalasi,
+        tanggalInstalasi,
         createdAt,
         updatedAt,
       ];
