@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:easy_image_viewer/easy_image_viewer.dart';
 import 'package:flutter/material.dart';
+import 'package:plnicon_mobile/models/foto_model.dart';
 import 'package:plnicon_mobile/models/master/genset_master_model.dart';
 import 'package:plnicon_mobile/models/nilai/genset_nilai_model.dart';
 import 'package:plnicon_mobile/models/pm_model.dart';
@@ -18,6 +19,7 @@ import 'package:plnicon_mobile/services/transaksional/genset_service.dart';
 import 'package:plnicon_mobile/services/user_service.dart';
 import 'package:plnicon_mobile/theme/theme.dart';
 import 'package:plnicon_mobile/widgets/custom_button.dart';
+import 'package:plnicon_mobile/widgets/custom_button_loading.dart';
 import 'package:plnicon_mobile/widgets/custom_popup.dart';
 import 'package:plnicon_mobile/widgets/input_dokumentasi.dart';
 import 'package:plnicon_mobile/widgets/text_input.dart';
@@ -61,6 +63,7 @@ class _GensetPageState extends State<GensetPage> {
   String fotoTeganganGensetTanpaBeban = "";
   String fotoArusGensetTanpaBeban = "";
   String fotoArusChargingAccu = "";
+  String fotoKartuGantung = "";
   bool loadingGenset = true;
   getinit() async {
     UserProvider userProvider =
@@ -74,11 +77,15 @@ class _GensetPageState extends State<GensetPage> {
 
     if (token == null) {
     } else {
+      setState(() {
+        loadingGenset = true;
+      });
       if (await userProvider.getUser(token: token)) {
         await gensetProvider.getGenset(
             widget.pm.id, widget.gensetMasterModel.id);
         if (gensetProvider.listGenset.isNotEmpty) {
-          for (var element in gensetProvider.listGenset.first.foto!) {
+          await Future.forEach(gensetProvider.listGenset.first.foto!,
+              (element) {
             String url = element.url.replaceAll("http://localhost",
                 "https://jakban.iconpln.co.id/backend-plnicon/public");
             if (element.deskripsi == "Foto Tampak Depan") {
@@ -105,7 +112,7 @@ class _GensetPageState extends State<GensetPage> {
               fotoArusGensetDenganBeban = url;
             } else if (element.deskripsi == "Temperatur Genset") {
               fotoTemperaturGenset = url;
-            } else if (element.deskripsi == "Foto PLN ON") {
+            } else if (element.deskripsi == "Foto PLN On") {
               fotoPLNOn = url;
             } else if (element.deskripsi == "Foto ATS Genset On Manual") {
               fotoAtsGensetOnManual = url;
@@ -115,16 +122,17 @@ class _GensetPageState extends State<GensetPage> {
               fotoArusGensetTanpaBeban = url;
             } else if (element.deskripsi == "Arus Charging Accu") {
               fotoArusChargingAccu = url;
+            } else if (element.deskripsi == "Kartu Gantung") {
+              fotoKartuGantung = url;
             }
             imagesProvider.foto[url] = element.deskripsi;
-          }
+          });
         }
       }
     }
     setState(() {
       loadingGenset = false;
     });
-    print(loadingGenset);
   }
 
   @override
@@ -199,10 +207,6 @@ class _GensetPageState extends State<GensetPage> {
         text: gensetProvider.listGenset.isEmpty
             ? ""
             : gensetProvider.listGenset.last.outdoorClean.toString());
-    TextEditingController kartuGantungUrlController = TextEditingController(
-        text: gensetProvider.listGenset.isEmpty
-            ? ""
-            : gensetProvider.listGenset.last.kartuGantungUrl.toString());
     TextEditingController temuanController = TextEditingController(
         text: gensetProvider.listGenset.isEmpty
             ? ""
@@ -262,11 +266,112 @@ class _GensetPageState extends State<GensetPage> {
                         margin: const EdgeInsets.symmetric(horizontal: 12),
                         child: Column(
                           children: [
-                            Image.file(
-                              File(e.key),
-                              height: 240,
-                              width: 240,
-                              fit: BoxFit.cover,
+                            GestureDetector(
+                              onTap: () {
+                                e.key.contains("https://jakban.iconpln.co.id")
+                                    ? showImageViewer(
+                                        context, Image.network(e.key).image,
+                                        swipeDismissible: true,
+                                        doubleTapZoomable: true)
+                                    : showImageViewer(
+                                        context, Image.file(File(e.key)).image,
+                                        swipeDismissible: true,
+                                        doubleTapZoomable: true);
+                              },
+                              child: Stack(
+                                children: [
+                                  e.key.contains("https://jakban.iconpln.co.id")
+                                      ? Image.network(
+                                          e.key,
+                                          height: 240,
+                                          width: 240,
+                                          fit: BoxFit.cover,
+                                        )
+                                      : Image.file(
+                                          File(e.key),
+                                          height: 240,
+                                          width: 240,
+                                          fit: BoxFit.cover,
+                                        ),
+                                  Align(
+                                    alignment: Alignment.topRight,
+                                    child: GestureDetector(
+                                      onTap: () {
+                                        setState(() {
+                                          imagesProvider.deleteImage(
+                                              path: e.key);
+                                          if (e.value == "Foto Tampak Depan") {
+                                            fotoTampakDepan = "";
+                                          } else if (e.value ==
+                                              "Foto Tampak Samping") {
+                                            fotoTampakSamping = "";
+                                          } else if (e.value ==
+                                              "Foto Level BBM") {
+                                            fotoLevelBBM = "";
+                                          } else if (e.value ==
+                                              "Jumlah Jam Running") {
+                                            fotojumlahJamRunning = "";
+                                          } else if (e.value ==
+                                              "Tegangan Accu Sebelum Running") {
+                                            fotoTeganganAccuSebelumRunning = "";
+                                          } else if (e.value ==
+                                              "Pembersihan Bagian Dalam") {
+                                            fotoPembersihanBagianDalam = "";
+                                          } else if (e.value ==
+                                              "Pembersihan Area Sekitar") {
+                                            fotoPembersihanAreaSekitar = "";
+                                          } else if (e.value ==
+                                              "Tegangan Charging Accu") {
+                                            fotoTeganganChargingAccu = "";
+                                          } else if (e.value ==
+                                              "Foto ATS Saat Fail Over") {
+                                            fotoAtsSaatFailOver = "";
+                                          } else if (e.value ==
+                                              "Tegangan Genset Dengan Beban") {
+                                            fotoTeganganGensetDenganBeban = "";
+                                          } else if (e.value ==
+                                              "Arus Genset Dengan Beban") {
+                                            fotoArusGensetDenganBeban = "";
+                                          } else if (e.value ==
+                                              "Temperatur Genset") {
+                                            fotoTemperaturGenset = "";
+                                          } else if (e.value == "Foto PLN On") {
+                                            fotoPLNOn = "";
+                                          } else if (e.value ==
+                                              "Foto ATS Genset On Manual") {
+                                            fotoAtsGensetOnManual = "";
+                                          } else if (e.value ==
+                                              "Tegangan Genset Tanpa Beban") {
+                                            fotoTeganganGensetTanpaBeban = "";
+                                          } else if (e.value ==
+                                              "Arus Genset Tanpa Beban") {
+                                            fotoArusGensetTanpaBeban = "";
+                                          } else if (e.value ==
+                                              "Arus Charging Accu") {
+                                            fotoArusChargingAccu = "";
+                                          } else if (e.value ==
+                                              "Kartu Gantung") {
+                                            fotoKartuGantung = "";
+                                          }
+                                        });
+                                      },
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          color: const Color.fromARGB(
+                                              255, 255, 73, 60),
+                                          borderRadius:
+                                              BorderRadius.circular(180),
+                                        ),
+                                        child: const Icon(
+                                          Icons.close,
+                                          size: 24,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                             Text(
                               e.value,
@@ -500,8 +605,7 @@ class _GensetPageState extends State<GensetPage> {
                     if (imagesProvider.croppedImageFile != null) {
                       imagesProvider.addDeskripsi(
                           path: contentPath, deskripsi: "Jumlah Jam Running");
-                      // imagesProvider.listFoto[contentPath] =
-                      //     imagesProvider.foto;
+
                       fotojumlahJamRunning = contentPath;
                       print(imagesProvider.foto);
                       deskripsiController.clear();
@@ -598,8 +702,7 @@ class _GensetPageState extends State<GensetPage> {
                       imagesProvider.addDeskripsi(
                           path: contentPath,
                           deskripsi: "Tegangan Accu Sebelum Running");
-                      // imagesProvider.listFoto[contentPath] =
-                      //     imagesProvider.foto;
+
                       fotoTeganganAccuSebelumRunning = contentPath;
                       print(imagesProvider.foto);
                       deskripsiController.clear();
@@ -703,8 +806,7 @@ class _GensetPageState extends State<GensetPage> {
                       imagesProvider.addDeskripsi(
                           path: contentPath,
                           deskripsi: "Pembersihan Bagian Dalam");
-                      // imagesProvider.listFoto[contentPath] =
-                      //     imagesProvider.foto;
+
                       fotoPembersihanBagianDalam = contentPath;
                       print(imagesProvider.foto);
                       deskripsiController.clear();
@@ -807,8 +909,7 @@ class _GensetPageState extends State<GensetPage> {
                       imagesProvider.addDeskripsi(
                           path: contentPath,
                           deskripsi: "Pembersihan Area Sekitar");
-                      // imagesProvider.listFoto[contentPath] =
-                      //     imagesProvider.foto;
+
                       fotoPembersihanAreaSekitar = contentPath;
                       print(imagesProvider.foto);
                       deskripsiController.clear();
@@ -911,8 +1012,7 @@ class _GensetPageState extends State<GensetPage> {
                       imagesProvider.addDeskripsi(
                           path: contentPath,
                           deskripsi: "Tegangan Charging Accu");
-                      // imagesProvider.listFoto[contentPath] =
-                      //     imagesProvider.foto;
+
                       fotoTeganganChargingAccu = contentPath;
                       print(imagesProvider.foto);
                       deskripsiController.clear();
@@ -1014,8 +1114,7 @@ class _GensetPageState extends State<GensetPage> {
                       imagesProvider.addDeskripsi(
                           path: contentPath,
                           deskripsi: "Foto ATS Saat Fail Over");
-                      // imagesProvider.listFoto[contentPath] =
-                      //     imagesProvider.foto;
+
                       fotoAtsSaatFailOver = contentPath;
                       print(imagesProvider.foto);
                       deskripsiController.clear();
@@ -1115,8 +1214,7 @@ class _GensetPageState extends State<GensetPage> {
                       imagesProvider.addDeskripsi(
                           path: contentPath,
                           deskripsi: "Tegangan Genset Dengan Beban");
-                      // imagesProvider.listFoto[contentPath] =
-                      //     imagesProvider.foto;
+
                       fotoTeganganGensetDenganBeban = contentPath;
                       print(imagesProvider.foto);
                       deskripsiController.clear();
@@ -1220,8 +1318,7 @@ class _GensetPageState extends State<GensetPage> {
                       imagesProvider.addDeskripsi(
                           path: contentPath,
                           deskripsi: "Arus Genset Dengan Beban");
-                      // imagesProvider.listFoto[contentPath] =
-                      //     imagesProvider.foto;
+
                       fotoArusGensetDenganBeban = contentPath;
                       print(imagesProvider.foto);
                       deskripsiController.clear();
@@ -1323,8 +1420,7 @@ class _GensetPageState extends State<GensetPage> {
                     if (imagesProvider.croppedImageFile != null) {
                       imagesProvider.addDeskripsi(
                           path: contentPath, deskripsi: "Temperatur Genset");
-                      // imagesProvider.listFoto[contentPath] =
-                      //     imagesProvider.foto;
+
                       fotoTemperaturGenset = contentPath;
                       print(imagesProvider.foto);
                       deskripsiController.clear();
@@ -1423,8 +1519,7 @@ class _GensetPageState extends State<GensetPage> {
                     if (imagesProvider.croppedImageFile != null) {
                       imagesProvider.addDeskripsi(
                           path: contentPath, deskripsi: "Foto PLN On");
-                      // imagesProvider.listFoto[contentPath] =
-                      //     imagesProvider.foto;
+
                       fotoPLNOn = contentPath;
                       print(imagesProvider.foto);
                       deskripsiController.clear();
@@ -1517,10 +1612,7 @@ class _GensetPageState extends State<GensetPage> {
                       imagesProvider.addDeskripsi(
                           path: contentPath,
                           deskripsi: "Foto ATS Genset On Manual");
-                      // imagesProvider.listFoto[contentPath] =
-                      //     imagesProvider.foto;
                       fotoAtsGensetOnManual = contentPath;
-                      print(imagesProvider.foto);
                       deskripsiController.clear();
                     }
                   }
@@ -1620,8 +1712,7 @@ class _GensetPageState extends State<GensetPage> {
                       imagesProvider.addDeskripsi(
                           path: contentPath,
                           deskripsi: "Tegangan Genset Tanpa Beban");
-                      // imagesProvider.listFoto[contentPath] =
-                      //     imagesProvider.foto;
+
                       fotoTeganganGensetTanpaBeban = contentPath;
                       print(imagesProvider.foto);
                       deskripsiController.clear();
@@ -1725,8 +1816,7 @@ class _GensetPageState extends State<GensetPage> {
                       imagesProvider.addDeskripsi(
                           path: contentPath,
                           deskripsi: "Arus Genset Tanpa Beban");
-                      // imagesProvider.listFoto[contentPath] =
-                      //     imagesProvider.foto;
+
                       fotoArusGensetTanpaBeban = contentPath;
                       print(imagesProvider.foto);
                       deskripsiController.clear();
@@ -1827,8 +1917,7 @@ class _GensetPageState extends State<GensetPage> {
                     if (imagesProvider.croppedImageFile != null) {
                       imagesProvider.addDeskripsi(
                           path: contentPath, deskripsi: "Arus Charging Accu");
-                      // imagesProvider.listFoto[contentPath] =
-                      //     imagesProvider.foto;
+
                       fotoArusChargingAccu = contentPath;
                       print(imagesProvider.foto);
                       deskripsiController.clear();
@@ -1897,15 +1986,106 @@ class _GensetPageState extends State<GensetPage> {
                               imagesProvider.addDeskripsi(
                                   path: contentPath,
                                   deskripsi: "Arus Charging Accu");
-                              // imagesProvider.listFoto[contentPath] =
-                              //     imagesProvider.foto;
                               fotoArusChargingAccu = contentPath;
-                              print(imagesProvider.foto);
                               deskripsiController.clear();
                             }
                           },
                     child: Visibility(
                       visible: fotoArusChargingAccu.isEmpty,
+                      child: Icon(
+                        Icons.photo_camera_outlined,
+                        color: textLightColor,
+                      ),
+                    ),
+                  )
+                ],
+              ),
+            ),
+          ),
+          Text(
+            "Foto Kartu Gantung",
+            style: buttonText.copyWith(color: textDarkColor),
+          ),
+          GestureDetector(
+            onTap: fotoKartuGantung.isEmpty
+                ? () async {
+                    await handlePicker();
+                    if (imagesProvider.croppedImageFile != null) {
+                      imagesProvider.addDeskripsi(
+                          path: contentPath, deskripsi: "Kartu Gantung");
+
+                      fotoKartuGantung = contentPath;
+                      print(imagesProvider.foto);
+                      deskripsiController.clear();
+                    }
+                  }
+                : () {},
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              margin: const EdgeInsets.only(bottom: 20, top: 4),
+              decoration: BoxDecoration(
+                  color: primaryBlue,
+                  borderRadius: BorderRadius.circular(defaultRadius)),
+              width: double.infinity,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: fotoKartuGantung.isEmpty
+                          ? () async {
+                              await handlePicker();
+                              if (imagesProvider.croppedImageFile != null) {
+                                imagesProvider.addDeskripsi(
+                                    path: contentPath,
+                                    deskripsi: "Kartu Gantung");
+                                fotoKartuGantung = contentPath;
+                                print(imagesProvider.foto);
+                                deskripsiController.clear();
+                              }
+                            }
+                          : () {
+                              fotoKartuGantung
+                                      .contains("https://jakban.iconpln.co.id")
+                                  ? showImageViewer(context,
+                                      Image.network(fotoKartuGantung).image,
+                                      swipeDismissible: true,
+                                      doubleTapZoomable: true)
+                                  : showImageViewer(context,
+                                      Image.file(File(fotoKartuGantung)).image,
+                                      swipeDismissible: true,
+                                      doubleTapZoomable: true);
+                            },
+                      child: Text(
+                        fotoKartuGantung.isEmpty
+                            ? "Tambah Foto"
+                            : fotoKartuGantung,
+                        style: buttonText,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: fotoKartuGantung.isNotEmpty
+                        ? () {
+                            setState(() {
+                              imagesProvider.deleteImage(
+                                  path: fotoKartuGantung);
+                              fotoKartuGantung = "";
+                            });
+                          }
+                        : () async {
+                            await handlePicker();
+                            if (imagesProvider.croppedImageFile != null) {
+                              imagesProvider.addDeskripsi(
+                                  path: contentPath,
+                                  deskripsi: "Kartu Gantung");
+                              fotoKartuGantung = contentPath;
+                              deskripsiController.clear();
+                            }
+                          },
+                    child: Visibility(
+                      visible: fotoKartuGantung.isEmpty,
                       child: Icon(
                         Icons.photo_camera_outlined,
                         color: textLightColor,
@@ -1924,7 +2104,6 @@ class _GensetPageState extends State<GensetPage> {
             onTap: () async {
               await handlePicker();
               if (imagesProvider.croppedImageFile != null) {
-                // ignore: use_build_context_synchronously
                 showDialog(
                   context: context,
                   builder: (context) => CustomPopUp(
@@ -2209,14 +2388,6 @@ class _GensetPageState extends State<GensetPage> {
                     height: 20,
                   ),
                   TextInput(
-                    controller: kartuGantungUrlController,
-                    label: "Kartu Gantung Url",
-                    placeholder: "Kartu Gantung Url",
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  TextInput(
                     controller: temuanController,
                     label: "Temuan",
                     placeholder: "Temuan",
@@ -2234,50 +2405,207 @@ class _GensetPageState extends State<GensetPage> {
                   Padding(
                     padding: EdgeInsets.symmetric(
                         horizontal: defaultMargin + 32, vertical: 40),
-                    child: CustomButton(
-                        text: "Save",
-                        onPressed: () async {
-                          GensetNilaiModel gen = await GensetService()
-                              .postGenset(
-                                  gensetId: widget.gensetMasterModel.id,
-                                  pmId: widget.pm.id,
-                                  fuel: int.parse(fuelController.text),
-                                  hourMeter:
-                                      double.parse(hourMeterController.text),
-                                  teganganAccu:
-                                      double.parse(teganganAccuController.text),
-                                  teganganCharger:
-                                      double.parse(
+                    child: isLoading
+                        ? CustomButtonLoading(color: primaryGreen)
+                        : CustomButton(
+                            text: "Save",
+                            onPressed: () async {
+                              setState(() {
+                                isLoading = true;
+                              });
+                              if (gensetProvider.listGenset.isEmpty) {
+                                if (fotoTampakDepan.isNotEmpty &&
+                                    fotoTampakSamping.isNotEmpty &&
+                                    fotoLevelBBM.isNotEmpty &&
+                                    fotojumlahJamRunning.isNotEmpty &&
+                                    fotoTeganganAccuSebelumRunning.isNotEmpty &&
+                                    fotoPembersihanBagianDalam.isNotEmpty &&
+                                    fotoPembersihanAreaSekitar.isNotEmpty &&
+                                    fotoTeganganChargingAccu.isNotEmpty &&
+                                    fotoAtsSaatFailOver.isNotEmpty &&
+                                    fotoTeganganGensetDenganBeban.isNotEmpty &&
+                                    fotoArusGensetDenganBeban.isNotEmpty &&
+                                    fotoTemperaturGenset.isNotEmpty &&
+                                    fotoPLNOn.isNotEmpty &&
+                                    fotoAtsGensetOnManual.isNotEmpty &&
+                                    fotoTeganganGensetTanpaBeban.isNotEmpty &&
+                                    fotoArusGensetTanpaBeban.isNotEmpty &&
+                                    fotoArusChargingAccu.isNotEmpty) {
+                                  GensetNilaiModel gen = await GensetService().postGenset(
+                                      gensetId: widget.gensetMasterModel.id,
+                                      pmId: widget.pm.id,
+                                      fuel: int.parse(fuelController.text),
+                                      hourMeter: double.parse(
+                                          hourMeterController.text),
+                                      teganganAccu: double.parse(
+                                          teganganAccuController.text),
+                                      teganganCharger: double.parse(
                                           teganganChargerController.text),
-                                  arusCharger: double.parse(arusChargerController
-                                      .text),
-                                  failOverTest: failOverTestController.text,
-                                  tempOn: double.parse(tempOnController.text),
-                                  ujiBebanVolt:
-                                      double.parse(ujiBebanVoltController.text),
-                                  ujiBebanArus:
-                                      double.parse(ujiBebanArusController.text),
-                                  ujiTanpaBebanVolt:
-                                      double.parse(ujiTanpaBebanVoltController
-                                          .text),
-                                  ujiTanpaBebanArus: double.parse(
-                                      ujiTanpaBebanArusController.text),
-                                  indoorClean: indoorCleanController.text,
-                                  outdoorClean: outdoorCleanController.text,
-                                  kartuGantungUrl:
-                                      kartuGantungUrlController.text,
-                                  temuan: temuanController.text,
-                                  rekomendasi: rekomendasiController.text);
-                          imagesProvider.foto.forEach((key, value) async {
-                            await GensetService().postFotoGenset(
-                                gensetNilaiId: gen.id,
-                                urlFoto: key,
-                                description: value);
-                          });
-                          Navigator.pop(context);
-                        },
-                        color: primaryBlue,
-                        clickColor: clickBlue),
+                                      arusCharger: double.parse(
+                                          arusChargerController.text),
+                                      failOverTest: failOverTestController.text,
+                                      tempOn:
+                                          double.parse(tempOnController.text),
+                                      ujiBebanVolt: double.parse(
+                                          ujiBebanVoltController.text),
+                                      ujiBebanArus: double.parse(
+                                          ujiBebanArusController.text),
+                                      ujiTanpaBebanVolt: double.parse(
+                                          ujiTanpaBebanVoltController.text),
+                                      ujiTanpaBebanArus: double.parse(ujiTanpaBebanArusController.text),
+                                      indoorClean: indoorCleanController.text,
+                                      outdoorClean: outdoorCleanController.text,
+                                      kartuGantungUrl: fotoKartuGantung,
+                                      temuan: temuanController.text,
+                                      rekomendasi: rekomendasiController.text);
+                                  await Future.forEach(
+                                      imagesProvider.foto.entries,
+                                      (element) async {
+                                    await GensetService().postFotoGenset(
+                                        gensetNilaiId: gen.id,
+                                        urlFoto: element.key,
+                                        description: element.value);
+                                  });
+                                  setState(() {
+                                    isLoading = false;
+                                  });
+                                  Navigator.pushAndRemoveUntil(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              PmDetailPage(pm: widget.pm)),
+                                      (route) => false);
+                                } else {
+                                  setState(() {
+                                    isLoading = false;
+                                  });
+                                  ScaffoldMessenger.of(context)
+                                      .removeCurrentSnackBar();
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      backgroundColor: primaryRed,
+                                      content: const Text(
+                                        'Isi foto dengan lengkap',
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ),
+                                  );
+                                }
+                              } else {
+                                if (fotoTampakDepan.isNotEmpty &&
+                                    fotoTampakSamping.isNotEmpty &&
+                                    fotoLevelBBM.isNotEmpty &&
+                                    fotojumlahJamRunning.isNotEmpty &&
+                                    fotoTeganganAccuSebelumRunning.isNotEmpty &&
+                                    fotoPembersihanBagianDalam.isNotEmpty &&
+                                    fotoPembersihanAreaSekitar.isNotEmpty &&
+                                    fotoTeganganChargingAccu.isNotEmpty &&
+                                    fotoAtsSaatFailOver.isNotEmpty &&
+                                    fotoTeganganGensetDenganBeban.isNotEmpty &&
+                                    fotoArusGensetDenganBeban.isNotEmpty &&
+                                    fotoTemperaturGenset.isNotEmpty &&
+                                    fotoPLNOn.isNotEmpty &&
+                                    fotoAtsGensetOnManual.isNotEmpty &&
+                                    fotoTeganganGensetTanpaBeban.isNotEmpty &&
+                                    fotoArusGensetTanpaBeban.isNotEmpty &&
+                                    fotoArusChargingAccu.isNotEmpty) {
+                                  setState(() {
+                                    isLoading = true;
+                                  });
+                                  GensetNilaiModel gen = await GensetService().editGenset(
+                                      foto: [
+                                        const FotoModel(
+                                            id: 99,
+                                            url: "url",
+                                            deskripsi: "deskripsi")
+                                      ],
+                                      id: gensetProvider.listGenset.last.id,
+                                      gensetId: widget.gensetMasterModel.id,
+                                      pmId: widget.pm.id,
+                                      fuel: int.parse(fuelController.text),
+                                      hourMeter: double.parse(
+                                          hourMeterController.text),
+                                      teganganAccu: double.parse(
+                                          teganganAccuController.text),
+                                      teganganCharger: double.parse(
+                                          teganganChargerController.text),
+                                      arusCharger: double.parse(
+                                          arusChargerController.text),
+                                      failOverTest: failOverTestController.text,
+                                      tempOn:
+                                          double.parse(tempOnController.text),
+                                      ujiBebanVolt: double.parse(
+                                          ujiBebanVoltController.text),
+                                      ujiBebanArus: double.parse(
+                                          ujiBebanArusController.text),
+                                      ujiTanpaBebanVolt: double.parse(
+                                          ujiTanpaBebanVoltController.text),
+                                      ujiTanpaBebanArus:
+                                          double.parse(ujiTanpaBebanArusController.text),
+                                      indoorClean: indoorCleanController.text,
+                                      outdoorClean: outdoorCleanController.text,
+                                      kartuGantungUrl: fotoKartuGantung,
+                                      temuan: temuanController.text,
+                                      rekomendasi: rekomendasiController.text);
+                                  if (gensetProvider.listGenset.isNotEmpty) {
+                                    for (var item in gensetProvider
+                                        .listGenset.last.foto!) {
+                                      bool isDelete = true;
+                                      for (var itemImagesProvider
+                                          in imagesProvider.foto.entries) {
+                                        String url = item.url.replaceAll(
+                                            "http://localhost",
+                                            "https://jakban.iconpln.co.id/backend-plnicon/public");
+                                        if (url == itemImagesProvider.key) {
+                                          isDelete = false;
+                                        }
+                                      }
+                                      if (isDelete) {
+                                        await GensetService()
+                                            .deleteImage(imageId: item.id);
+                                      }
+                                    }
+                                  }
+                                  await Future.forEach(
+                                      imagesProvider.foto.entries,
+                                      (element) async {
+                                    if (!(element.key.contains(
+                                        "https://jakban.iconpln.co.id"))) {
+                                      await GensetService().postFotoGenset(
+                                          gensetNilaiId: gen.id,
+                                          urlFoto: element.key,
+                                          description: element.value);
+                                    }
+                                  });
+                                  setState(() {
+                                    isLoading = false;
+                                  });
+                                  Navigator.pushAndRemoveUntil(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              PmDetailPage(pm: widget.pm)),
+                                      (route) => false);
+                                } else {
+                                  setState(() {
+                                    isLoading = false;
+                                  });
+                                  ScaffoldMessenger.of(context)
+                                      .removeCurrentSnackBar();
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      backgroundColor: primaryRed,
+                                      content: const Text(
+                                        'Isi foto dengan lengkap',
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ),
+                                  );
+                                }
+                              }
+                            },
+                            color: primaryGreen,
+                            clickColor: clickGreen),
                   )
                 ],
               ),

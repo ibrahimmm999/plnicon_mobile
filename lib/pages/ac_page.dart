@@ -861,8 +861,6 @@ class _AcPageState extends State<AcPage> {
                                     }
                                   }
                                 }
-                                // print("ISI IMAGE PROVIDER");
-                                // print(imagesProvider.foto);
                                 await Future.forEach(
                                     imagesProvider.foto.entries,
                                     (element) async {
