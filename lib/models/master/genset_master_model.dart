@@ -14,7 +14,7 @@ class GensetMasterModel extends Equatable {
   final String switchGenset;
   final double accu;
   final String tipeBattCharger;
-  // final DateTime tanggalInstalasi;
+  final String tanggalInstalasi;
   final DateTime createdAt;
   final DateTime updatedAt;
 
@@ -32,7 +32,7 @@ class GensetMasterModel extends Equatable {
     required this.merkAccu,
     required this.switchGenset,
     required this.tipeBattCharger,
-    // required this.tanggalInstalasi,
+    required this.tanggalInstalasi,
     required this.createdAt,
     required this.updatedAt,
   });
@@ -52,7 +52,7 @@ class GensetMasterModel extends Equatable {
       tipeBattCharger: json['tipe_batt_charger'],
       accu: double.parse(json['accu'].toString()),
       merkAccu: json['merk_accu'],
-      // tanggalInstalasi: DateTime.parse(json['tgl_instalasi']),
+      tanggalInstalasi: (json['tgl_instalasi']),
       createdAt: DateTime.parse(json['created_at']),
       updatedAt: DateTime.parse(json['created_at']),
     );
@@ -73,7 +73,7 @@ class GensetMasterModel extends Equatable {
         switchGenset,
         merkAccu,
         tipeBattCharger,
-        // tanggalInstalasi,
+        tanggalInstalasi,
         createdAt,
         updatedAt,
       ];

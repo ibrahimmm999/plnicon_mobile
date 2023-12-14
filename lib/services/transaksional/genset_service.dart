@@ -2,7 +2,6 @@
 
 import 'dart:convert';
 
-import 'package:plnicon_mobile/models/foto_model.dart';
 import 'package:plnicon_mobile/models/nilai/genset_nilai_model.dart';
 import 'package:plnicon_mobile/services/url_service.dart';
 import 'package:http/http.dart' as http;
@@ -23,7 +22,6 @@ class GensetService {
 
     if (response.statusCode == 200) {
       var data = jsonDecode(response.body)['data'] as List;
-      // print(data);
       List<GensetNilaiModel> genset = List<GensetNilaiModel>.from(
         data.map((e) => GensetNilaiModel.fromJson(e)),
       );
@@ -48,7 +46,6 @@ class GensetService {
 
     if (response.statusCode == 200) {
       var data = jsonDecode(response.body)['data'] as List;
-      print(data);
       List<GensetNilaiModel> genset = List<GensetNilaiModel>.from(
         data.map((e) => GensetNilaiModel.fromJson(e)),
       );
@@ -110,7 +107,6 @@ class GensetService {
       body: jsonEncode(body),
       encoding: Encoding.getByName('utf-8'),
     );
-    print(response.request);
     if (response.statusCode == 200) {
       var data = jsonDecode(response.body)['data'];
       return GensetNilaiModel.fromJson(data);
@@ -148,6 +144,30 @@ class GensetService {
       return true;
     } else {
       throw "Add foto genset failed";
+    }
+  }
+
+  Future<bool> deleteImage({required int imageId}) async {
+    late Uri url = UrlService().api('delete-genset-foto');
+    var headers = {
+      'Content-Type': 'application/json',
+      'Authorization': await UserService().getTokenPreference() ?? '',
+    };
+
+    var body = {
+      'id': imageId,
+    };
+
+    var response = await http.post(
+      url,
+      headers: headers,
+      body: jsonEncode(body),
+    );
+
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      throw "Delete image failed";
     }
   }
 }

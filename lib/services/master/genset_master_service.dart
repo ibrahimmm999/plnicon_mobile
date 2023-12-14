@@ -2,6 +2,7 @@
 
 import 'dart:convert';
 
+import 'package:intl/intl.dart';
 import 'package:plnicon_mobile/models/master/genset_master_model.dart';
 import 'package:plnicon_mobile/services/url_service.dart';
 import 'package:http/http.dart' as http;
@@ -9,8 +10,7 @@ import 'package:plnicon_mobile/services/user_service.dart';
 
 class GensetMasterService {
   Future<GensetMasterModel> postGensetMaster(
-      {required int gensetId,
-      required int popId,
+      {required int popId,
       required String sn,
       required String merkEngine,
       required String merk,
@@ -22,7 +22,7 @@ class GensetMasterService {
       required String merkAccu,
       required String tipeBattCharger,
       required String switchGenset,
-      required DateTime tglInstalasi}) async {
+      String? tglInstalasi}) async {
     late Uri url = UrlService().api('genset');
 
     var headers = {
@@ -30,7 +30,6 @@ class GensetMasterService {
       'Authorization': await UserService().getTokenPreference() ?? '',
     };
     var body = {
-      'id': gensetId,
       'pop_id': popId,
       'sn': sn,
       'merk_engine': merkEngine,
@@ -43,7 +42,8 @@ class GensetMasterService {
       'merk_accu': merkAccu,
       'tipe_batt_charger': tipeBattCharger,
       'switch': switchGenset,
-      'tgl_instalasi': tglInstalasi
+      'tgl_instalasi': tglInstalasi ??
+          DateFormat('yyyy-MM-dd hh:mm:ss').format(DateTime.now())
     };
 
     var response = await http.post(
@@ -60,7 +60,7 @@ class GensetMasterService {
     }
   }
 
-  Future<GensetMasterModel> deleteGensetMaster({required int id}) async {
+  Future<bool> deleteGensetMaster({required int id}) async {
     late Uri url = UrlService().api('delete-genset');
 
     var headers = {
@@ -77,8 +77,7 @@ class GensetMasterService {
         body: jsonEncode(body),
       );
       if (response.statusCode == 200) {
-        var data = jsonDecode(response.body)['data'];
-        return GensetMasterModel.fromJson(data);
+        return true;
       } else {
         throw "Delete data genset failed";
       }
@@ -101,6 +100,7 @@ class GensetMasterService {
     required String merkAccu,
     required String tipeBattCharger,
     required String switchGenset,
+    String? tglInstalasi,
   }) async {
     late Uri url = UrlService().api('edit-genset');
 
@@ -121,7 +121,9 @@ class GensetMasterService {
       'accu': accu,
       'merk_accu': merkAccu,
       'tipe_batt_charger': tipeBattCharger,
-      'switch': switchGenset
+      'switch': switchGenset,
+      'tgl_instalasi': tglInstalasi ??
+          DateFormat('yyyy-MM-dd hh:mm:ss').format(DateTime.now())
     };
 
     var response = await http.post(

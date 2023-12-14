@@ -117,9 +117,9 @@ class _EditAcPageState extends State<EditAcPage> {
                 DateTime? pickedDate = await showDatePicker(
                     context: context,
                     cancelText: "Cancel",
-                    currentDate: DateTime.now(),
                     confirmText: "Set",
-                    initialDate: DateTime.now(),
+                    initialDate:
+                        DateTime.parse(widget.acMaster.tanggalInstalasi),
                     firstDate: DateTime(1945),
                     lastDate: DateTime.now());
                 if (pickedDate != null) {

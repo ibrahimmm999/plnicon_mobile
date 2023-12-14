@@ -23,7 +23,6 @@ class AcService {
 
     if (response.statusCode == 200) {
       var data = jsonDecode(response.body)['data'] as List;
-      // print(data);
       List<AcNilaiModel> ac = List<AcNilaiModel>.from(
         data.map((e) => AcNilaiModel.fromJson(e)),
       );
@@ -158,7 +157,6 @@ class AcService {
 
     if (response.statusCode == 200) {
       var data = jsonDecode(responsed.body)['data'];
-      print("POST SUCCESS");
       print(data);
       return true;
     } else {
@@ -182,7 +180,6 @@ class AcService {
       headers: headers,
       body: jsonEncode(body),
     );
-    print(body);
 
     if (response.statusCode == 200) {
       return true;

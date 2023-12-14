@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:io';
 
 import 'package:easy_image_viewer/easy_image_viewer.dart';
@@ -6,6 +8,7 @@ import 'package:plnicon_mobile/models/master/genset_master_model.dart';
 import 'package:plnicon_mobile/models/nilai/genset_nilai_model.dart';
 import 'package:plnicon_mobile/models/pm_model.dart';
 import 'package:plnicon_mobile/pages/edit_master/edit_genset_page.dart';
+import 'package:plnicon_mobile/pages/pm_detail_page.dart';
 import 'package:plnicon_mobile/providers/images_provider.dart';
 import 'package:plnicon_mobile/providers/page_provider.dart';
 import 'package:plnicon_mobile/providers/transaksional_provider.dart';
@@ -2043,14 +2046,14 @@ class _GensetPageState extends State<GensetPage> {
                     height: 20,
                   ),
                   Text(
-                    "Tipe Batt Charger : ${widget.gensetMasterModel.switchGenset}",
+                    "Tipe Batt Charger : ${widget.gensetMasterModel.tipeBattCharger}",
                     style: buttonText.copyWith(color: textDarkColor),
                   ),
                   const SizedBox(
                     height: 20,
                   ),
                   Text(
-                    "Tanggal Instalasi : -",
+                    "Tanggal Instalasi : ${widget.gensetMasterModel.tanggalInstalasi}",
                     style: buttonText.copyWith(color: textDarkColor),
                   ),
                   const SizedBox(
@@ -2063,6 +2066,7 @@ class _GensetPageState extends State<GensetPage> {
                             context,
                             MaterialPageRoute(
                                 builder: (context) => EditGensetPage(
+                                    pm: widget.pm,
                                     gensetMasterModel: widget.gensetMasterModel,
                                     title: "Edit Genset")));
                       },
@@ -2073,10 +2077,15 @@ class _GensetPageState extends State<GensetPage> {
                   ),
                   CustomButton(
                       text: "Delete",
-                      onPressed: () {
-                        GensetMasterService().deleteGensetMaster(
+                      onPressed: () async {
+                        await GensetMasterService().deleteGensetMaster(
                             id: widget.gensetMasterModel.id);
-                        Navigator.pop(context);
+                        Navigator.pushAndRemoveUntil(
+                            context,
+                            MaterialPageRoute(
+                                builder: ((context) =>
+                                    PmDetailPage(pm: widget.pm))),
+                            (route) => false);
                       },
                       color: primaryRed,
                       clickColor: clickRed),

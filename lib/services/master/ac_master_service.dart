@@ -42,7 +42,6 @@ class AcMasterService {
         headers: headers,
         body: jsonEncode(body),
       );
-      print(response.statusCode);
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body)['data'];
         return AcMasterModel.fromJson(data);
