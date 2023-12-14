@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:io';
 
 import 'package:easy_image_viewer/easy_image_viewer.dart';
@@ -6,6 +8,7 @@ import 'package:plnicon_mobile/models/master/kwh_master_model.dart';
 import 'package:plnicon_mobile/models/nilai/kwh_nilai_model.dart';
 import 'package:plnicon_mobile/models/pm_model.dart';
 import 'package:plnicon_mobile/pages/edit_master/edit_kwh_page.dart';
+import 'package:plnicon_mobile/pages/pm_detail_page.dart';
 import 'package:plnicon_mobile/providers/images_provider.dart';
 import 'package:plnicon_mobile/providers/page_provider.dart';
 import 'package:plnicon_mobile/providers/transaksional_provider.dart';
@@ -564,7 +567,7 @@ class _KWHPageState extends State<KWHPage> {
                     height: 20,
                   ),
                   Text(
-                    "Tanggal Instalasi : -",
+                    "Tanggal Instalasi : ${widget.kwh.tanggalInstalasi}",
                     style: buttonText.copyWith(color: textDarkColor),
                   ),
                   const SizedBox(
@@ -577,7 +580,9 @@ class _KWHPageState extends State<KWHPage> {
                             context,
                             MaterialPageRoute(
                                 builder: (context) => EditKwhPage(
-                                    kwh: widget.kwh, title: "Edit KWH")));
+                                    pm: widget.pm,
+                                    kwh: widget.kwh,
+                                    title: "Edit KWH")));
                       },
                       color: primaryGreen,
                       clickColor: clickGreen),
@@ -586,9 +591,15 @@ class _KWHPageState extends State<KWHPage> {
                   ),
                   CustomButton(
                       text: "Delete",
-                      onPressed: () {
-                        KwhMasterService().deleteKwhMaster(id: widget.kwh.id);
-                        Navigator.pop(context);
+                      onPressed: () async {
+                        await KwhMasterService()
+                            .deleteKwhMaster(id: widget.kwh.id);
+                        Navigator.pushAndRemoveUntil(
+                            context,
+                            MaterialPageRoute(
+                                builder: ((context) =>
+                                    PmDetailPage(pm: widget.pm))),
+                            (route) => false);
                       },
                       color: primaryRed,
                       clickColor: clickRed),

@@ -1,4 +1,5 @@
-import 'package:calendar_date_picker2/calendar_date_picker2.dart';
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:plnicon_mobile/models/master/ac_master_model.dart';
@@ -9,8 +10,6 @@ import 'package:plnicon_mobile/services/master/ac_master_service.dart';
 import 'package:plnicon_mobile/theme/theme.dart';
 import 'package:plnicon_mobile/widgets/custom_appbar.dart';
 import 'package:plnicon_mobile/widgets/custom_button.dart';
-import 'package:plnicon_mobile/widgets/custom_button_loading.dart';
-import 'package:plnicon_mobile/widgets/custom_popup.dart';
 import 'package:plnicon_mobile/widgets/text_input.dart';
 import 'package:provider/provider.dart';
 
@@ -41,7 +40,6 @@ class _EditAcPageState extends State<EditAcPage> {
 
   @override
   Widget build(BuildContext context) {
-    bool isLoading = false;
     TransaksionalProvider acProvider =
         Provider.of<TransaksionalProvider>(context);
     PopProvider popProvider = Provider.of<PopProvider>(context);
@@ -127,13 +125,9 @@ class _EditAcPageState extends State<EditAcPage> {
                 if (pickedDate != null) {
                   String formattedDate =
                       DateFormat('yyyy-MM-dd hh:mm:ss').format(pickedDate);
-                  print(formattedDate);
                   setState(() {
                     tglInstalasi = formattedDate;
                   });
-                  print(tglInstalasi);
-                } else {
-                  print("Date is not selected");
                 }
               },
               child: Container(
@@ -156,9 +150,6 @@ class _EditAcPageState extends State<EditAcPage> {
           CustomButton(
               text: "Save",
               onPressed: () async {
-                setState(() {
-                  isLoading = true;
-                });
                 await AcMasterService().editAcMaster(
                     popId: widget.acMaster.popId,
                     acId: widget.acMaster.id,
@@ -172,9 +163,7 @@ class _EditAcPageState extends State<EditAcPage> {
 
                 await popProvider.getDataPop(id: widget.acMaster.popId);
                 await acProvider.getAc(widget.pm.id, widget.acMaster.id);
-                setState(() {
-                  isLoading = false;
-                });
+
                 Navigator.pop(context);
                 Navigator.pop(context);
               },

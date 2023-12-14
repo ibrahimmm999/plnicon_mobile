@@ -1,55 +1,81 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:plnicon_mobile/models/master/kwh_master_model.dart';
+import 'package:plnicon_mobile/models/pm_model.dart';
+import 'package:plnicon_mobile/providers/pop_provider.dart';
+import 'package:plnicon_mobile/providers/transaksional_provider.dart';
 import 'package:plnicon_mobile/services/master/kwh_master_service.dart';
-import 'package:plnicon_mobile/services/transaksional/kwh_service.dart';
 import 'package:plnicon_mobile/theme/theme.dart';
 import 'package:plnicon_mobile/widgets/custom_appbar.dart';
 import 'package:plnicon_mobile/widgets/custom_button.dart';
 import 'package:plnicon_mobile/widgets/text_input.dart';
+import 'package:provider/provider.dart';
 
-class EditKwhPage extends StatelessWidget {
-  const EditKwhPage({super.key, required this.kwh, required this.title});
+class EditKwhPage extends StatefulWidget {
+  const EditKwhPage(
+      {super.key, required this.kwh, required this.title, required this.pm});
   final KwhMasterModel kwh;
   final String title;
+  final PmModel pm;
+
+  @override
+  State<EditKwhPage> createState() => _EditKwhPageState();
+}
+
+String tglInstalasi = '';
+
+class _EditKwhPageState extends State<EditKwhPage> {
+  @override
+  void initState() {
+    super.initState();
+    setState(() {
+      tglInstalasi = widget.kwh.tanggalInstalasi;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    TransaksionalProvider kwhProvider =
+        Provider.of<TransaksionalProvider>(context);
+    PopProvider popProvider = Provider.of<PopProvider>(context);
     TextEditingController aresterTypeController =
-        TextEditingController(text: kwh.aresterType);
+        TextEditingController(text: widget.kwh.aresterType);
     TextEditingController dayaController =
-        TextEditingController(text: kwh.daya.toString());
+        TextEditingController(text: widget.kwh.daya.toString());
     TextEditingController aresterController =
-        TextEditingController(text: kwh.arester);
-    TextEditingController cosController = TextEditingController(text: kwh.cos);
+        TextEditingController(text: widget.kwh.arester);
+    TextEditingController cosController =
+        TextEditingController(text: widget.kwh.cos);
     TextEditingController cosTypeController =
-        TextEditingController(text: kwh.cosType);
+        TextEditingController(text: widget.kwh.cosType);
     TextEditingController jumlahPhasaController =
-        TextEditingController(text: kwh.jumlahPhasa.toString());
+        TextEditingController(text: widget.kwh.jumlahPhasa.toString());
     TextEditingController warnaKabelGController =
-        TextEditingController(text: kwh.warnaKabelG);
+        TextEditingController(text: widget.kwh.warnaKabelG);
     TextEditingController warnaKabelNController =
-        TextEditingController(text: kwh.warnaKabelN);
+        TextEditingController(text: widget.kwh.warnaKabelN);
     TextEditingController warnaKabelRController =
-        TextEditingController(text: kwh.warnaKabelR);
+        TextEditingController(text: widget.kwh.warnaKabelR);
     TextEditingController warnaKabelSController =
-        TextEditingController(text: kwh.warnaKabelS);
+        TextEditingController(text: widget.kwh.warnaKabelS);
     TextEditingController warnaKabelTController =
-        TextEditingController(text: kwh.warnaKabelT);
+        TextEditingController(text: widget.kwh.warnaKabelT);
     TextEditingController luasKabelRController =
-        TextEditingController(text: kwh.luasKabelR.toString());
+        TextEditingController(text: widget.kwh.luasKabelR.toString());
     TextEditingController luasKabelSController =
-        TextEditingController(text: kwh.luasKabelS.toString());
+        TextEditingController(text: widget.kwh.luasKabelS.toString());
     TextEditingController luasKabelTController =
-        TextEditingController(text: kwh.luasKabelT.toString());
+        TextEditingController(text: widget.kwh.luasKabelT.toString());
     TextEditingController luasKabelNController =
-        TextEditingController(text: kwh.luasKabelN.toString());
+        TextEditingController(text: widget.kwh.luasKabelN.toString());
     TextEditingController capmcbrController =
-        TextEditingController(text: kwh.capmcbr.toString());
+        TextEditingController(text: widget.kwh.capmcbr.toString());
     TextEditingController capmcbsController =
-        TextEditingController(text: kwh.capmcbs.toString());
+        TextEditingController(text: widget.kwh.capmcbs.toString());
     TextEditingController capmcbtController =
-        TextEditingController(text: kwh.capmcbt.toString());
+        TextEditingController(text: widget.kwh.capmcbt.toString());
     return Scaffold(
-      appBar: CustomAppBar(isMainPage: false, title: title),
+      appBar: CustomAppBar(isMainPage: false, title: widget.title),
       body: ListView(
         padding: EdgeInsets.all(defaultMargin),
         children: [
@@ -198,9 +224,41 @@ class EditKwhPage extends StatelessWidget {
             height: 20,
           ),
           Text(
-            "Tanggal Instalasi : -",
+            "Tanggal Instalasi",
             style: buttonText.copyWith(color: textDarkColor),
           ),
+          GestureDetector(
+              onTap: () async {
+                DateTime? pickedDate = await showDatePicker(
+                    context: context,
+                    cancelText: "Cancel",
+                    currentDate: DateTime.now(),
+                    confirmText: "Set",
+                    initialDate: DateTime.now(),
+                    firstDate: DateTime(1945),
+                    lastDate: DateTime.now());
+                if (pickedDate != null) {
+                  String formattedDate =
+                      DateFormat('yyyy-MM-dd hh:mm:ss').format(pickedDate);
+                  setState(() {
+                    tglInstalasi = formattedDate;
+                  });
+                }
+              },
+              child: Container(
+                padding: EdgeInsets.all(defaultMargin),
+                decoration: BoxDecoration(
+                    color: primaryBlue,
+                    borderRadius: BorderRadius.circular(defaultRadius)),
+                child: Row(
+                  children: [
+                    Text(
+                      tglInstalasi,
+                      style: buttonText,
+                    )
+                  ],
+                ),
+              )),
           const SizedBox(
             height: 32,
           ),
@@ -208,8 +266,8 @@ class EditKwhPage extends StatelessWidget {
               text: "Save",
               onPressed: () async {
                 await KwhMasterService().editKwhMaster(
-                    kwhId: kwh.id,
-                    popId: kwh.popId,
+                    kwhId: widget.kwh.id,
+                    popId: widget.kwh.popId,
                     daya: double.parse(dayaController.text),
                     arester: aresterController.text,
                     aresterType: aresterTypeController.text,
@@ -224,10 +282,13 @@ class EditKwhPage extends StatelessWidget {
                     warnaKabelT: warnaKabelTController.text,
                     warnaKabelN: warnaKabelNController.text,
                     warnaKabelG: warnaKabelGController.text,
+                    tglInstalasi: tglInstalasi,
                     luasKabelR: double.parse(luasKabelRController.text),
                     luasKabelS: double.parse(luasKabelSController.text),
                     luasKabelT: double.parse(luasKabelTController.text),
                     luasKabelN: double.parse(luasKabelNController.text));
+                await popProvider.getDataPop(id: widget.kwh.popId);
+                await kwhProvider.getKwh(widget.pm.id, widget.kwh.id);
                 Navigator.pop(context);
                 Navigator.pop(context);
               },

@@ -21,9 +21,9 @@ class KwhMasterModel extends Equatable {
   final String warnaKabelT;
   final String warnaKabelN;
   final String warnaKabelG;
-  // final DateTime tanggalInstalasi;
-  // final DateTime createdAt;
-  // final DateTime updatedAt;
+  final String tanggalInstalasi;
+  final DateTime createdAt;
+  final DateTime updatedAt;
 
   const KwhMasterModel({
     required this.id,
@@ -46,9 +46,9 @@ class KwhMasterModel extends Equatable {
     required this.warnaKabelS,
     required this.warnaKabelN,
     required this.warnaKabelR,
-    // required this.tanggalInstalasi,
-    // required this.createdAt,
-    // required this.updatedAt,
+    required this.tanggalInstalasi,
+    required this.createdAt,
+    required this.updatedAt,
   });
 
   factory KwhMasterModel.fromJson(Map<String, dynamic> json) {
@@ -73,9 +73,9 @@ class KwhMasterModel extends Equatable {
       warnaKabelS: json['warna_kabels'] ?? "",
       warnaKabelR: json['warna_kabelr'] ?? "",
       warnaKabelT: json['warna_kabelt'] ?? "",
-      // tanggalInstalasi: DateTime.parse(json['tgl_instalasi']),
-      // createdAt: DateTime.parse(json['created_at']),
-      // updatedAt: DateTime.parse(json['created_at']),
+      tanggalInstalasi: json['tgl_instalasi'] ?? "",
+      createdAt: DateTime.parse(json['created_at']),
+      updatedAt: DateTime.parse(json['created_at']),
     );
   }
 
@@ -101,8 +101,8 @@ class KwhMasterModel extends Equatable {
         warnaKabelT,
         capmcbs,
         capmcbt,
-        // tanggalInstalasi,
-        // createdAt,
-        // updatedAt,
+        tanggalInstalasi,
+        createdAt,
+        updatedAt,
       ];
 }

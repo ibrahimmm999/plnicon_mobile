@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:plnicon_mobile/providers/pop_provider.dart';
 import 'package:plnicon_mobile/services/master/kwh_master_service.dart';
 import 'package:plnicon_mobile/theme/theme.dart';
 import 'package:plnicon_mobile/widgets/custom_appbar.dart';
 import 'package:plnicon_mobile/widgets/custom_button.dart';
 import 'package:plnicon_mobile/widgets/text_input.dart';
+import 'package:provider/provider.dart';
 
 class AddKwhPage extends StatelessWidget {
   const AddKwhPage({super.key, required this.popId});
   final int popId;
   @override
   Widget build(BuildContext context) {
+    PopProvider popProvider = Provider.of<PopProvider>(context);
     TextEditingController aresterTypeController = TextEditingController();
     TextEditingController aresterController = TextEditingController();
     TextEditingController dayaController = TextEditingController();
@@ -177,10 +180,6 @@ class AddKwhPage extends StatelessWidget {
           const SizedBox(
             height: 20,
           ),
-          Text(
-            "Tanggal Instalasi : -",
-            style: buttonText.copyWith(color: textDarkColor),
-          ),
           const SizedBox(
             height: 32,
           ),
@@ -207,6 +206,7 @@ class AddKwhPage extends StatelessWidget {
                     luasKabelS: double.parse(luasKabelSController.text),
                     luasKabelT: double.parse(luasKabelTController.text),
                     luasKabelN: double.parse(luasKabelNController.text));
+                popProvider.getDataPop(id: popId);
                 Navigator.pop(context);
               },
               color: primaryGreen,
