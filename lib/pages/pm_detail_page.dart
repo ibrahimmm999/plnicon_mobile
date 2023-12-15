@@ -6,6 +6,7 @@ import 'package:plnicon_mobile/pages/add_master/add_ats_page.dart';
 import 'package:plnicon_mobile/pages/add_master/add_genset_page.dart';
 import 'package:plnicon_mobile/pages/add_master/add_inverter_page.dart';
 import 'package:plnicon_mobile/pages/add_master/add_kwh_page.dart';
+import 'package:plnicon_mobile/pages/add_master/add_modul_page.dart';
 import 'package:plnicon_mobile/pages/add_master/add_pdb_page.dart';
 import 'package:plnicon_mobile/pages/add_master/add_recti_page.dart';
 import 'package:plnicon_mobile/pages/ats_page.dart';
@@ -593,7 +594,15 @@ class _PmDetailPageState extends State<PmDetailPage> {
                                     style: buttonText.copyWith(
                                         color: textDarkColor),
                                   ),
-                                  const Icon(Icons.add)
+                                  GestureDetector(
+                                      onTap: () => Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    AddModulPage(
+                                                        pop: widget.pm.pop)),
+                                          ),
+                                      child: const Icon(Icons.add))
                                 ],
                               ),
                             ),
@@ -626,6 +635,7 @@ class _PmDetailPageState extends State<PmDetailPage> {
                                                 MaterialPageRoute(
                                                     builder: (context) =>
                                                         ModulPage(
+                                                          pm: widget.pm,
                                                           modul: e,
                                                           title: "Modul $index",
                                                         )),

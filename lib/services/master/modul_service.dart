@@ -8,12 +8,10 @@ import 'package:http/http.dart' as http;
 import 'package:plnicon_mobile/services/user_service.dart';
 
 class ModulMasterService {
-  Future<ModulMasterModel> postMModulMaster({
-    required int modulId,
-    required String rectId,
-    required String kapasitas,
+  Future<ModulMasterModel> postModulMaster({
+    required int rectId,
+    required int kapasitas,
     required String sn,
-    required int popId,
   }) async {
     late Uri url = UrlService().api('modul');
 
@@ -22,8 +20,6 @@ class ModulMasterService {
       'Authorization': await UserService().getTokenPreference() ?? '',
     };
     var body = {
-      'id': modulId,
-      'pop_id': popId,
       'rect_id': rectId,
       'sn': sn,
       'kapasitas': kapasitas,
@@ -43,12 +39,37 @@ class ModulMasterService {
     }
   }
 
+  Future<bool> deleteMaster({required int id}) async {
+    late Uri url = UrlService().api('delete-modul');
+
+    var headers = {
+      'Content-Type': 'application/json',
+      'Authorization': await UserService().getTokenPreference() ?? '',
+    };
+    var body = {
+      'id': id,
+    };
+    try {
+      var response = await http.post(
+        url,
+        headers: headers,
+        body: jsonEncode(body),
+      );
+      if (response.statusCode == 200) {
+        return true;
+      } else {
+        throw "Delete data modul failed";
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future<ModulMasterModel> editModulMaster({
     required int modulId,
-    required String rectId,
-    required String kapasitas,
+    required int rectId,
+    required int kapasitas,
     required String sn,
-    required int popId,
   }) async {
     late Uri url = UrlService().api('edit-modul');
 
@@ -58,7 +79,6 @@ class ModulMasterService {
     };
     var body = {
       'id': modulId,
-      'pop_id': popId,
       'rect_id': rectId,
       'sn': sn,
       'kapasitas': kapasitas,

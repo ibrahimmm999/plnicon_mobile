@@ -8,11 +8,13 @@ class TextInput extends StatefulWidget {
       {super.key,
       required this.controller,
       this.placeholder = "",
+      this.keyboardType = TextInputType.text,
       this.label = "",
       this.suffixText = "",
       this.isLongText = false,
       this.isPassword = false});
   final TextEditingController controller;
+  final TextInputType keyboardType;
   final String placeholder;
   final String label;
   final bool isPassword;
@@ -37,6 +39,7 @@ class _TextInputState extends State<TextInput> {
               style: buttonText.copyWith(color: textDarkColor),
             )),
         TextFormField(
+          keyboardType: widget.keyboardType,
           maxLines: widget.isLongText ? 4 : 1,
           obscureText: widget.isPassword ? isObscure : false,
           style: GoogleFonts.montserrat(
