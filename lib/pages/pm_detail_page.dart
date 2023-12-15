@@ -16,7 +16,6 @@ import 'package:plnicon_mobile/pages/genset_page.dart';
 import 'package:plnicon_mobile/pages/inverter_page.dart';
 import 'package:plnicon_mobile/pages/kwh_page.dart';
 import 'package:plnicon_mobile/pages/main_page.dart';
-import 'package:plnicon_mobile/pages/mcb_page.dart';
 import 'package:plnicon_mobile/pages/modul_page.dart';
 import 'package:plnicon_mobile/pages/pdb_page.dart';
 import 'package:plnicon_mobile/pages/rack_page.dart';

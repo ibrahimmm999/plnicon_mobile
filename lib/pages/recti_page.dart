@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:io';
 
 import 'package:easy_image_viewer/easy_image_viewer.dart';
@@ -5,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:plnicon_mobile/models/nilai/rect_nilai_model.dart';
 import 'package:plnicon_mobile/models/pm_model.dart';
 import 'package:plnicon_mobile/pages/edit_master/edit_recti_page.dart';
+import 'package:plnicon_mobile/pages/pm_detail_page.dart';
 import 'package:plnicon_mobile/providers/images_provider.dart';
 import 'package:plnicon_mobile/providers/page_provider.dart';
 import 'package:plnicon_mobile/providers/transaksional_provider.dart';
@@ -203,7 +206,7 @@ class _RectiPageState extends State<RectiPage> {
                     height: 20,
                   ),
                   Text(
-                    "Tanggal Instalasi : -",
+                    "Tanggal Instalasi : ${widget.rect.tanggalInstalasi}",
                     style: buttonText.copyWith(color: textDarkColor),
                   ),
                   const SizedBox(
@@ -228,8 +231,12 @@ class _RectiPageState extends State<RectiPage> {
                       onPressed: () async {
                         await RectMasterService()
                             .deleteRectMaster(id: widget.rect.id);
-                        // ignore: use_build_context_synchronously
-                        Navigator.pop(context);
+                        Navigator.pushAndRemoveUntil(
+                            context,
+                            MaterialPageRoute(
+                                builder: ((context) =>
+                                    PmDetailPage(pm: widget.pm))),
+                            (route) => false);
                       },
                       color: primaryRed,
                       clickColor: clickRed),
@@ -665,7 +672,6 @@ class _RectiPageState extends State<RectiPage> {
                     onTap: () async {
                       await handlePicker();
                       if (imagesProvider.croppedImageFile != null) {
-                        // ignore: use_build_context_synchronously
                         showDialog(
                           context: context,
                           builder: (context) => CustomPopUp(
