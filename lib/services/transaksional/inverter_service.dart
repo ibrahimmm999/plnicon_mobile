@@ -3,7 +3,6 @@
 import 'dart:convert';
 
 import 'package:plnicon_mobile/models/foto_model.dart';
-import 'package:plnicon_mobile/models/nilai/ac_nilai_model.dart';
 import 'package:plnicon_mobile/models/nilai/inverter_nilai_model.dart';
 import 'package:plnicon_mobile/services/url_service.dart';
 import 'package:http/http.dart' as http;
@@ -85,6 +84,7 @@ class InverterService {
       'input_ac': inputAc,
       'input_dc': inputDc,
       'output_dc': outputDc,
+      'hasil_uji': hasilUji,
       'mainfall': mainfall,
       'temuan': temuan,
       'rekomendasi': rekomendasi,
@@ -114,6 +114,7 @@ class InverterService {
     required String outputDc,
     required String mainfall,
     required String hasilUji,
+    required List<FotoModel> foto,
     required String temuan,
     required String rekomendasi,
   }) async {
@@ -136,7 +137,6 @@ class InverterService {
       'temuan': temuan,
       'rekomendasi': rekomendasi,
     };
-    print(body);
 
     var response = await http.post(
       url,
@@ -168,7 +168,6 @@ class InverterService {
 
     if (response.statusCode == 200) {
       var data = jsonDecode(response.body)['data'] as List;
-      print(data);
       List<InverterNilaiModel> inverter = List<InverterNilaiModel>.from(
         data.map((e) => InverterNilaiModel.fromJson(e)),
       );
@@ -207,6 +206,30 @@ class InverterService {
       return true;
     } else {
       throw "Add foto inverter failed";
+    }
+  }
+
+  Future<bool> deleteImage({required int imageId}) async {
+    late Uri url = UrlService().api('delete-inverter-foto');
+    var headers = {
+      'Content-Type': 'application/json',
+      'Authorization': await UserService().getTokenPreference() ?? '',
+    };
+
+    var body = {
+      'id': imageId,
+    };
+
+    var response = await http.post(
+      url,
+      headers: headers,
+      body: jsonEncode(body),
+    );
+
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      throw "Delete image failed";
     }
   }
 }

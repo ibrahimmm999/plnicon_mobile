@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:easy_image_viewer/easy_image_viewer.dart';
 import 'package:flutter/material.dart';
+import 'package:plnicon_mobile/models/foto_model.dart';
 import 'package:plnicon_mobile/models/master/inverter_master_model.dart';
 import 'package:plnicon_mobile/models/nilai/inverter_nilai_model.dart';
 import 'package:plnicon_mobile/models/pm_model.dart';
@@ -18,6 +19,7 @@ import 'package:plnicon_mobile/services/transaksional/inverter_service.dart';
 import 'package:plnicon_mobile/services/user_service.dart';
 import 'package:plnicon_mobile/theme/theme.dart';
 import 'package:plnicon_mobile/widgets/custom_button.dart';
+import 'package:plnicon_mobile/widgets/custom_button_loading.dart';
 import 'package:plnicon_mobile/widgets/custom_popup.dart';
 import 'package:plnicon_mobile/widgets/input_dokumentasi.dart';
 import 'package:plnicon_mobile/widgets/text_input.dart';
@@ -372,10 +374,7 @@ class _InverterPageState extends State<InverterPage> {
                               imagesProvider.addDeskripsi(
                                   path: contentPath,
                                   deskripsi: "Foto Full Rack Inverter");
-                              // imagesProvider.foto[contentPath] =
-                              //     imagesProvider.foto;
                               fotoFullRackInverter = contentPath;
-                              print(imagesProvider.foto);
                               deskripsiController.clear();
                             }
                           }
@@ -400,7 +399,8 @@ class _InverterPageState extends State<InverterPage> {
                                           null) {
                                         imagesProvider.addDeskripsi(
                                             path: contentPath,
-                                            deskripsi: "AC Outdoor");
+                                            deskripsi:
+                                                "Foto Full Rack Inverter");
                                         // imagesProvider.listFoto[contentPath] =
                                         //     imagesProvider.foto;
                                         fotoFullRackInverter = contentPath;
@@ -652,10 +652,7 @@ class _InverterPageState extends State<InverterPage> {
                                   imagesProvider.addDeskripsi(
                                       path: contentPath,
                                       deskripsi: "Foto Display Inverter");
-                                  // imagesProvider.listFoto[contentPath] =
-                                  //     imagesProvider.foto;
                                   fotoDisplayInverter = contentPath;
-                                  print(imagesProvider.foto);
                                   deskripsiController.clear();
                                 }
                               },
@@ -686,9 +683,6 @@ class _InverterPageState extends State<InverterPage> {
                               imagesProvider.addDeskripsi(
                                   path: contentPath,
                                   deskripsi: deskripsiController.text);
-                              // imagesProvider.listFoto[contentPath] =
-                              //     imagesProvider.foto;
-                              print(imagesProvider.foto);
                               deskripsiController.clear();
                             },
                           ),
@@ -812,41 +806,164 @@ class _InverterPageState extends State<InverterPage> {
                   Padding(
                     padding: EdgeInsets.symmetric(
                         horizontal: defaultMargin + 32, vertical: 40),
-                    child: CustomButton(
-                        text: "Save",
-                        onPressed: () async {
-                          if (inverterProvider.listInverter.isEmpty) {
-                            InverterNilaiModel inverter =
-                                await InverterService().postInverter(
-                                    inverterId: widget.inverter.id,
-                                    pmId: widget.pm.id,
-                                    load: loadController.text,
-                                    inputAc: inputACController.text,
-                                    inputDc: inputDCController.text,
-                                    outputDc: outputDCController.text,
-                                    mainfall: mainfallController.text,
-                                    hasilUji: hasilUji,
-                                    temuan: temuanController.text,
-                                    rekomendasi: rekomendasiController.text);
-                          } else {
-                            InverterNilaiModel inverter =
-                                await InverterService().editInverter(
-                                    id: inverterProvider.listInverter.last.id,
-                                    inverterId: widget.inverter.id,
-                                    pmId: widget.pm.id,
-                                    load: loadController.text,
-                                    inputAc: inputACController.text,
-                                    inputDc: inputDCController.text,
-                                    outputDc: outputDCController.text,
-                                    mainfall: mainfallController.text,
-                                    hasilUji: hasilUji,
-                                    temuan: temuanController.text,
-                                    rekomendasi: rekomendasiController.text);
-                          }
-                          Navigator.pop(context);
-                        },
-                        color: primaryBlue,
-                        clickColor: clickBlue),
+                    child: isLoading
+                        ? CustomButtonLoading(color: primaryGreen)
+                        : CustomButton(
+                            text: "Save",
+                            onPressed: () async {
+                              setState(() {
+                                isLoading = true;
+                              });
+                              if (inverterProvider.listInverter.isEmpty) {
+                                if (fotoFullRackInverter.isNotEmpty &&
+                                    fotoInverterTampakDepan.isNotEmpty &&
+                                    fotoDisplayInverter.isNotEmpty &&
+                                    loadController.text.isNotEmpty &&
+                                    inputACController.text.isNotEmpty &&
+                                    inputDCController.text.isNotEmpty &&
+                                    outputDCController.text.isNotEmpty &&
+                                    mainfallController.text.isNotEmpty &&
+                                    hasilUji.isNotEmpty) {
+                                  InverterNilaiModel inverter =
+                                      await InverterService().postInverter(
+                                          inverterId: widget.inverter.id,
+                                          pmId: widget.pm.id,
+                                          load: loadController.text,
+                                          inputAc: inputACController.text,
+                                          inputDc: inputDCController.text,
+                                          outputDc: outputDCController.text,
+                                          mainfall: mainfallController.text,
+                                          hasilUji: hasilUji,
+                                          temuan: temuanController.text,
+                                          rekomendasi:
+                                              rekomendasiController.text);
+                                  await Future.forEach(
+                                      imagesProvider.foto.entries,
+                                      (element) async {
+                                    await InverterService().postFotoInverter(
+                                        inverterNilaiId: inverter.id,
+                                        urlFoto: element.key,
+                                        description: element.value);
+                                  });
+                                  setState(() {
+                                    isLoading = false;
+                                  });
+                                  Navigator.pushAndRemoveUntil(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              PmDetailPage(pm: widget.pm)),
+                                      (route) => false);
+                                } else {
+                                  setState(() {
+                                    isLoading = false;
+                                  });
+                                  ScaffoldMessenger.of(context)
+                                      .removeCurrentSnackBar();
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      backgroundColor: primaryRed,
+                                      content: const Text(
+                                        'Isi data serta foto dengan lengkap',
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ),
+                                  );
+                                }
+                              } else {
+                                if (fotoFullRackInverter.isNotEmpty &&
+                                    fotoInverterTampakDepan.isNotEmpty &&
+                                    fotoDisplayInverter.isNotEmpty &&
+                                    loadController.text.isNotEmpty &&
+                                    inputACController.text.isNotEmpty &&
+                                    inputDCController.text.isNotEmpty &&
+                                    outputDCController.text.isNotEmpty &&
+                                    mainfallController.text.isNotEmpty &&
+                                    hasilUji.isNotEmpty) {
+                                  setState(() {
+                                    isLoading = true;
+                                  });
+                                  InverterNilaiModel inverter =
+                                      await InverterService().editInverter(
+                                          foto: [
+                                        const FotoModel(
+                                            id: 99,
+                                            url: "url",
+                                            deskripsi: "deskripsi")
+                                      ],
+                                          id: inverterProvider
+                                              .listInverter.last.id,
+                                          inverterId: widget.inverter.id,
+                                          pmId: widget.pm.id,
+                                          load: loadController.text,
+                                          inputAc: inputACController.text,
+                                          inputDc: inputDCController.text,
+                                          outputDc: outputDCController.text,
+                                          mainfall: mainfallController.text,
+                                          hasilUji: hasilUji,
+                                          temuan: temuanController.text,
+                                          rekomendasi:
+                                              rekomendasiController.text);
+                                  if (inverterProvider
+                                      .listInverter.isNotEmpty) {
+                                    for (var item in inverterProvider
+                                        .listInverter.last.foto!) {
+                                      bool isDelete = true;
+                                      for (var itemImagesProvider
+                                          in imagesProvider.foto.entries) {
+                                        String url = item.url.replaceAll(
+                                            "http://localhost",
+                                            "https://jakban.iconpln.co.id/backend-plnicon/public");
+                                        if (url == itemImagesProvider.key) {
+                                          isDelete = false;
+                                        }
+                                      }
+                                      if (isDelete) {
+                                        await InverterService()
+                                            .deleteImage(imageId: item.id);
+                                      }
+                                    }
+                                  }
+                                  await Future.forEach(
+                                      imagesProvider.foto.entries,
+                                      (element) async {
+                                    if (!(element.key.contains(
+                                        "https://jakban.iconpln.co.id"))) {
+                                      await InverterService().postFotoInverter(
+                                          inverterNilaiId: inverter.id,
+                                          urlFoto: element.key,
+                                          description: element.value);
+                                    }
+                                  });
+                                  setState(() {
+                                    isLoading = false;
+                                  });
+                                  Navigator.pushAndRemoveUntil(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              PmDetailPage(pm: widget.pm)),
+                                      (route) => false);
+                                } else {
+                                  setState(() {
+                                    isLoading = false;
+                                  });
+                                  ScaffoldMessenger.of(context)
+                                      .removeCurrentSnackBar();
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      backgroundColor: primaryRed,
+                                      content: const Text(
+                                        'Isi data serta foto dengan lengkap',
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ),
+                                  );
+                                }
+                              }
+                            },
+                            color: primaryGreen,
+                            clickColor: clickGreen),
                   )
                 ],
               ),
