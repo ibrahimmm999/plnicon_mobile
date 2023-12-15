@@ -178,7 +178,6 @@ class PdbService {
       headers: headers,
       body: jsonEncode(body),
     );
-    print(body);
 
     if (response.statusCode == 200) {
       return true;

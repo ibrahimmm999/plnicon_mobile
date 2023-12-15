@@ -19,6 +19,7 @@ import 'package:plnicon_mobile/services/transaksional/pdb_service.dart';
 import 'package:plnicon_mobile/services/user_service.dart';
 import 'package:plnicon_mobile/theme/theme.dart';
 import 'package:plnicon_mobile/widgets/custom_button.dart';
+import 'package:plnicon_mobile/widgets/custom_button_loading.dart';
 import 'package:plnicon_mobile/widgets/custom_popup.dart';
 import 'package:plnicon_mobile/widgets/input_dokumentasi.dart';
 import 'package:plnicon_mobile/widgets/text_input.dart';
@@ -84,11 +85,13 @@ class _PDBPageState extends State<PDBPage> {
       }
     }
     loading = false;
-    print(pdbProvider.listPdb);
   }
 
   @override
   Widget build(BuildContext context) {
+    PageProvider pageProvider = Provider.of<PageProvider>(context);
+    TransaksionalProvider pdbProvider =
+        Provider.of<TransaksionalProvider>(context);
     ImagesProvider imagesProvider = Provider.of<ImagesProvider>(context);
     Future<void> handlePicker() async {
       imagesProvider.setCroppedImageFile = null;
@@ -104,11 +107,14 @@ class _PDBPageState extends State<PDBPage> {
     }
 
     TextEditingController deskripsiController = TextEditingController();
-    TextEditingController temuanController = TextEditingController();
-    TextEditingController rekomendasiController = TextEditingController();
-    PageProvider pageProvider = Provider.of<PageProvider>(context);
-    TransaksionalProvider pdbProvider =
-        Provider.of<TransaksionalProvider>(context);
+    TextEditingController temuanController = TextEditingController(
+        text:
+            pdbProvider.listPdb.isEmpty ? "" : pdbProvider.listPdb.last.temuan);
+    TextEditingController rekomendasiController = TextEditingController(
+        text: pdbProvider.listPdb.isEmpty
+            ? ""
+            : pdbProvider.listPdb.last.rekomendasi);
+
     List<String> listAresterWarna = ["Ok", "Not OK"];
     Widget switchContent() {
       return SizedBox(
@@ -333,10 +339,7 @@ class _PDBPageState extends State<PDBPage> {
                               imagesProvider.addDeskripsi(
                                   path: contentPath,
                                   deskripsi: "Foto PDB Terbuka");
-                              // imagesProvider.foto[contentPath] =
-                              //     imagesProvider.foto;
                               fotoPdbTerbuka = contentPath;
-                              print(imagesProvider.foto);
                               deskripsiController.clear();
                             }
                           }
@@ -362,10 +365,7 @@ class _PDBPageState extends State<PDBPage> {
                                         imagesProvider.addDeskripsi(
                                             path: contentPath,
                                             deskripsi: "Foto PDB Terbuka");
-                                        // imagesProvider.listFoto[contentPath] =
-                                        //     imagesProvider.foto;
                                         fotoPdbTerbuka = contentPath;
-                                        print(imagesProvider.foto);
                                         deskripsiController.clear();
                                       }
                                     }
@@ -417,10 +417,7 @@ class _PDBPageState extends State<PDBPage> {
                               imagesProvider.addDeskripsi(
                                   path: contentPath,
                                   deskripsi: "Foto PDB Tertutup");
-                              // imagesProvider.listFoto[contentPath] =
-                              //     imagesProvider.foto;
                               fotoPdbTertutup = contentPath;
-                              print(imagesProvider.foto);
                               deskripsiController.clear();
                             }
                           }
@@ -446,10 +443,7 @@ class _PDBPageState extends State<PDBPage> {
                                         imagesProvider.addDeskripsi(
                                             path: contentPath,
                                             deskripsi: "Foto PDB Tertutup");
-                                        // imagesProvider.listFoto[contentPath] =
-                                        //     imagesProvider.foto;
                                         fotoPdbTertutup = contentPath;
-                                        print(imagesProvider.foto);
                                         deskripsiController.clear();
                                       }
                                     }
@@ -494,10 +488,7 @@ class _PDBPageState extends State<PDBPage> {
                                       imagesProvider.addDeskripsi(
                                           path: contentPath,
                                           deskripsi: "Foto PDB Tertutup");
-                                      // imagesProvider.listFoto[contentPath] =
-                                      //     imagesProvider.foto;
                                       fotoPdbTertutup = contentPath;
-                                      print(imagesProvider.foto);
                                       deskripsiController.clear();
                                     }
                                   },
@@ -530,9 +521,6 @@ class _PDBPageState extends State<PDBPage> {
                               imagesProvider.addDeskripsi(
                                   path: contentPath,
                                   deskripsi: deskripsiController.text);
-                              // imagesProvider.listFoto[contentPath] =
-                              //     imagesProvider.foto;
-                              print(imagesProvider.foto);
                               deskripsiController.clear();
                             },
                           ),
@@ -593,7 +581,6 @@ class _PDBPageState extends State<PDBPage> {
                     value: aresterWarna.isEmpty ? null : aresterWarna,
                     onChanged: (value) {
                       aresterWarna = value.toString();
-                      // setState(() {});
                     },
                   ),
                   const SizedBox(
@@ -617,83 +604,140 @@ class _PDBPageState extends State<PDBPage> {
                   Padding(
                     padding: EdgeInsets.symmetric(
                         horizontal: defaultMargin + 32, vertical: 40),
-                    child: CustomButton(
-                        text: "Save",
-                        onPressed: () async {
-                          if (pdbProvider.listPdb.isEmpty) {
-                            if (aresterWarna.isNotEmpty) {
-                              PdbNilaiModel pdb = await PdbService().postPdb(
-                                  pdbId: widget.pdb.id,
-                                  pmId: widget.pm.id,
-                                  aresterWarna: aresterWarna,
-                                  temuan: temuanController.text,
-                                  rekomendasi: rekomendasiController.text);
-                              imagesProvider.foto.forEach((key, value) async {
-                                await PdbService().postFotoPdb(
-                                    pdbNilaiId: pdb.id,
-                                    urlFoto: key,
-                                    description: value);
+                    child: isLoading
+                        ? CustomButtonLoading(color: primaryGreen)
+                        : CustomButton(
+                            text: "Save",
+                            onPressed: () async {
+                              setState(() {
+                                isLoading = true;
                               });
-                              Navigator.pop(context);
-                            } else {
-                              ScaffoldMessenger.of(context)
-                                  .removeCurrentSnackBar();
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  backgroundColor: primaryRed,
-                                  content: const Text(
-                                    'Isi foto dengan lengkap',
-                                    textAlign: TextAlign.center,
-                                  ),
-                                ),
-                              );
-                            }
-                          } else {
-                            if (aresterWarna.isNotEmpty) {
-                              PdbNilaiModel pdb = await PdbService().editPdb(
-                                  foto: [
-                                    const FotoModel(
-                                        id: 99,
-                                        url: "url",
-                                        deskripsi: "deskripsi")
-                                  ],
-                                  id: pdbProvider.listPdb.last.id,
-                                  pdbId: widget.pdb.id,
-                                  pmId: widget.pm.id,
-                                  aresterWarna: aresterWarna,
-                                  temuan: temuanController.text,
-                                  rekomendasi: rekomendasiController.text);
-                              if (pdbProvider.listPdb.isNotEmpty) {
-                                for (var item
-                                    in pdbProvider.listPdb.last.foto!) {
-                                  await PdbService()
-                                      .deleteImage(imageId: item.id);
+                              if (pdbProvider.listPdb.isEmpty) {
+                                if (aresterWarna.isNotEmpty &&
+                                    fotoPdbTerbuka.isNotEmpty &&
+                                    fotoPdbTertutup.isNotEmpty) {
+                                  PdbNilaiModel pdb = await PdbService()
+                                      .postPdb(
+                                          pdbId: widget.pdb.id,
+                                          pmId: widget.pm.id,
+                                          aresterWarna: aresterWarna,
+                                          temuan: temuanController.text,
+                                          rekomendasi:
+                                              rekomendasiController.text);
+                                  await Future.forEach(
+                                      imagesProvider.foto.entries,
+                                      (element) async {
+                                    await PdbService().postFotoPdb(
+                                        pdbNilaiId: pdb.id,
+                                        urlFoto: element.key,
+                                        description: element.value);
+                                  });
+                                  setState(() {
+                                    isLoading = false;
+                                  });
+                                  Navigator.pushAndRemoveUntil(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              PmDetailPage(pm: widget.pm)),
+                                      (route) => false);
+                                } else {
+                                  setState(() {
+                                    isLoading = false;
+                                  });
+                                  ScaffoldMessenger.of(context)
+                                      .removeCurrentSnackBar();
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      backgroundColor: primaryRed,
+                                      content: const Text(
+                                        'Isi foto dengan lengkap',
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ),
+                                  );
+                                }
+                              } else {
+                                if (aresterWarna.isNotEmpty &&
+                                    fotoPdbTerbuka.isNotEmpty &&
+                                    fotoPdbTertutup.isNotEmpty) {
+                                  setState(() {
+                                    isLoading = true;
+                                  });
+                                  PdbNilaiModel pdb = await PdbService()
+                                      .editPdb(
+                                          foto: [
+                                        const FotoModel(
+                                            id: 99,
+                                            url: "url",
+                                            deskripsi: "deskripsi")
+                                      ],
+                                          id: pdbProvider.listPdb.last.id,
+                                          pdbId: widget.pdb.id,
+                                          pmId: widget.pm.id,
+                                          aresterWarna: aresterWarna,
+                                          temuan: temuanController.text,
+                                          rekomendasi:
+                                              rekomendasiController.text);
+                                  if (pdbProvider.listPdb.isNotEmpty) {
+                                    for (var item
+                                        in pdbProvider.listPdb.last.foto!) {
+                                      bool isDelete = true;
+                                      for (var itemImagesProvider
+                                          in imagesProvider.foto.entries) {
+                                        String url = item.url.replaceAll(
+                                            "http://localhost",
+                                            "https://jakban.iconpln.co.id/backend-plnicon/public");
+                                        if (url == itemImagesProvider.key) {
+                                          isDelete = false;
+                                        }
+                                      }
+                                      if (isDelete) {
+                                        await PdbService()
+                                            .deleteImage(imageId: item.id);
+                                      }
+                                    }
+                                  }
+                                  await Future.forEach(
+                                      imagesProvider.foto.entries,
+                                      (element) async {
+                                    if (!(element.key.contains(
+                                        "https://jakban.iconpln.co.id"))) {
+                                      await PdbService().postFotoPdb(
+                                          pdbNilaiId: pdb.id,
+                                          urlFoto: element.key,
+                                          description: element.value);
+                                    }
+                                  });
+                                  setState(() {
+                                    isLoading = false;
+                                  });
+                                  Navigator.pushAndRemoveUntil(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              PmDetailPage(pm: widget.pm)),
+                                      (route) => false);
+                                } else {
+                                  setState(() {
+                                    isLoading = false;
+                                  });
+                                  ScaffoldMessenger.of(context)
+                                      .removeCurrentSnackBar();
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      backgroundColor: primaryRed,
+                                      content: const Text(
+                                        'Isi foto dengan lengkap',
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ),
+                                  );
                                 }
                               }
-                              imagesProvider.foto.forEach((key, value) async {
-                                await PdbService().postFotoPdb(
-                                    pdbNilaiId: pdb.id,
-                                    urlFoto: key,
-                                    description: value);
-                              });
-                              Navigator.pop(context);
-                            } else {
-                              ScaffoldMessenger.of(context)
-                                  .removeCurrentSnackBar();
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  backgroundColor: primaryRed,
-                                  content: const Text(
-                                    'Isi foto dengan lengkap',
-                                    textAlign: TextAlign.center,
-                                  ),
-                                ),
-                              );
-                            }
-                          }
-                        },
-                        color: primaryBlue,
-                        clickColor: clickBlue),
+                            },
+                            color: primaryGreen,
+                            clickColor: clickGreen),
                   )
                 ],
               ),
@@ -701,7 +745,7 @@ class _PDBPageState extends State<PDBPage> {
           }
         default:
           {
-            return Scaffold();
+            return const Scaffold();
           }
       }
     }
@@ -720,10 +764,18 @@ class _PDBPageState extends State<PDBPage> {
           ),
         ),
         body: Column(
-          children: [
-            switchContent(),
-            Expanded(child: buildContent()),
-          ],
+          mainAxisAlignment:
+              loading ? MainAxisAlignment.center : MainAxisAlignment.start,
+          children: loading
+              ? [
+                  Center(
+                      child: CircularProgressIndicator(
+                          backgroundColor: primaryBlue))
+                ]
+              : [
+                  switchContent(),
+                  Expanded(child: buildContent()),
+                ],
         ));
   }
 }

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:plnicon_mobile/providers/pop_provider.dart';
-import 'package:plnicon_mobile/services/master/ac_master_service.dart';
 import 'package:plnicon_mobile/services/master/pdb_master_service.dart';
 import 'package:plnicon_mobile/theme/theme.dart';
 import 'package:plnicon_mobile/widgets/custom_appbar.dart';
@@ -18,6 +17,8 @@ class AddPdbPage extends StatefulWidget {
 }
 
 String tglInstalasi = '';
+String tipe = "";
+String arester = "";
 
 class _AddPdbPageState extends State<AddPdbPage> {
   @override
@@ -30,10 +31,10 @@ class _AddPdbPageState extends State<AddPdbPage> {
 
   @override
   Widget build(BuildContext context) {
+    List<String> listTipe = ["ACPDB", "DCPDB"];
+    List<String> listArester = ["ADA", "TIDAK ADA"];
     PopProvider popProvider = Provider.of<PopProvider>(context);
     TextEditingController namaAcController = TextEditingController();
-    TextEditingController tipeController = TextEditingController();
-    TextEditingController aresterController = TextEditingController();
     TextEditingController aresterTipeController = TextEditingController();
     return Scaffold(
       appBar: const CustomAppBar(isMainPage: false, title: "Add Pdb"),
@@ -52,7 +53,36 @@ class _AddPdbPageState extends State<AddPdbPage> {
             "Tipe",
             style: buttonText.copyWith(color: textDarkColor),
           ),
-          TextInput(controller: tipeController),
+          DropdownButtonFormField(
+            alignment: Alignment.centerLeft,
+            style: buttonText.copyWith(color: textDarkColor),
+            borderRadius: BorderRadius.circular(defaultRadius),
+            decoration: InputDecoration(
+              contentPadding: EdgeInsets.all(defaultRadius),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(defaultRadius),
+                borderSide: BorderSide(width: 2, color: primaryBlue),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(defaultRadius),
+                borderSide: BorderSide(width: 2, color: neutral500),
+              ),
+              hintStyle: buttonText.copyWith(color: textDarkColor),
+            ),
+            items: listTipe
+                .map((e) => DropdownMenuItem(
+                      value: e,
+                      child: Text(
+                        e,
+                      ),
+                    ))
+                .toList(),
+            value: tipe.isEmpty ? null : tipe,
+            onChanged: (value) {
+              tipe = value.toString();
+              // setState(() {});
+            },
+          ),
           const SizedBox(
             height: 20,
           ),
@@ -60,7 +90,36 @@ class _AddPdbPageState extends State<AddPdbPage> {
             "Arester",
             style: buttonText.copyWith(color: textDarkColor),
           ),
-          TextInput(controller: aresterController),
+          DropdownButtonFormField(
+            alignment: Alignment.centerLeft,
+            style: buttonText.copyWith(color: textDarkColor),
+            borderRadius: BorderRadius.circular(defaultRadius),
+            decoration: InputDecoration(
+              contentPadding: EdgeInsets.all(defaultRadius),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(defaultRadius),
+                borderSide: BorderSide(width: 2, color: primaryBlue),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(defaultRadius),
+                borderSide: BorderSide(width: 2, color: neutral500),
+              ),
+              hintStyle: buttonText.copyWith(color: textDarkColor),
+            ),
+            items: listArester
+                .map((e) => DropdownMenuItem(
+                      value: e,
+                      child: Text(
+                        e,
+                      ),
+                    ))
+                .toList(),
+            value: arester.isEmpty ? null : arester,
+            onChanged: (value) {
+              arester = value.toString();
+              // setState(() {});
+            },
+          ),
           const SizedBox(
             height: 20,
           ),
@@ -116,8 +175,8 @@ class _AddPdbPageState extends State<AddPdbPage> {
               onPressed: () async {
                 await PdbMasterService().postPdbMaster(
                   nama: namaAcController.text,
-                  tipe: tipeController.text,
-                  arester: aresterController.text,
+                  tipe: tipe,
+                  arester: arester,
                   aresterTipe: aresterTipeController.text,
                   popId: widget.popId,
                 );

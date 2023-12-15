@@ -25,6 +25,8 @@ class EditPdbPage extends StatefulWidget {
 }
 
 String tglInstalasi = "";
+String tipe = "";
+String arester = "";
 
 class _EditPdbPageState extends State<EditPdbPage> {
   @override
@@ -32,19 +34,20 @@ class _EditPdbPageState extends State<EditPdbPage> {
     super.initState();
     setState(() {
       tglInstalasi = widget.pdb.tanggalInstalasi;
+      tipe = widget.pdb.tipe;
+      arester = widget.pdb.arester;
     });
   }
 
+  bool loading = true;
   @override
   Widget build(BuildContext context) {
+    List<String> listTipe = ["ACPDB", "DCPDB"];
+    List<String> listArester = ["ADA", "TIDAK ADA"];
     TransaksionalProvider pdbProvider =
         Provider.of<TransaksionalProvider>(context);
     TextEditingController namaController =
         TextEditingController(text: widget.pdb.nama);
-    TextEditingController tipeController =
-        TextEditingController(text: widget.pdb.tipe);
-    TextEditingController aresterController =
-        TextEditingController(text: widget.pdb.arester);
     TextEditingController aresterTipeController =
         TextEditingController(text: widget.pdb.aresterTipe);
     PopProvider popProvider = Provider.of<PopProvider>(context);
@@ -65,7 +68,36 @@ class _EditPdbPageState extends State<EditPdbPage> {
             "Arester",
             style: buttonText.copyWith(color: textDarkColor),
           ),
-          TextInput(controller: aresterController),
+          DropdownButtonFormField(
+            alignment: Alignment.centerLeft,
+            style: buttonText.copyWith(color: textDarkColor),
+            borderRadius: BorderRadius.circular(defaultRadius),
+            decoration: InputDecoration(
+              contentPadding: EdgeInsets.all(defaultRadius),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(defaultRadius),
+                borderSide: BorderSide(width: 2, color: primaryBlue),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(defaultRadius),
+                borderSide: BorderSide(width: 2, color: neutral500),
+              ),
+              hintStyle: buttonText.copyWith(color: textDarkColor),
+            ),
+            items: listArester
+                .map((e) => DropdownMenuItem(
+                      value: e,
+                      child: Text(
+                        e,
+                      ),
+                    ))
+                .toList(),
+            value: arester.isEmpty ? null : arester,
+            onChanged: (value) {
+              arester = value.toString();
+              // setState(() {});
+            },
+          ),
           const SizedBox(
             height: 20,
           ),
@@ -81,7 +113,36 @@ class _EditPdbPageState extends State<EditPdbPage> {
             "Tipe",
             style: buttonText.copyWith(color: textDarkColor),
           ),
-          TextInput(controller: tipeController),
+          DropdownButtonFormField(
+            alignment: Alignment.centerLeft,
+            style: buttonText.copyWith(color: textDarkColor),
+            borderRadius: BorderRadius.circular(defaultRadius),
+            decoration: InputDecoration(
+              contentPadding: EdgeInsets.all(defaultRadius),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(defaultRadius),
+                borderSide: BorderSide(width: 2, color: primaryBlue),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(defaultRadius),
+                borderSide: BorderSide(width: 2, color: neutral500),
+              ),
+              hintStyle: buttonText.copyWith(color: textDarkColor),
+            ),
+            items: listTipe
+                .map((e) => DropdownMenuItem(
+                      value: e,
+                      child: Text(
+                        e,
+                      ),
+                    ))
+                .toList(),
+            value: tipe.isEmpty ? null : tipe,
+            onChanged: (value) {
+              tipe = value.toString();
+              // setState(() {});
+            },
+          ),
           const SizedBox(
             height: 20,
           ),
@@ -129,8 +190,8 @@ class _EditPdbPageState extends State<EditPdbPage> {
                 await PdbMasterService().editPdbMaster(
                     pdbId: widget.pdb.id,
                     nama: namaController.text,
-                    tipe: tipeController.text,
-                    arester: aresterController.text,
+                    tipe: tipe,
+                    arester: arester,
                     aresterTipe: aresterTipeController.text,
                     tglInstalasi: tglInstalasi,
                     popId: widget.pdb.popId);
