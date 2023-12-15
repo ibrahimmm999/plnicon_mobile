@@ -32,9 +32,9 @@ class _EditRectiPageState extends State<EditRectiPage> {
   void initState() {
     super.initState();
     setState(() {
-      tglInstalasi = widget.rect.tanggalInstalasi;
       jumlahPhasa = widget.rect.jumlahPhasa.toString();
       modulControl = widget.rect.modulControl.toString();
+      tglInstalasi = widget.rect.tanggalInstalasi;
     });
   }
 
@@ -191,6 +191,10 @@ class _EditRectiPageState extends State<EditRectiPage> {
                   setState(() {
                     tglInstalasi = formattedDate;
                   });
+                } else {
+                  setState(() {
+                    tglInstalasi = widget.rect.tanggalInstalasi;
+                  });
                 }
               },
               child: Container(
@@ -213,6 +217,7 @@ class _EditRectiPageState extends State<EditRectiPage> {
           CustomButton(
               text: "Save",
               onPressed: () async {
+                print(tglInstalasi);
                 await RectMasterService().editRectMaster(
                     rectId: widget.rect.id,
                     sn: snController.text,

@@ -899,7 +899,6 @@ class _AcPageState extends State<AcPage> {
                                 );
                               }
                             }
-                            // ignore: use_build_context_synchronously
                           },
                           color: primaryGreen,
                           clickColor: clickGreen),

@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:easy_image_viewer/easy_image_viewer.dart';
 import 'package:flutter/material.dart';
+import 'package:plnicon_mobile/models/foto_model.dart';
 import 'package:plnicon_mobile/models/nilai/rect_nilai_model.dart';
 import 'package:plnicon_mobile/models/pm_model.dart';
 import 'package:plnicon_mobile/pages/edit_master/edit_recti_page.dart';
@@ -17,6 +18,7 @@ import 'package:plnicon_mobile/services/transaksional/rect_service.dart';
 import 'package:plnicon_mobile/services/user_service.dart';
 import 'package:plnicon_mobile/theme/theme.dart';
 import 'package:plnicon_mobile/widgets/custom_button.dart';
+import 'package:plnicon_mobile/widgets/custom_button_loading.dart';
 import 'package:plnicon_mobile/widgets/custom_popup.dart';
 import 'package:plnicon_mobile/widgets/input_dokumentasi.dart';
 import 'package:plnicon_mobile/widgets/text_input.dart';
@@ -61,8 +63,8 @@ class _RectiPageState extends State<RectiPage> {
     } else {
       if (await userProvider.getUser(token: token)) {
         await rectProvider.getRect(widget.pm.id, widget.rect.id);
+
         if (rectProvider.listRect.isNotEmpty) {
-          print(rectProvider.listRect.first.foto.length);
           for (var element in rectProvider.listRect.first.foto) {
             String url = element.url.replaceAll("http://localhost",
                 "https://jakban.iconpln.co.id/backend-plnicon/public");
@@ -81,7 +83,6 @@ class _RectiPageState extends State<RectiPage> {
         }
       }
     }
-    print(imagesProvider.foto);
     loading = false;
   }
 
@@ -275,88 +276,94 @@ class _RectiPageState extends State<RectiPage> {
                         : ListView(
                             scrollDirection: Axis.horizontal,
                             children: imagesProvider.foto.entries.map((e) {
-                              return Container(
-                                width: 240,
-                                margin:
-                                    const EdgeInsets.symmetric(horizontal: 12),
-                                child: Column(
-                                  children: [
-                                    GestureDetector(
-                                      onTap: () {
-                                        e.key.contains(
-                                                "https://jakban.iconpln.co.id")
-                                            ? showImageViewer(context,
-                                                Image.network(e.key).image,
-                                                swipeDismissible: true,
-                                                doubleTapZoomable: true)
-                                            : showImageViewer(context,
-                                                Image.file(File(e.key)).image,
-                                                swipeDismissible: true,
-                                                doubleTapZoomable: true);
-                                      },
-                                      child: Stack(
-                                        children: [
+                              return Visibility(
+                                visible: !(phasa == 1 &&
+                                    (e.value == "Load S" ||
+                                        e.value == "Load T")),
+                                child: Container(
+                                  width: 240,
+                                  margin: const EdgeInsets.symmetric(
+                                      horizontal: 12),
+                                  child: Column(
+                                    children: [
+                                      GestureDetector(
+                                        onTap: () {
                                           e.key.contains(
                                                   "https://jakban.iconpln.co.id")
-                                              ? Image.network(
-                                                  e.key,
-                                                  height: 240,
-                                                  width: 240,
-                                                  fit: BoxFit.cover,
-                                                )
-                                              : Image.file(
-                                                  File(e.key),
-                                                  height: 240,
-                                                  width: 240,
-                                                  fit: BoxFit.cover,
-                                                ),
-                                          Align(
-                                            alignment: Alignment.topRight,
-                                            child: GestureDetector(
-                                              onTap: () {
-                                                setState(() {
-                                                  imagesProvider.deleteImage(
-                                                      path: e.key);
-                                                  if (e.value == "Foto Fisik") {
-                                                    fotoFisik = "";
-                                                  } else if (e.value ==
-                                                      "Load R") {
-                                                    fotoLoadR = "";
-                                                  } else if (e.value ==
-                                                      "Load S") {
-                                                    fotoLoadS = "";
-                                                  } else if (e.value ==
-                                                      "Load T") {
-                                                    fotoLoadT = "";
-                                                  }
-                                                });
-                                              },
-                                              child: Container(
-                                                decoration: BoxDecoration(
-                                                  color: const Color.fromARGB(
-                                                      255, 255, 73, 60),
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          180),
-                                                ),
-                                                child: const Icon(
-                                                  Icons.close,
-                                                  size: 24,
-                                                  color: Colors.white,
+                                              ? showImageViewer(context,
+                                                  Image.network(e.key).image,
+                                                  swipeDismissible: true,
+                                                  doubleTapZoomable: true)
+                                              : showImageViewer(context,
+                                                  Image.file(File(e.key)).image,
+                                                  swipeDismissible: true,
+                                                  doubleTapZoomable: true);
+                                        },
+                                        child: Stack(
+                                          children: [
+                                            e.key.contains(
+                                                    "https://jakban.iconpln.co.id")
+                                                ? Image.network(
+                                                    e.key,
+                                                    height: 240,
+                                                    width: 240,
+                                                    fit: BoxFit.cover,
+                                                  )
+                                                : Image.file(
+                                                    File(e.key),
+                                                    height: 240,
+                                                    width: 240,
+                                                    fit: BoxFit.cover,
+                                                  ),
+                                            Align(
+                                              alignment: Alignment.topRight,
+                                              child: GestureDetector(
+                                                onTap: () {
+                                                  setState(() {
+                                                    imagesProvider.deleteImage(
+                                                        path: e.key);
+                                                    if (e.value ==
+                                                        "Foto Fisik") {
+                                                      fotoFisik = "";
+                                                    } else if (e.value ==
+                                                        "Load R") {
+                                                      fotoLoadR = "";
+                                                    } else if (e.value ==
+                                                        "Load S") {
+                                                      fotoLoadS = "";
+                                                    } else if (e.value ==
+                                                        "Load T") {
+                                                      fotoLoadT = "";
+                                                    }
+                                                  });
+                                                },
+                                                child: Container(
+                                                  decoration: BoxDecoration(
+                                                    color: const Color.fromARGB(
+                                                        255, 255, 73, 60),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            180),
+                                                  ),
+                                                  child: const Icon(
+                                                    Icons.close,
+                                                    size: 24,
+                                                    color: Colors.white,
+                                                  ),
                                                 ),
                                               ),
                                             ),
-                                          ),
-                                        ],
+                                          ],
+                                        ),
                                       ),
-                                    ),
-                                    Text(
-                                      e.value,
-                                      style: buttonText.copyWith(
-                                          color: textDarkColor),
-                                      overflow: TextOverflow.clip,
-                                    )
-                                  ],
+                                      Text(
+                                        e.value,
+                                        style: buttonText.copyWith(
+                                            color: textDarkColor),
+                                        overflow: TextOverflow.clip,
+                                      )
+                                    ],
+                                  ),
                                 ),
                               );
                             }).toList()),
@@ -758,43 +765,295 @@ class _RectiPageState extends State<RectiPage> {
                   Padding(
                     padding: EdgeInsets.symmetric(
                         horizontal: defaultMargin + 32, vertical: 40),
-                    child: CustomButton(
-                        text: "Save",
-                        onPressed: () async {
-                          if (rectProvider.listRect.isEmpty) {
-                            RectNilaiModel rect = await RectService().postRect(
-                                rectId: widget.rect.id,
-                                pmId: widget.pm.id,
-                                loadr: double.parse(loadrController.text),
-                                loads: loadsController.text.isEmpty
-                                    ? 0.0
-                                    : double.parse(loadsController.text),
-                                loadt: loadtController.text.isEmpty
-                                    ? 0.0
-                                    : double.parse(loadtController.text),
-                                temuan: temuanController.text,
-                                rekomendasi: rekomendasiController.text);
-                            imagesProvider.foto.forEach((key, value) async {
-                              await RectService().postFotoRect(
-                                  rectNilaiId: int.parse(rect.id),
-                                  urlFoto: key,
-                                  description: value);
-                            });
-                          } else {
-                            RectNilaiModel rect = await RectService().editRect(
-                                id: int.parse(rectProvider.listRect.last.id),
-                                rectId: widget.rect.id,
-                                pmId: widget.pm.id,
-                                loadr: double.parse(loadrController.text),
-                                loads: double.parse(loadsController.text),
-                                loadt: double.parse(loadtController.text),
-                                temuan: temuanController.text,
-                                rekomendasi: rekomendasiController.text);
-                          }
-                          Navigator.pop(context);
-                        },
-                        color: primaryBlue,
-                        clickColor: clickBlue),
+                    child: isLoading
+                        ? CustomButtonLoading(color: primaryGreen)
+                        : CustomButton(
+                            text: "Save",
+                            onPressed: () async {
+                              setState(() {
+                                isLoading = true;
+                              });
+                              if (rectProvider.listRect.isEmpty) {
+                                if (phasa == 1) {
+                                  if (fotoFisik.isNotEmpty &&
+                                      fotoLoadR.isNotEmpty &&
+                                      loadrController.text.isNotEmpty) {
+                                    RectNilaiModel rect = await RectService()
+                                        .postRect(
+                                            rectId: widget.rect.id,
+                                            pmId: widget.pm.id,
+                                            loadr: double.parse(
+                                                loadrController.text),
+                                            temuan: temuanController.text,
+                                            rekomendasi:
+                                                rekomendasiController.text);
+                                    await Future.forEach(
+                                        imagesProvider.foto.entries,
+                                        (element) async {
+                                      await RectService().postFotoRect(
+                                          rectNilaiId: int.parse(rect.id),
+                                          urlFoto: element.key,
+                                          description: element.value);
+                                    });
+                                    setState(() {
+                                      isLoading = false;
+                                    });
+                                    Navigator.pushAndRemoveUntil(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                PmDetailPage(pm: widget.pm)),
+                                        (route) => false);
+                                  } else {
+                                    setState(() {
+                                      isLoading = false;
+                                    });
+                                    ScaffoldMessenger.of(context)
+                                        .removeCurrentSnackBar();
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        backgroundColor: primaryRed,
+                                        content: const Text(
+                                          'Isi data serta foto dengan lengkap',
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      ),
+                                    );
+                                  }
+                                } else {
+                                  if (fotoFisik.isNotEmpty &&
+                                      fotoLoadR.isNotEmpty &&
+                                      fotoLoadS.isNotEmpty &&
+                                      fotoLoadT.isNotEmpty &&
+                                      loadrController.text.isNotEmpty &&
+                                      loadsController.text.isNotEmpty &&
+                                      loadtController.text.isNotEmpty) {
+                                    RectNilaiModel rect = await RectService()
+                                        .postRect(
+                                            rectId: widget.rect.id,
+                                            pmId: widget.pm.id,
+                                            loadr: double.parse(
+                                                loadrController.text),
+                                            loads: double.parse(
+                                                loadsController.text),
+                                            loadt: double.parse(
+                                                loadtController.text),
+                                            temuan: temuanController.text,
+                                            rekomendasi:
+                                                rekomendasiController.text);
+                                    imagesProvider.foto
+                                        .forEach((key, value) async {
+                                      await RectService().postFotoRect(
+                                          rectNilaiId: int.parse(rect.id),
+                                          urlFoto: key,
+                                          description: value);
+                                      setState(() {
+                                        isLoading = false;
+                                      });
+                                      Navigator.pushAndRemoveUntil(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  PmDetailPage(pm: widget.pm)),
+                                          (route) => false);
+                                    });
+                                  } else {
+                                    setState(() {
+                                      isLoading = false;
+                                    });
+                                    ScaffoldMessenger.of(context)
+                                        .removeCurrentSnackBar();
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        backgroundColor: primaryRed,
+                                        content: const Text(
+                                          'Isi data serta foto dengan lengkap',
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      ),
+                                    );
+                                  }
+                                }
+                              } else {
+                                if (phasa == 1) {
+                                  if (fotoFisik.isNotEmpty &&
+                                      fotoLoadR.isNotEmpty &&
+                                      loadrController.text.isNotEmpty) {
+                                    setState(() {
+                                      isLoading = true;
+                                    });
+                                    RectNilaiModel rect = await RectService()
+                                        .editRect(
+                                            foto: [
+                                          const FotoModel(
+                                              id: 99,
+                                              url: "url",
+                                              deskripsi: "deskripsi")
+                                        ],
+                                            id: int.parse(
+                                                rectProvider.listRect.last.id),
+                                            rectId: widget.rect.id,
+                                            pmId: widget.pm.id,
+                                            loadr: double.parse(
+                                                loadrController.text),
+                                            loads: null,
+                                            loadt: null,
+                                            temuan: temuanController.text,
+                                            rekomendasi:
+                                                rekomendasiController.text);
+                                    if (rectProvider.listRect.isNotEmpty) {
+                                      for (var item
+                                          in rectProvider.listRect.last.foto) {
+                                        bool isDelete = true;
+                                        for (var itemImagesProvider
+                                            in imagesProvider.foto.entries) {
+                                          String url = item.url.replaceAll(
+                                              "http://localhost",
+                                              "https://jakban.iconpln.co.id/backend-plnicon/public");
+                                          print("foto load S : $fotoLoadS");
+                                          print("foto load T : $fotoLoadT");
+                                          print("foto url : $url");
+                                          print("foto item url : ${item.url}");
+                                          if (url == itemImagesProvider.key &&
+                                              url != fotoLoadS &&
+                                              url != fotoLoadT) {
+                                            isDelete = false;
+                                          }
+                                        }
+                                        if (isDelete) {
+                                          await RectService()
+                                              .deleteImage(imageId: item.id);
+                                        }
+                                      }
+                                    }
+                                    await Future.forEach(
+                                        imagesProvider.foto.entries,
+                                        (element) async {
+                                      if (!(element.key.contains(
+                                          "https://jakban.iconpln.co.id"))) {
+                                        await RectService().postFotoRect(
+                                            rectNilaiId: int.parse(rect.id),
+                                            urlFoto: element.key,
+                                            description: element.value);
+                                      }
+                                    });
+                                    setState(() {
+                                      isLoading = false;
+                                    });
+                                    Navigator.pushAndRemoveUntil(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                PmDetailPage(pm: widget.pm)),
+                                        (route) => false);
+                                  } else {
+                                    setState(() {
+                                      isLoading = false;
+                                    });
+                                    ScaffoldMessenger.of(context)
+                                        .removeCurrentSnackBar();
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        backgroundColor: primaryRed,
+                                        content: const Text(
+                                          'Isi data serta foto dengan lengkap',
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      ),
+                                    );
+                                  }
+                                } else {
+                                  if (fotoFisik.isNotEmpty &&
+                                      fotoLoadR.isNotEmpty &&
+                                      fotoLoadS.isNotEmpty &&
+                                      fotoLoadT.isNotEmpty &&
+                                      loadrController.text.isNotEmpty &&
+                                      loadsController.text.isNotEmpty &&
+                                      loadtController.text.isNotEmpty) {
+                                    setState(() {
+                                      isLoading = true;
+                                    });
+                                    RectNilaiModel rect = await RectService()
+                                        .editRect(
+                                            foto: [
+                                          const FotoModel(
+                                              id: 99,
+                                              url: "url",
+                                              deskripsi: "deskripsi")
+                                        ],
+                                            id: int.parse(
+                                                rectProvider.listRect.last.id),
+                                            rectId: widget.rect.id,
+                                            pmId: widget.pm.id,
+                                            loadr: double.parse(
+                                                loadrController.text),
+                                            loads: double.parse(
+                                                loadsController.text),
+                                            loadt: double.parse(
+                                                loadtController.text),
+                                            temuan: temuanController.text,
+                                            rekomendasi:
+                                                rekomendasiController.text);
+                                    if (rectProvider.listRect.isNotEmpty) {
+                                      for (var item
+                                          in rectProvider.listRect.last.foto) {
+                                        bool isDelete = true;
+                                        for (var itemImagesProvider
+                                            in imagesProvider.foto.entries) {
+                                          String url = item.url.replaceAll(
+                                              "http://localhost",
+                                              "https://jakban.iconpln.co.id/backend-plnicon/public");
+                                          if (url == itemImagesProvider.key) {
+                                            isDelete = false;
+                                          }
+                                        }
+                                        if (isDelete) {
+                                          await RectService()
+                                              .deleteImage(imageId: item.id);
+                                        }
+                                      }
+                                    }
+                                    await Future.forEach(
+                                        imagesProvider.foto.entries,
+                                        (element) async {
+                                      if (!(element.key.contains(
+                                          "https://jakban.iconpln.co.id"))) {
+                                        await RectService().postFotoRect(
+                                            rectNilaiId: int.parse(rect.id),
+                                            urlFoto: element.key,
+                                            description: element.value);
+                                      }
+                                    });
+                                    setState(() {
+                                      isLoading = false;
+                                    });
+                                    Navigator.pushAndRemoveUntil(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                PmDetailPage(pm: widget.pm)),
+                                        (route) => false);
+                                  } else {
+                                    setState(() {
+                                      isLoading = false;
+                                    });
+                                    ScaffoldMessenger.of(context)
+                                        .removeCurrentSnackBar();
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        backgroundColor: primaryRed,
+                                        content: const Text(
+                                          'Isi data serta foto dengan lengkap',
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      ),
+                                    );
+                                  }
+                                }
+                              }
+                            },
+                            color: primaryGreen,
+                            clickColor: clickGreen),
                   )
                 ],
               ),
@@ -821,10 +1080,18 @@ class _RectiPageState extends State<RectiPage> {
           ),
         ),
         body: Column(
-          children: [
-            switchContent(),
-            Expanded(child: buildContent()),
-          ],
+          mainAxisAlignment:
+              loading ? MainAxisAlignment.center : MainAxisAlignment.start,
+          children: loading
+              ? [
+                  Center(
+                      child: CircularProgressIndicator(
+                          backgroundColor: primaryBlue))
+                ]
+              : [
+                  switchContent(),
+                  Expanded(child: buildContent()),
+                ],
         ));
   }
 }

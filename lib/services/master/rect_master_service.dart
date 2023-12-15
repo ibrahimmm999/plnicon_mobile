@@ -89,7 +89,7 @@ class RectMasterService {
     required String merk,
     required String tipe,
     required int popId,
-    String? tglInstalasi,
+    required String tglInstalasi,
   }) async {
     late Uri url = UrlService().api('edit-rect');
 
@@ -107,8 +107,7 @@ class RectMasterService {
       'slot_modul': slotModul,
       'modul_terpasang': modulTerpasang,
       'modul_control': modulControl,
-      'tgl_instalasi': tglInstalasi ??
-          DateFormat('yyyy-MM-dd hh:mm:ss').format(DateTime.now())
+      'tgl_instalasi': tglInstalasi
     };
 
     var response = await http.post(

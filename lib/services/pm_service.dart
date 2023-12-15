@@ -3,7 +3,6 @@
 import 'dart:convert';
 
 import 'package:plnicon_mobile/models/pm_model.dart';
-import 'package:plnicon_mobile/models/pop_model.dart';
 import 'package:plnicon_mobile/services/url_service.dart';
 import 'package:http/http.dart' as http;
 

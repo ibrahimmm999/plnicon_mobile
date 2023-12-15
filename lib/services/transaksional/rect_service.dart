@@ -2,6 +2,7 @@
 
 import 'dart:convert';
 
+import 'package:plnicon_mobile/models/foto_model.dart';
 import 'package:plnicon_mobile/models/nilai/rect_nilai_model.dart';
 import 'package:plnicon_mobile/services/url_service.dart';
 import 'package:http/http.dart' as http;
@@ -61,8 +62,8 @@ class RectService {
       {required int rectId,
       required int pmId,
       required double loadr,
-      required double loads,
-      required double loadt,
+      double? loads,
+      double? loadt,
       required String temuan,
       required String rekomendasi}) async {
     late Uri url = UrlService().api('rect-nilai');
@@ -101,8 +102,9 @@ class RectService {
       required int rectId,
       required int pmId,
       required double loadr,
-      required double loads,
-      required double loadt,
+      double? loads,
+      required List<FotoModel> foto,
+      double? loadt,
       required String temuan,
       required String rekomendasi}) async {
     late Uri url = UrlService().api('edit-rect-nilai');
@@ -166,6 +168,30 @@ class RectService {
       return true;
     } else {
       throw "Add foto rect failed";
+    }
+  }
+
+  Future<bool> deleteImage({required int imageId}) async {
+    late Uri url = UrlService().api('delete-rect-foto');
+    var headers = {
+      'Content-Type': 'application/json',
+      'Authorization': await UserService().getTokenPreference() ?? '',
+    };
+
+    var body = {
+      'id': imageId,
+    };
+
+    var response = await http.post(
+      url,
+      headers: headers,
+      body: jsonEncode(body),
+    );
+
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      throw "Delete image failed";
     }
   }
 }
