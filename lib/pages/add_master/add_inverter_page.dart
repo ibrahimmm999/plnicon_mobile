@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:plnicon_mobile/providers/pop_provider.dart';
 import 'package:plnicon_mobile/services/master/inverter_master_service.dart';
@@ -51,7 +53,10 @@ class AddInverterPage extends StatelessWidget {
             "Kapasitas",
             style: buttonText.copyWith(color: textDarkColor),
           ),
-          TextInput(controller: kapasitasController),
+          TextInput(
+            controller: kapasitasController,
+            keyboardType: TextInputType.number,
+          ),
           const SizedBox(
             height: 20,
           ),
@@ -63,26 +68,39 @@ class AddInverterPage extends StatelessWidget {
           const SizedBox(
             height: 20,
           ),
-          Text(
-            "Tanggal Instalasi : -",
-            style: buttonText.copyWith(color: textDarkColor),
-          ),
           const SizedBox(
             height: 20,
           ),
           CustomButton(
               text: "Save",
               onPressed: () async {
-                await InverterMasterService().postInverterMaster(
-                  sn: snController.text,
-                  tipe: tipeController.text,
-                  kondisi: kondisiController.text,
-                  merk: merkController.text,
-                  kapasitas: int.parse(kapasitasController.text),
-                  popId: popId,
-                );
-                popProvider.getDataPop(id: popId);
-                Navigator.pop(context);
+                if (merkController.text.isNotEmpty &&
+                    kondisiController.text.isNotEmpty &&
+                    tipeController.text.isNotEmpty &&
+                    kapasitasController.text.isNotEmpty &&
+                    snController.text.isNotEmpty) {
+                  await InverterMasterService().postInverterMaster(
+                    sn: snController.text,
+                    tipe: tipeController.text,
+                    kondisi: kondisiController.text,
+                    merk: merkController.text,
+                    kapasitas: int.parse(kapasitasController.text),
+                    popId: popId,
+                  );
+                  popProvider.getDataPop(id: popId);
+                  Navigator.pop(context);
+                } else {
+                  ScaffoldMessenger.of(context).removeCurrentSnackBar();
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      backgroundColor: primaryRed,
+                      content: const Text(
+                        'Isi data dengan lengkap',
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  );
+                }
               },
               color: primaryGreen,
               clickColor: clickGreen),

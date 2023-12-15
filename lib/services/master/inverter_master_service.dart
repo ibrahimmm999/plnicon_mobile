@@ -2,6 +2,7 @@
 
 import 'dart:convert';
 
+import 'package:intl/intl.dart';
 import 'package:plnicon_mobile/models/master/inverter_master_model.dart';
 import 'package:plnicon_mobile/services/url_service.dart';
 import 'package:http/http.dart' as http;
@@ -15,6 +16,7 @@ class InverterMasterService {
     required int kapasitas,
     required String tipe,
     required int popId,
+    String? tglInstalasi,
   }) async {
     late Uri url = UrlService().api('inverter');
 
@@ -29,7 +31,8 @@ class InverterMasterService {
       'merk': merk,
       'kapasitas': kapasitas,
       'tipe': tipe,
-      'tgl_instalasi': "2023-08-08 00:00:00"
+      'tgl_instalasi': tglInstalasi ??
+          DateFormat('yyyy-MM-dd hh:mm:ss').format(DateTime.now())
     };
 
     var response = await http.post(
@@ -46,7 +49,7 @@ class InverterMasterService {
     }
   }
 
-  Future<InverterMasterModel> deleteInverterMaster({required int id}) async {
+  Future<bool> deleteInverterMaster({required int id}) async {
     late Uri url = UrlService().api('delete-inverter');
 
     var headers = {
@@ -63,8 +66,7 @@ class InverterMasterService {
         body: jsonEncode(body),
       );
       if (response.statusCode == 200) {
-        var data = jsonDecode(response.body)['data'];
-        return InverterMasterModel.fromJson(data);
+        return true;
       } else {
         throw "Delete data inverter failed";
       }
@@ -81,6 +83,7 @@ class InverterMasterService {
     required String merk,
     required int kapasitas,
     required String tipe,
+    String? tglInstalasi,
   }) async {
     late Uri url = UrlService().api('edit-inverter');
 
@@ -96,6 +99,8 @@ class InverterMasterService {
       'merk': merk,
       'kapasitas': kapasitas,
       'tipe': tipe,
+      'tgl_instalasi': tglInstalasi ??
+          DateFormat('yyyy-MM-dd hh:mm:ss').format(DateTime.now())
     };
 
     var response = await http.post(

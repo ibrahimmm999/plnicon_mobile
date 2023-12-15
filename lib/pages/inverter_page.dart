@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:io';
 
 import 'package:easy_image_viewer/easy_image_viewer.dart';
@@ -6,9 +8,9 @@ import 'package:plnicon_mobile/models/master/inverter_master_model.dart';
 import 'package:plnicon_mobile/models/nilai/inverter_nilai_model.dart';
 import 'package:plnicon_mobile/models/pm_model.dart';
 import 'package:plnicon_mobile/pages/edit_master/edit_inverter_page.dart';
+import 'package:plnicon_mobile/pages/pm_detail_page.dart';
 import 'package:plnicon_mobile/providers/images_provider.dart';
 import 'package:plnicon_mobile/providers/page_provider.dart';
-import 'package:plnicon_mobile/providers/pop_provider.dart';
 import 'package:plnicon_mobile/providers/transaksional_provider.dart';
 import 'package:plnicon_mobile/providers/user_provider.dart';
 import 'package:plnicon_mobile/services/master/inverter_master_service.dart';
@@ -199,7 +201,7 @@ class _InverterPageState extends State<InverterPage> {
                     height: 20,
                   ),
                   Text(
-                    "Tanggal Instalasi : -",
+                    "Tanggal Instalasi : ${widget.inverter.tanggalInstalasi}",
                     style: buttonText.copyWith(color: textDarkColor),
                   ),
                   const SizedBox(
@@ -212,6 +214,7 @@ class _InverterPageState extends State<InverterPage> {
                             context,
                             MaterialPageRoute(
                                 builder: (context) => EditInverterPage(
+                                    pm: widget.pm,
                                     inverter: widget.inverter,
                                     title: "Edit Inverter")));
                       },
@@ -225,8 +228,12 @@ class _InverterPageState extends State<InverterPage> {
                       onPressed: () async {
                         await InverterMasterService()
                             .deleteInverterMaster(id: widget.inverter.id);
-                        // ignore: use_build_context_synchronously
-                        Navigator.pop(context);
+                        Navigator.pushAndRemoveUntil(
+                            context,
+                            MaterialPageRoute(
+                                builder: ((context) =>
+                                    PmDetailPage(pm: widget.pm))),
+                            (route) => false);
                       },
                       color: primaryRed,
                       clickColor: clickRed),
@@ -670,7 +677,6 @@ class _InverterPageState extends State<InverterPage> {
                     onTap: () async {
                       await handlePicker();
                       if (imagesProvider.croppedImageFile != null) {
-                        // ignore: use_build_context_synchronously
                         showDialog(
                           context: context,
                           builder: (context) => CustomPopUp(
