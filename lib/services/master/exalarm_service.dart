@@ -32,6 +32,30 @@ class ExAlarmService {
     }
   }
 
+  Future<List<ExAlarmNilaiModel>> getByPmAndPop(
+      {required int pmId, required int popId}) async {
+    var url = UrlService().api('ex-alarm?pm_id=$pmId&pop_id=$popId');
+    var headers = {
+      'Content-Type': 'application/json',
+      'Authorization': await UserService().getTokenPreference() ?? '',
+    };
+
+    var response = await http.get(
+      url,
+      headers: headers,
+    );
+
+    if (response.statusCode == 200) {
+      var data = jsonDecode(response.body)['data'] as List;
+      List<ExAlarmNilaiModel> exalarm = List<ExAlarmNilaiModel>.from(
+        data.map((e) => ExAlarmNilaiModel.fromJson(e)),
+      );
+      return exalarm;
+    } else {
+      throw "Get data failed";
+    }
+  }
+
   Future<ExAlarmNilaiModel> postExAlarm(
       {required int pmId,
       required int plnOff,

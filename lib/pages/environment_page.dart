@@ -1,11 +1,13 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:io';
 
 import 'package:easy_image_viewer/easy_image_viewer.dart';
 import 'package:flutter/material.dart';
 import 'package:plnicon_mobile/models/master/environment_master_model.dart';
 import 'package:plnicon_mobile/models/pm_model.dart';
-import 'package:plnicon_mobile/pages/edit_master/edit_environment_page.dart';
-import 'package:plnicon_mobile/pages/main_page.dart';
+import 'package:plnicon_mobile/pages/add_master/add_environment_page.dart';
+import 'package:plnicon_mobile/pages/pm_detail_page.dart';
 import 'package:plnicon_mobile/providers/images_provider.dart';
 import 'package:plnicon_mobile/providers/page_provider.dart';
 import 'package:plnicon_mobile/providers/transaksional_provider.dart';
@@ -14,7 +16,6 @@ import 'package:plnicon_mobile/services/master/env_master_service.dart';
 import 'package:plnicon_mobile/services/user_service.dart';
 import 'package:plnicon_mobile/theme/theme.dart';
 import 'package:plnicon_mobile/widgets/custom_button.dart';
-import 'package:plnicon_mobile/widgets/custom_dropdown.dart';
 import 'package:plnicon_mobile/widgets/custom_popup.dart';
 import 'package:plnicon_mobile/widgets/input_dokumentasi.dart';
 import 'package:plnicon_mobile/widgets/text_input.dart';
@@ -52,6 +53,8 @@ class _EnvironmentPageState extends State<EnvironmentPage> {
   getinit() async {
     UserProvider userProvider =
         Provider.of<UserProvider>(context, listen: false);
+    TransaksionalProvider envProvider =
+        Provider.of<TransaksionalProvider>(context, listen: false);
     ImagesProvider imagesProvider =
         Provider.of<ImagesProvider>(context, listen: false);
 
@@ -60,32 +63,40 @@ class _EnvironmentPageState extends State<EnvironmentPage> {
     if (token == null) {
     } else {
       if (await userProvider.getUser(token: token)) {
-        // await acProvider.getAc(widget.pm.id, widget.acMaster.id);
+        await envProvider.getEnv(widget.pm.id, widget.pm.popId);
         bangunan = widget.environment.bangunan.isEmpty
             ? ""
             : widget.environment.bangunan;
-        // if (widget.environment..isNotEmpty) {
-        //   for (var element in widget.environment..first.foto!) {
-        //     String url = element.url.replaceAll("http://localhost",
-        //         "https://jakban.iconpln.co.id/backend-plnicon/public");
+        if (envProvider.listEnvironment.isNotEmpty) {
+          for (var element in envProvider.listEnvironment.first.foto!) {
+            String url = element.url.replaceAll("http://localhost",
+                "https://jakban.iconpln.co.id/backend-plnicon/public");
 
-        //     if (element.deskripsi == "AC Outdoor") {
-        //       fotoPopTampakDepan = url;
-        //     } else if (element.deskripsi == "POP Tampak Belakang") {
-        //       fotoPopTampakBelakang = url;
-        //     } else if (element.deskripsi == "Suhu AC") {
-        //       fotoPopTampakSampingKanan = url;
-        //     }
-        //     imagesProvider.foto[url] = element.deskripsi;
-        //   }
-        // }
+            if (element.deskripsi == "POP Tampak Depan") {
+              fotoPopTampakDepan = url;
+            } else if (element.deskripsi == "POP Tampak Belakang") {
+              fotoPopTampakBelakang = url;
+            } else if (element.deskripsi == "POP Tampak Samping Kanan") {
+              fotoPopTampakSampingKanan = url;
+            } else if (element.deskripsi == "POP Tampak Samping Kiri") {
+              fotoPopTampakSampingKiri = url;
+            } else if (element.deskripsi == "POP Bagian Dalam") {
+              fotoPopBagianDalam = url;
+            }
+            imagesProvider.foto[url] = element.deskripsi;
+          }
+        }
       }
     }
-    loading = false;
+    setState(() {
+      loading = false;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    TransaksionalProvider envProvider =
+        Provider.of<TransaksionalProvider>(context);
     ImagesProvider imagesProvider = Provider.of<ImagesProvider>(context);
     Future<void> handlePicker() async {
       imagesProvider.setCroppedImageFile = null;
@@ -104,7 +115,7 @@ class _EnvironmentPageState extends State<EnvironmentPage> {
         text: widget.environment.exhaust.isEmpty
             ? ""
             : widget.environment.exhaust);
-    TextEditingController kesehatanExhaustController = TextEditingController(
+    TextEditingController kebersihanExhaustController = TextEditingController(
         text: widget.environment.kebersihanExhaust.isEmpty
             ? ""
             : widget.environment.kebersihanExhaust);
@@ -114,10 +125,12 @@ class _EnvironmentPageState extends State<EnvironmentPage> {
         text: widget.environment.jumlahLampu.isEmpty
             ? ""
             : widget.environment.jumlahLampu);
-    TextEditingController kesehatanBangunanController = TextEditingController(
+    TextEditingController kebersihanBangunanController = TextEditingController(
         text: widget.environment.kebersihanBangunan.isEmpty
             ? ""
             : widget.environment.kebersihanExhaust);
+    TextEditingController suhuRuanganController =
+        TextEditingController(text: widget.environment.suhuRuangan.toString());
     TextEditingController temuanController = TextEditingController();
     TextEditingController rekomendasiController = TextEditingController();
     TextEditingController deskripsiController = TextEditingController();
@@ -202,42 +215,26 @@ class _EnvironmentPageState extends State<EnvironmentPage> {
                     height: 20,
                   ),
                   Text(
-                    "Temuan : ${widget.environment.temuan}",
+                    "Tanggal Instalasi : ${widget.environment.tglInstalasi}",
                     style: buttonText.copyWith(color: textDarkColor),
                   ),
                   const SizedBox(
-                    height: 20,
-                  ),
-                  Text(
-                    "Rekomendasi : ${widget.environment.rekomendasi}",
-                    style: buttonText.copyWith(color: textDarkColor),
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  Text(
-                    "Tanggal Instalasi : -",
-                    style: buttonText.copyWith(color: textDarkColor),
-                  ),
-                  const SizedBox(
-                    height: 20,
+                    height: 32,
                   ),
                   CustomButton(
-                      text: "Edit",
-                      onPressed: () {
-                        Navigator.push(
+                      text: "Delete",
+                      onPressed: () async {
+                        await EnvironmentMasterService()
+                            .deleteMaster(id: widget.environment.id);
+                        Navigator.pushAndRemoveUntil(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => EditEnvPage(
-                                    pm: widget.pm,
-                                    env: widget.environment,
-                                    title: "Edit Environment")));
+                                builder: ((context) =>
+                                    PmDetailPage(pm: widget.pm))),
+                            (route) => false);
                       },
-                      color: primaryGreen,
-                      clickColor: clickGreen),
-                  const SizedBox(
-                    height: 20,
-                  ),
+                      color: primaryRed,
+                      clickColor: clickRed),
                 ],
               ),
             );
@@ -377,10 +374,7 @@ class _EnvironmentPageState extends State<EnvironmentPage> {
                               imagesProvider.addDeskripsi(
                                   path: contentPath,
                                   deskripsi: "POP Tampak Depan");
-                              // imagesProvider.foto[contentPath] =
-                              //     imagesProvider.foto;
                               fotoPopTampakDepan = contentPath;
-                              print(imagesProvider.foto);
                               deskripsiController.clear();
                             }
                           }
@@ -406,10 +400,7 @@ class _EnvironmentPageState extends State<EnvironmentPage> {
                                         imagesProvider.addDeskripsi(
                                             path: contentPath,
                                             deskripsi: "POP Tampak Depan");
-                                        // imagesProvider.listFoto[contentPath] =
-                                        //     imagesProvider.foto;
                                         fotoPopTampakDepan = contentPath;
-                                        print(imagesProvider.foto);
                                         deskripsiController.clear();
                                       }
                                     }
@@ -462,10 +453,7 @@ class _EnvironmentPageState extends State<EnvironmentPage> {
                               imagesProvider.addDeskripsi(
                                   path: contentPath,
                                   deskripsi: "POP Tampak Belakang");
-                              // imagesProvider.listFoto[contentPath] =
-                              //     imagesProvider.foto;
                               fotoPopTampakBelakang = contentPath;
-                              print(imagesProvider.foto);
                               deskripsiController.clear();
                             }
                           }
@@ -491,10 +479,7 @@ class _EnvironmentPageState extends State<EnvironmentPage> {
                                         imagesProvider.addDeskripsi(
                                             path: contentPath,
                                             deskripsi: "POP Tampak Belakang");
-                                        // imagesProvider.listFoto[contentPath] =
-                                        //     imagesProvider.foto;
                                         fotoPopTampakBelakang = contentPath;
-                                        print(imagesProvider.foto);
                                         deskripsiController.clear();
                                       }
                                     }
@@ -541,10 +526,7 @@ class _EnvironmentPageState extends State<EnvironmentPage> {
                                       imagesProvider.addDeskripsi(
                                           path: contentPath,
                                           deskripsi: "POP Tampak Belakang");
-                                      // imagesProvider.listFoto[contentPath] =
-                                      //     imagesProvider.foto;
                                       fotoPopTampakBelakang = contentPath;
-                                      print(imagesProvider.foto);
                                       deskripsiController.clear();
                                     }
                                   },
@@ -572,10 +554,7 @@ class _EnvironmentPageState extends State<EnvironmentPage> {
                               imagesProvider.addDeskripsi(
                                   path: contentPath,
                                   deskripsi: "POP Tampak Samping Kanan");
-                              // imagesProvider.listFoto[contentPath] =
-                              //     imagesProvider.foto;
                               fotoPopTampakSampingKanan = contentPath;
-                              print(imagesProvider.foto);
                               deskripsiController.clear();
                             }
                           }
@@ -617,10 +596,7 @@ class _EnvironmentPageState extends State<EnvironmentPage> {
                                             path: contentPath,
                                             deskripsi:
                                                 "POP Tampak Samping Kanan");
-                                        // imagesProvider.listFoto[contentPath] =
-                                        //     imagesProvider.foto;
                                         fotoPopTampakSampingKanan = contentPath;
-                                        print(imagesProvider.foto);
                                         deskripsiController.clear();
                                       }
                                     }
@@ -660,10 +636,7 @@ class _EnvironmentPageState extends State<EnvironmentPage> {
                                   imagesProvider.addDeskripsi(
                                       path: contentPath,
                                       deskripsi: "POP Tampak Samping Kanan");
-                                  // imagesProvider.listFoto[contentPath] =
-                                  //     imagesProvider.foto;
                                   fotoPopTampakSampingKanan = contentPath;
-                                  print(imagesProvider.foto);
                                   deskripsiController.clear();
                                 }
                               },
@@ -689,10 +662,7 @@ class _EnvironmentPageState extends State<EnvironmentPage> {
                               imagesProvider.addDeskripsi(
                                   path: contentPath,
                                   deskripsi: "POP Tampak Samping Kiri");
-                              // imagesProvider.listFoto[contentPath] =
-                              //     imagesProvider.foto;
                               fotoPopTampakSampingKiri = contentPath;
-                              print(imagesProvider.foto);
                               deskripsiController.clear();
                             }
                           }
@@ -734,10 +704,7 @@ class _EnvironmentPageState extends State<EnvironmentPage> {
                                             path: contentPath,
                                             deskripsi:
                                                 "POP Tampak Samping Kiri");
-                                        // imagesProvider.listFoto[contentPath] =
-                                        //     imagesProvider.foto;
                                         fotoPopTampakSampingKiri = contentPath;
-                                        print(imagesProvider.foto);
                                         deskripsiController.clear();
                                       }
                                     }
@@ -777,10 +744,7 @@ class _EnvironmentPageState extends State<EnvironmentPage> {
                                   imagesProvider.addDeskripsi(
                                       path: contentPath,
                                       deskripsi: "POP Tampak Samping Kiri");
-                                  // imagesProvider.listFoto[contentPath] =
-                                  //     imagesProvider.foto;
                                   fotoPopTampakSampingKiri = contentPath;
-                                  print(imagesProvider.foto);
                                   deskripsiController.clear();
                                 }
                               },
@@ -806,10 +770,7 @@ class _EnvironmentPageState extends State<EnvironmentPage> {
                               imagesProvider.addDeskripsi(
                                   path: contentPath,
                                   deskripsi: "POP Bagian Dalam");
-                              // imagesProvider.listFoto[contentPath] =
-                              //     imagesProvider.foto;
                               fotoPopBagianDalam = contentPath;
-                              print(imagesProvider.foto);
                               deskripsiController.clear();
                             }
                           }
@@ -846,10 +807,7 @@ class _EnvironmentPageState extends State<EnvironmentPage> {
                                         imagesProvider.addDeskripsi(
                                             path: contentPath,
                                             deskripsi: "POP Bagian Dalam");
-                                        // imagesProvider.listFoto[contentPath] =
-                                        //     imagesProvider.foto;
                                         fotoPopBagianDalam = contentPath;
-                                        print(imagesProvider.foto);
                                         deskripsiController.clear();
                                       }
                                     }
@@ -888,10 +846,7 @@ class _EnvironmentPageState extends State<EnvironmentPage> {
                                   imagesProvider.addDeskripsi(
                                       path: contentPath,
                                       deskripsi: "POP Bagian Dalam");
-                                  // imagesProvider.listFoto[contentPath] =
-                                  //     imagesProvider.foto;
                                   fotoPopBagianDalam = contentPath;
-                                  print(imagesProvider.foto);
                                   deskripsiController.clear();
                                 }
                               },
@@ -913,7 +868,6 @@ class _EnvironmentPageState extends State<EnvironmentPage> {
                     onTap: () async {
                       await handlePicker();
                       if (imagesProvider.croppedImageFile != null) {
-                        // ignore: use_build_context_synchronously
                         showDialog(
                           context: context,
                           builder: (context) => CustomPopUp(
@@ -923,9 +877,6 @@ class _EnvironmentPageState extends State<EnvironmentPage> {
                               imagesProvider.addDeskripsi(
                                   path: contentPath,
                                   deskripsi: deskripsiController.text);
-                              // imagesProvider.listFoto[contentPath] =
-                              //     imagesProvider.foto;
-                              print(imagesProvider.foto);
                               deskripsiController.clear();
                             },
                           ),
@@ -964,9 +915,9 @@ class _EnvironmentPageState extends State<EnvironmentPage> {
                     height: 20,
                   ),
                   TextInput(
-                    controller: kesehatanExhaustController,
-                    label: "Kesehatan Exhaust",
-                    placeholder: "Kesehatan Exhaust",
+                    controller: kebersihanExhaustController,
+                    label: "Kebersihan Exhaust",
+                    placeholder: "Kebersihan Exhaust",
                   ),
                   const SizedBox(
                     height: 20,
@@ -983,6 +934,14 @@ class _EnvironmentPageState extends State<EnvironmentPage> {
                     controller: jumlahLampuController,
                     label: "Jumlah Lampu",
                     placeholder: "Jumlah Lampu",
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  TextInput(
+                    controller: suhuRuanganController,
+                    label: "Suhu Ruangan",
+                    placeholder: "Suhu Ruangan",
                   ),
                   const SizedBox(
                     height: 20,
@@ -1018,16 +977,15 @@ class _EnvironmentPageState extends State<EnvironmentPage> {
                     value: bangunan.isEmpty ? null : bangunan,
                     onChanged: (value) {
                       bangunan = value.toString();
-                      // setState(() {});
                     },
                   ),
                   const SizedBox(
                     height: 20,
                   ),
                   TextInput(
-                    controller: kesehatanBangunanController,
-                    label: "Kesehatan Bangunan",
-                    placeholder: "Kesehatan Bangunan",
+                    controller: kebersihanBangunanController,
+                    label: "Kebersihan Bangunan",
+                    placeholder: "Kebersihan Bangunan",
                   ),
                   const SizedBox(
                     height: 20,
@@ -1052,14 +1010,83 @@ class _EnvironmentPageState extends State<EnvironmentPage> {
                         horizontal: defaultMargin + 32, vertical: 40),
                     child: CustomButton(
                         text: "Save",
-                        onPressed: () {
-                          imagesProvider.foto.forEach((key, value) async {
-                            await EnvironmentMasterService().postFotoEnv(
+                        onPressed: () async {
+                          if (exhaustController.text.isNotEmpty &&
+                              kebersihanExhaustController.text.isNotEmpty &&
+                              lampuController.text.isNotEmpty &&
+                              jumlahLampuController.text.isNotEmpty &&
+                              kebersihanBangunanController.text.isNotEmpty &&
+                              bangunan.isNotEmpty &&
+                              suhuRuanganController.text.isNotEmpty) {
+                            await EnvironmentMasterService().editEnvMaster(
                                 envId: widget.environment.id,
-                                urlFoto: key,
-                                description: value);
-                          });
-                          Navigator.pop(context);
+                                popId: widget.pm.popId,
+                                exhaust: exhaustController.text,
+                                lampu: lampuController.text,
+                                jumlahLampu: jumlahLampuController.text,
+                                kebersihanBangunan:
+                                    kebersihanBangunanController.text,
+                                bangunan: bangunan,
+                                suhuRuangan: suhuRuanganController.text,
+                                kebersihanExhaust:
+                                    kebersihanExhaustController.text,
+                                rekomendasi: rekomendasiController.text,
+                                temuan: temuanController.text,
+                                tglInstalasi: tglInstalasi);
+                            if (envProvider.listEnvironment.isNotEmpty) {
+                              for (var item
+                                  in envProvider.listEnvironment.last.foto!) {
+                                bool isDelete = true;
+                                for (var itemImagesProvider
+                                    in imagesProvider.foto.entries) {
+                                  String url = item.url.replaceAll(
+                                      "http://localhost",
+                                      "https://jakban.iconpln.co.id/backend-plnicon/public");
+                                  if (url == itemImagesProvider.key) {
+                                    isDelete = false;
+                                  }
+                                }
+                                if (isDelete) {
+                                  await EnvironmentMasterService()
+                                      .deleteImage(imageId: item.id);
+                                }
+                              }
+                            }
+                            await Future.forEach(imagesProvider.foto.entries,
+                                (element) async {
+                              if (!(element.key
+                                  .contains("https://jakban.iconpln.co.id"))) {
+                                await EnvironmentMasterService().postFotoEnv(
+                                    envId: widget.environment.id,
+                                    urlFoto: element.key,
+                                    description: element.value);
+                              }
+                            });
+                            setState(() {
+                              isLoading = false;
+                            });
+                            Navigator.pushAndRemoveUntil(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        PmDetailPage(pm: widget.pm)),
+                                (route) => false);
+                          } else {
+                            setState(() {
+                              isLoading = false;
+                            });
+                            ScaffoldMessenger.of(context)
+                                .removeCurrentSnackBar();
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                backgroundColor: primaryRed,
+                                content: const Text(
+                                  'Isi data suhu, pengujian, serta foto dengan lengkap',
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                            );
+                          }
                         },
                         color: primaryBlue,
                         clickColor: clickBlue),
@@ -1070,7 +1097,7 @@ class _EnvironmentPageState extends State<EnvironmentPage> {
           }
         default:
           {
-            return Scaffold();
+            return const Scaffold();
           }
       }
     }
@@ -1089,10 +1116,18 @@ class _EnvironmentPageState extends State<EnvironmentPage> {
           ),
         ),
         body: Column(
-          children: [
-            switchContent(),
-            Expanded(child: buildContent()),
-          ],
+          mainAxisAlignment:
+              loading ? MainAxisAlignment.center : MainAxisAlignment.start,
+          children: loading
+              ? [
+                  Center(
+                      child: CircularProgressIndicator(
+                          backgroundColor: primaryBlue))
+                ]
+              : [
+                  switchContent(),
+                  Expanded(child: buildContent()),
+                ],
         ));
   }
 }

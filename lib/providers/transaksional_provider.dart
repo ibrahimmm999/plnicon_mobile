@@ -9,6 +9,7 @@ import 'package:plnicon_mobile/models/nilai/kwh_nilai_model.dart';
 import 'package:plnicon_mobile/models/nilai/pdb_nilai_model.dart';
 import 'package:plnicon_mobile/models/nilai/perangkat_nilai_model.dart';
 import 'package:plnicon_mobile/models/nilai/rect_nilai_model.dart';
+import 'package:plnicon_mobile/services/master/env_master_service.dart';
 import 'package:plnicon_mobile/services/master/exalarm_service.dart';
 import 'package:plnicon_mobile/services/transaksional/ac_service.dart';
 import 'package:plnicon_mobile/services/transaksional/baterai_service.dart';
@@ -79,7 +80,7 @@ class TransaksionalProvider extends ChangeNotifier {
     }
   }
 
-  Future<bool> getExalarm(int pmId, int exalarm) async {
+  Future<bool> getExalarm(int pmId, int popId) async {
     try {
       _listExalarm = await ExAlarmService().getExAlarm();
       print(_listExalarm);
@@ -134,10 +135,10 @@ class TransaksionalProvider extends ChangeNotifier {
     }
   }
 
-  Future<bool> getEnv(int pmId, int kwhId) async {
+  Future<bool> getEnv(int pmId, int popId) async {
     try {
-      _listKwh = await KwhService()
-          .getKwhByPmAndMaster(kwhId: kwhId.toString(), pmId: pmId.toString());
+      _listEnvironment = await EnvironmentMasterService()
+          .getByPmAndPop(pmId: pmId, popId: popId);
       notifyListeners();
       return true;
     } catch (e) {
