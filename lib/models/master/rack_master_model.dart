@@ -6,7 +6,8 @@ class RackMasterModel extends Equatable {
   final int popId;
   final int nomorRack;
   final String lokasi;
-  final List<PerangkatMasterModel> listPerangkat;
+  final String? tglInstalasi;
+  final List<PerangkatMasterModel>? listPerangkat;
   final DateTime createdAt;
   final DateTime updatedAt;
 
@@ -15,9 +16,10 @@ class RackMasterModel extends Equatable {
     required this.popId,
     required this.nomorRack,
     required this.lokasi,
-    required this.listPerangkat,
+    this.listPerangkat,
     required this.createdAt,
     required this.updatedAt,
+    this.tglInstalasi,
   });
 
   factory RackMasterModel.fromJson(Map<String, dynamic> json) {
@@ -26,6 +28,7 @@ class RackMasterModel extends Equatable {
       popId: json['pop_id'],
       nomorRack: json['nomor_rack'],
       lokasi: json['lokasi'],
+      tglInstalasi: json['tgl_instalasi'],
       listPerangkat: json['perangkat'] == null
           ? []
           : List<PerangkatMasterModel>.from(
@@ -44,5 +47,6 @@ class RackMasterModel extends Equatable {
         listPerangkat,
         createdAt,
         updatedAt,
+        tglInstalasi
       ];
 }

@@ -10,6 +10,7 @@ import 'package:plnicon_mobile/pages/add_master/add_inverter_page.dart';
 import 'package:plnicon_mobile/pages/add_master/add_kwh_page.dart';
 import 'package:plnicon_mobile/pages/add_master/add_modul_page.dart';
 import 'package:plnicon_mobile/pages/add_master/add_pdb_page.dart';
+import 'package:plnicon_mobile/pages/add_master/add_rack_page.dart';
 import 'package:plnicon_mobile/pages/add_master/add_recti_page.dart';
 import 'package:plnicon_mobile/pages/ats_page.dart';
 import 'package:plnicon_mobile/pages/baterai_page.dart';
@@ -1124,7 +1125,16 @@ class _PmDetailPageState extends State<PmDetailPage> {
                                     style: buttonText.copyWith(
                                         color: textDarkColor),
                                   ),
-                                  const Icon(Icons.add)
+                                  GestureDetector(
+                                      onTap: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  AddRackPage(pm: widget.pm)),
+                                        );
+                                      },
+                                      child: const Icon(Icons.add))
                                 ],
                               ),
                             ),
@@ -1154,6 +1164,7 @@ class _PmDetailPageState extends State<PmDetailPage> {
                                                   MaterialPageRoute(
                                                       builder: (context) =>
                                                           RackPage(
+                                                            pm: widget.pm,
                                                             rack: e,
                                                             title:
                                                                 "Rack $index",

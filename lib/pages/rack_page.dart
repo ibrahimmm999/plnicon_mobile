@@ -1,25 +1,25 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:plnicon_mobile/models/master/rack_master_model.dart';
+import 'package:plnicon_mobile/models/pm_model.dart';
+import 'package:plnicon_mobile/pages/edit_master/edit_rack_page.dart';
+import 'package:plnicon_mobile/pages/pm_detail_page.dart';
 import 'package:plnicon_mobile/providers/page_provider.dart';
-import 'package:plnicon_mobile/providers/pop_provider.dart';
 import 'package:plnicon_mobile/services/master/rack_master_service.dart';
 import 'package:plnicon_mobile/theme/theme.dart';
 import 'package:plnicon_mobile/widgets/custom_button.dart';
-import 'package:plnicon_mobile/widgets/text_input.dart';
 import 'package:provider/provider.dart';
 
 class RackPage extends StatelessWidget {
-  const RackPage({super.key, required this.title, required this.rack});
+  const RackPage(
+      {super.key, required this.title, required this.rack, required this.pm});
   final RackMasterModel rack;
+  final PmModel pm;
   final String title;
 
   @override
   Widget build(BuildContext context) {
-    PopProvider popProvider = Provider.of<PopProvider>(context);
-    TextEditingController nomorRack =
-        TextEditingController(text: rack.nomorRack.toString());
-    TextEditingController lokasiController =
-        TextEditingController(text: rack.lokasi);
     return Scaffold(
       appBar: AppBar(
         backgroundColor: primaryBlue,
@@ -37,41 +37,52 @@ class RackPage extends StatelessWidget {
         padding: EdgeInsets.all(defaultMargin),
         children: [
           Text(
-            "Nomor Rack",
+            "Nomor Rack : ${rack.nomorRack}",
             style: buttonText.copyWith(color: textDarkColor),
           ),
-          TextInput(controller: nomorRack),
           const SizedBox(
             height: 20,
           ),
           Text(
-            "Lokasi",
+            "Lokasi : ${rack.lokasi}",
             style: buttonText.copyWith(color: textDarkColor),
           ),
-          TextInput(controller: lokasiController),
           const SizedBox(
             height: 20,
           ),
           Text(
-            "List Perangkat : ",
+            "Tanggal Instalasi : ${rack.tglInstalasi}",
             style: buttonText.copyWith(color: textDarkColor),
           ),
           const SizedBox(
-            height: 32,
+            height: 52,
           ),
           CustomButton(
-              text: "Save",
-              onPressed: () async {
-                await RackMasterService().editRackMaster(
-                    rackId: rack.id,
-                    popId: rack.popId,
-                    nomorRack: int.parse(nomorRack.text),
-                    lokasi: lokasiController.text);
-                popProvider.getDataPop(id: rack.popId);
-                Navigator.pop(context);
+              text: "Edit Data",
+              onPressed: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            EditRackPage(pm: pm, rack: rack)));
               },
               color: primaryGreen,
-              clickColor: clickGreen)
+              clickColor: clickGreen),
+          const SizedBox(
+            height: 20,
+          ),
+          CustomButton(
+              text: "Delete",
+              onPressed: () async {
+                await RackMasterService().deleteMaster(id: rack.id);
+                Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(
+                        builder: ((context) => PmDetailPage(pm: pm))),
+                    (route) => false);
+              },
+              color: primaryRed,
+              clickColor: clickRed),
         ],
       ),
     );
