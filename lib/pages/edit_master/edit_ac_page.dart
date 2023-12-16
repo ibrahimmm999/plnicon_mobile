@@ -150,22 +150,40 @@ class _EditAcPageState extends State<EditAcPage> {
           CustomButton(
               text: "Save",
               onPressed: () async {
-                await AcMasterService().editAcMaster(
-                    popId: widget.acMaster.popId,
-                    acId: widget.acMaster.id,
-                    nama: namaAcController.text,
-                    kondisi: kondisiController.text,
-                    merk: merkController.text,
-                    kapasitas: kapasitasController.text,
-                    tekananFreon: tekananFreonController.text,
-                    modeHidup: modeHidupController.text,
-                    tglInstalasi: tglInstalasi);
+                if (namaAcController.text.isNotEmpty &&
+                    kondisiController.text.isNotEmpty &&
+                    merkController.text.isNotEmpty &&
+                    kapasitasController.text.isNotEmpty &&
+                    tekananFreonController.text.isNotEmpty &&
+                    modeHidupController.text.isNotEmpty) {
+                  await AcMasterService().editAcMaster(
+                      popId: widget.acMaster.popId,
+                      acId: widget.acMaster.id,
+                      nama: namaAcController.text,
+                      kondisi: kondisiController.text,
+                      merk: merkController.text,
+                      kapasitas: kapasitasController.text,
+                      tekananFreon: tekananFreonController.text,
+                      modeHidup: modeHidupController.text,
+                      tglInstalasi: tglInstalasi);
 
-                await popProvider.getDataPop(id: widget.acMaster.popId);
-                await acProvider.getAc(widget.pm.id, widget.acMaster.id);
+                  await popProvider.getDataPop(id: widget.acMaster.popId);
+                  await acProvider.getAc(widget.pm.id, widget.acMaster.id);
 
-                Navigator.pop(context);
-                Navigator.pop(context);
+                  Navigator.pop(context);
+                  Navigator.pop(context);
+                } else {
+                  ScaffoldMessenger.of(context).removeCurrentSnackBar();
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      backgroundColor: primaryRed,
+                      content: const Text(
+                        'Isi data dengan lengkap',
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  );
+                }
               },
               color: primaryGreen,
               clickColor: clickGreen),

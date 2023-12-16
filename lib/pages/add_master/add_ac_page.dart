@@ -131,18 +131,36 @@ class _AddAcPageState extends State<AddAcPage> {
           CustomButton(
               text: "Save",
               onPressed: () async {
-                await AcMasterService().postAcMaster(
-                  nama: namaAcController.text,
-                  tglInstalasi: tglInstalasi,
-                  kondisi: kondisiController.text,
-                  merk: merkController.text,
-                  kapasitas: kapasitasController.text,
-                  tekananFreon: tekananFreonController.text,
-                  modeHidup: modeHidupController.text,
-                  popId: widget.popId,
-                );
-                popProvider.getDataPop(id: widget.popId);
-                Navigator.pop(context);
+                if (namaAcController.text.isNotEmpty &&
+                    kondisiController.text.isNotEmpty &&
+                    merkController.text.isNotEmpty &&
+                    kapasitasController.text.isNotEmpty &&
+                    tekananFreonController.text.isNotEmpty &&
+                    modeHidupController.text.isNotEmpty) {
+                  await AcMasterService().postAcMaster(
+                    nama: namaAcController.text,
+                    tglInstalasi: tglInstalasi,
+                    kondisi: kondisiController.text,
+                    merk: merkController.text,
+                    kapasitas: kapasitasController.text,
+                    tekananFreon: tekananFreonController.text,
+                    modeHidup: modeHidupController.text,
+                    popId: widget.popId,
+                  );
+                  popProvider.getDataPop(id: widget.popId);
+                  Navigator.pop(context);
+                } else {
+                  ScaffoldMessenger.of(context).removeCurrentSnackBar();
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      backgroundColor: primaryRed,
+                      content: const Text(
+                        'Isi data dengan lengkap',
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  );
+                }
               },
               color: primaryGreen,
               clickColor: clickGreen),
