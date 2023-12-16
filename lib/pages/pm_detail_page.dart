@@ -8,6 +8,7 @@ import 'package:plnicon_mobile/pages/add_master/add_exalarm_page.dart';
 import 'package:plnicon_mobile/pages/add_master/add_genset_page.dart';
 import 'package:plnicon_mobile/pages/add_master/add_inverter_page.dart';
 import 'package:plnicon_mobile/pages/add_master/add_kwh_page.dart';
+import 'package:plnicon_mobile/pages/add_master/add_mcb_page.dart';
 import 'package:plnicon_mobile/pages/add_master/add_modul_page.dart';
 import 'package:plnicon_mobile/pages/add_master/add_pdb_page.dart';
 import 'package:plnicon_mobile/pages/add_master/add_rack_page.dart';
@@ -20,6 +21,7 @@ import 'package:plnicon_mobile/pages/genset_page.dart';
 import 'package:plnicon_mobile/pages/inverter_page.dart';
 import 'package:plnicon_mobile/pages/kwh_page.dart';
 import 'package:plnicon_mobile/pages/main_page.dart';
+import 'package:plnicon_mobile/pages/mcb_page.dart';
 import 'package:plnicon_mobile/pages/modul_page.dart';
 import 'package:plnicon_mobile/pages/pdb_page.dart';
 import 'package:plnicon_mobile/pages/rack_page.dart';
@@ -618,41 +620,75 @@ class _PmDetailPageState extends State<PmDetailPage> {
                                       bottom: Radius.circular(defaultRadius))),
                               width: double.infinity,
                               child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: popProvider.listPop.first.listRect
-                                            .isNotEmpty &&
-                                        popProvider.listPop.first.listRect.first
-                                            .listModul.isNotEmpty
-                                    ? popProvider
-                                        .listPop.first.listRect.first.listModul
-                                        .map((e) {
-                                        var index = popProvider.listPop.first
-                                                .listRect.first.listModul
-                                                .indexOf(e) +
-                                            1;
-                                        return GestureDetector(
-                                            onTap: () {
-                                              imagesProvider.clearList();
-                                              Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        ModulPage(
-                                                          pm: widget.pm,
-                                                          modul: e,
-                                                          title: "Modul $index",
-                                                        )),
-                                              );
-                                            },
-                                            child: card("Modul $index"));
-                                      }).toList()
-                                    : [
-                                        Text(
-                                          "N/A",
-                                          style: body,
-                                        )
-                                      ],
-                              ),
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children:
+                                      popProvider
+                                              .listPop.first.listRect.isNotEmpty
+                                          ? popProvider.listPop.first.listRect
+                                              .map((rect) {
+                                              if (rect.listModul.isNotEmpty) {
+                                                var index = popProvider
+                                                        .listPop.first.listRect
+                                                        .indexOf(rect) +
+                                                    1;
+                                                return Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    SizedBox(
+                                                      height:
+                                                          index == 1 ? 8 : 16,
+                                                    ),
+                                                    Text(
+                                                      "Rectifier $index :",
+                                                      style: buttonText.copyWith(
+                                                          color: textDarkColor),
+                                                    ),
+                                                    const SizedBox(
+                                                      height: 8,
+                                                    ),
+                                                    Column(
+                                                      children: rect.listModul
+                                                          .map((e) {
+                                                        var index = rect
+                                                                .listModul
+                                                                .indexOf(e) +
+                                                            1;
+                                                        return GestureDetector(
+                                                            onTap: () {
+                                                              imagesProvider
+                                                                  .clearList();
+                                                              Navigator.push(
+                                                                context,
+                                                                MaterialPageRoute(
+                                                                    builder:
+                                                                        (context) =>
+                                                                            ModulPage(
+                                                                              pm: widget.pm,
+                                                                              modul: e,
+                                                                              title: "Modul $index",
+                                                                            )),
+                                                              );
+                                                            },
+                                                            child: card(
+                                                                "Modul $index"));
+                                                      }).toList(),
+                                                    )
+                                                  ],
+                                                );
+                                              } else {
+                                                return Text(
+                                                  "N/A",
+                                                  style: body,
+                                                );
+                                              }
+                                            }).toList()
+                                          : [
+                                              Text(
+                                                "N/A",
+                                                style: body,
+                                              )
+                                            ]),
                             ),
                           ],
                         )),
@@ -1188,81 +1224,123 @@ class _PmDetailPageState extends State<PmDetailPage> {
                     ),
 
                     // Mcb
-                    // Container(
-                    //     width: double.infinity,
-                    //     decoration: BoxDecoration(
-                    //         boxShadow: const [
-                    //           BoxShadow(
-                    //               color: Color.fromARGB(30, 0, 0, 0),
-                    //               offset: Offset(0, 4),
-                    //               blurRadius: 4)
-                    //         ],
-                    //         color: primaryBlue,
-                    //         borderRadius: BorderRadius.circular(defaultRadius)),
-                    //     child: Column(
-                    //       crossAxisAlignment: CrossAxisAlignment.start,
-                    //       children: [
-                    //         Padding(
-                    //           padding: EdgeInsets.symmetric(
-                    //               horizontal: defaultMargin, vertical: 12),
-                    //           child: Row(
-                    //             mainAxisAlignment:
-                    //                 MainAxisAlignment.spaceBetween,
-                    //             children: [
-                    //               Text(
-                    //                 "MCB",
-                    //                 style: buttonText.copyWith(
-                    //                     color: textDarkColor),
-                    //               ),
-                    //               const Icon(Icons.add)
-                    //             ],
-                    //           ),
-                    //         ),
-                    //         Container(
-                    //           padding: EdgeInsets.symmetric(
-                    //               horizontal: defaultMargin, vertical: 8),
-                    //           decoration: BoxDecoration(
-                    //               color: Colors.white,
-                    //               borderRadius: BorderRadius.vertical(
-                    //                   bottom: Radius.circular(defaultRadius))),
-                    //           width: double.infinity,
-                    //           child: Column(
-                    //               crossAxisAlignment: CrossAxisAlignment.start,
-                    //               children: popProvider.listPop.first.listPdb
-                    //                           .isNotEmpty &&
-                    //                       popProvider.listPop.first.listPdb
-                    //                           .first.listMcb.isNotEmpty
-                    //                   ? popProvider
-                    //                       .listPop.first.listPdb.first.listMcb
-                    //                       .map((e) {
-                    //                       var index = popProvider.listPop.first
-                    //                               .listPdb.first.listMcb
-                    //                               .indexOf(e) +
-                    //                           1;
-                    //                       return GestureDetector(
-                    //                           onTap: () {
-                    //                             imagesProvider.clearList();
-                    //                             Navigator.push(
-                    //                               context,
-                    //                               MaterialPageRoute(
-                    //                                   builder: (context) =>
-                    //                                       McbPage(
-                    //                                         mcb: e,
-                    //                                         title: "MCB $index",
-                    //                                       )),
-                    //                             );
-                    //                           },
-                    //                           child: card("MCB $index"));
-                    //                     }).toList()
-                    //                   : [
-                    //                       Text(
-                    //                         "N/A",
-                    //                         style: body,
-                    //                       )
-                    //                     ]),
-                    //         ),
-                    //       ],
-                    //     )),
+                    Container(
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                            boxShadow: const [
+                              BoxShadow(
+                                  color: Color.fromARGB(30, 0, 0, 0),
+                                  offset: Offset(0, 4),
+                                  blurRadius: 4)
+                            ],
+                            color: primaryBlue,
+                            borderRadius: BorderRadius.circular(defaultRadius)),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: defaultMargin, vertical: 12),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    "MCB",
+                                    style: buttonText.copyWith(
+                                        color: textDarkColor),
+                                  ),
+                                  GestureDetector(
+                                      onTap: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) => AddMcbPage(
+                                                  popId: widget.pm.popId)),
+                                        );
+                                      },
+                                      child: const Icon(Icons.add))
+                                ],
+                              ),
+                            ),
+                            Container(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: defaultMargin, vertical: 8),
+                              decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.vertical(
+                                      bottom: Radius.circular(defaultRadius))),
+                              width: double.infinity,
+                              child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: popProvider
+                                          .listPop.first.listPdb.isNotEmpty
+                                      ? popProvider.listPop.first.listPdb
+                                          .map((pdb) {
+                                          if (pdb.listMcb.isNotEmpty) {
+                                            var index = popProvider
+                                                    .listPop.first.listPdb
+                                                    .indexOf(pdb) +
+                                                1;
+                                            return Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                SizedBox(
+                                                  height: index == 1 ? 8 : 16,
+                                                ),
+                                                Text(
+                                                  "Pdb $index :",
+                                                  style: buttonText.copyWith(
+                                                      color: textDarkColor),
+                                                ),
+                                                const SizedBox(
+                                                  height: 8,
+                                                ),
+                                                Column(
+                                                  children:
+                                                      pdb.listMcb.map((e) {
+                                                    var index =
+                                                        pdb.listMcb.indexOf(e) +
+                                                            1;
+                                                    return GestureDetector(
+                                                      onTap: () {
+                                                        imagesProvider
+                                                            .clearList();
+                                                        Navigator.push(
+                                                          context,
+                                                          MaterialPageRoute(
+                                                              builder: (context) =>
+                                                                  McbPage(
+                                                                      pm: widget
+                                                                          .pm,
+                                                                      title:
+                                                                          "MCB $index",
+                                                                      mcb: e)),
+                                                        );
+                                                      },
+                                                      child: card("MCB $index"),
+                                                    );
+                                                  }).toList(),
+                                                )
+                                              ],
+                                            );
+                                          } else {
+                                            return Text(
+                                              "N/A",
+                                              style: body,
+                                            );
+                                          }
+                                        }).toList()
+                                      : [
+                                          Text(
+                                            "N/A",
+                                            style: body,
+                                          )
+                                        ]),
+                            ),
+                          ],
+                        )),
 
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 28),
