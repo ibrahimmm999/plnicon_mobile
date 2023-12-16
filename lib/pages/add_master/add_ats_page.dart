@@ -1,5 +1,8 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:plnicon_mobile/providers/pop_provider.dart';
+import 'package:plnicon_mobile/services/master/ats_master_service.dart';
 import 'package:plnicon_mobile/theme/theme.dart';
 import 'package:plnicon_mobile/widgets/custom_appbar.dart';
 import 'package:plnicon_mobile/widgets/custom_button.dart';
@@ -60,8 +63,30 @@ class AddAtsPage extends StatelessWidget {
           CustomButton(
               text: "Save",
               onPressed: () async {
-                popProvider.getDataPop(id: popId);
-                Navigator.pop(context);
+                if (statusController.text.isNotEmpty &&
+                    snController.text.isNotEmpty &&
+                    merkController.text.isNotEmpty &&
+                    tipeController.text.isNotEmpty) {
+                  await AtsMasterService().postAtsMaster(
+                      status: statusController.text,
+                      sn: snController.text,
+                      merk: merkController.text,
+                      tipe: tipeController.text,
+                      popId: popId);
+                  popProvider.getDataPop(id: popId);
+                  Navigator.pop(context);
+                } else {
+                  ScaffoldMessenger.of(context).removeCurrentSnackBar();
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      backgroundColor: primaryRed,
+                      content: const Text(
+                        'Isi data dengan lengkap',
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  );
+                }
               },
               color: primaryGreen,
               clickColor: clickGreen),

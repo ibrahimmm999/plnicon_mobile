@@ -375,6 +375,7 @@ class _PmDetailPageState extends State<PmDetailPage> {
                                                   MaterialPageRoute(
                                                       builder: (context) =>
                                                           AtsPage(
+                                                            pm: widget.pm,
                                                             ats: e,
                                                             title: "ATS $index",
                                                           )),

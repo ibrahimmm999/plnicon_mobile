@@ -1,13 +1,15 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:plnicon_mobile/models/master/ats_master_model.dart';
 import 'package:plnicon_mobile/models/pm_model.dart';
-import 'package:plnicon_mobile/providers/pop_provider.dart';
+import 'package:plnicon_mobile/pages/pm_detail_page.dart';
+import 'package:plnicon_mobile/services/master/ats_master_service.dart';
 import 'package:plnicon_mobile/theme/theme.dart';
 import 'package:plnicon_mobile/widgets/custom_appbar.dart';
 import 'package:plnicon_mobile/widgets/custom_button.dart';
 import 'package:plnicon_mobile/widgets/text_input.dart';
-import 'package:provider/provider.dart';
 
 class EditAtsPage extends StatefulWidget {
   const EditAtsPage(
@@ -36,7 +38,6 @@ class _EditAtsPageState extends State<EditAtsPage> {
 
   @override
   Widget build(BuildContext context) {
-    PopProvider popProvider = Provider.of<PopProvider>(context);
     TextEditingController snController = TextEditingController();
     TextEditingController tipeController = TextEditingController();
     TextEditingController merkController = TextEditingController();
@@ -121,8 +122,35 @@ class _EditAtsPageState extends State<EditAtsPage> {
           CustomButton(
               text: "Save",
               onPressed: () async {
-                popProvider.getDataPop(id: widget.popId);
-                Navigator.pop(context);
+                if (statusController.text.isNotEmpty &&
+                    snController.text.isNotEmpty &&
+                    merkController.text.isNotEmpty &&
+                    tipeController.text.isNotEmpty) {
+                  await AtsMasterService().editAtsMaster(
+                      atsId: widget.atsMaster.id,
+                      tglInstalasi: tglInstalasi,
+                      status: statusController.text,
+                      sn: snController.text,
+                      merk: merkController.text,
+                      tipe: tipeController.text,
+                      popId: widget.popId);
+                  Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => PmDetailPage(pm: widget.pm)),
+                      (route) => false);
+                } else {
+                  ScaffoldMessenger.of(context).removeCurrentSnackBar();
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      backgroundColor: primaryRed,
+                      content: const Text(
+                        'Isi data dengan lengkap',
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  );
+                }
               },
               color: primaryGreen,
               clickColor: clickGreen),

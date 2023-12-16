@@ -83,7 +83,8 @@ class TransaksionalProvider extends ChangeNotifier {
 
   Future<bool> getExalarm(int pmId, int popId) async {
     try {
-      _listExalarm = await ExAlarmService().getExAlarm();
+      _listExalarm =
+          await ExAlarmService().getByPmAndPop(pmId: pmId, popId: popId);
       print(_listExalarm);
       notifyListeners();
       return true;
@@ -140,6 +141,7 @@ class TransaksionalProvider extends ChangeNotifier {
     try {
       _listEnvironment = await EnvironmentMasterService()
           .getByPmAndPop(pmId: pmId, popId: popId);
+      print(_listEnvironment);
       notifyListeners();
       return true;
     } catch (e) {
