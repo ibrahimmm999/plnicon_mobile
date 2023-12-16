@@ -2,13 +2,13 @@ import 'package:equatable/equatable.dart';
 import 'package:plnicon_mobile/models/master/ac_master_model.dart';
 import 'package:plnicon_mobile/models/master/ats_master_model.dart';
 import 'package:plnicon_mobile/models/master/environment_master_model.dart';
-import 'package:plnicon_mobile/models/master/exalarm_master_model.dart';
 import 'package:plnicon_mobile/models/master/genset_master_model.dart';
 import 'package:plnicon_mobile/models/master/inverter_master_model.dart';
 import 'package:plnicon_mobile/models/master/kwh_master_model.dart';
 import 'package:plnicon_mobile/models/master/pdb_master_model.dart';
 import 'package:plnicon_mobile/models/master/rack_master_model.dart';
 import 'package:plnicon_mobile/models/master/rect_master_model.dart';
+import 'package:plnicon_mobile/models/nilai/exalarm_nilai_model.dart';
 
 class PopModel extends Equatable {
   final int id;
@@ -28,7 +28,7 @@ class PopModel extends Equatable {
   final List<RackMasterModel> listRack;
   final List<RectMasterModel> listRect;
   final List<PdbMasterModel> listPdb;
-  final List<ExAlarmMasterModel> listExAlarm;
+  final List<ExAlarmNilaiModel> listExAlarm;
   final List<EnvironmentMasterModel> listEnvironment;
   final List<KwhMasterModel> listKwh;
 
@@ -104,8 +104,8 @@ class PopModel extends Equatable {
               json['rect'].map((x) => RectMasterModel.fromJson(x))),
       listExAlarm: json['ex_alarm'] == null
           ? []
-          : List<ExAlarmMasterModel>.from(
-              json['ex_alarm'].map((x) => ExAlarmMasterModel.fromJson(x))),
+          : List<ExAlarmNilaiModel>.from(
+              json['ex_alarm'].map((x) => ExAlarmNilaiModel.fromJson(x))),
     );
   }
 

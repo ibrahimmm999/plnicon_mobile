@@ -3,6 +3,7 @@ import 'package:plnicon_mobile/models/pm_model.dart';
 import 'package:plnicon_mobile/pages/ac_page.dart';
 import 'package:plnicon_mobile/pages/add_master/add_ac_page.dart';
 import 'package:plnicon_mobile/pages/add_master/add_ats_page.dart';
+import 'package:plnicon_mobile/pages/add_master/add_exalarm_page.dart';
 import 'package:plnicon_mobile/pages/add_master/add_genset_page.dart';
 import 'package:plnicon_mobile/pages/add_master/add_inverter_page.dart';
 import 'package:plnicon_mobile/pages/add_master/add_kwh_page.dart';
@@ -860,7 +861,16 @@ class _PmDetailPageState extends State<PmDetailPage> {
                                     style: buttonText.copyWith(
                                         color: textDarkColor),
                                   ),
-                                  const Icon(Icons.add)
+                                  GestureDetector(
+                                      onTap: () => Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  AddExAlarmPage(
+                                                    pm: widget.pm,
+                                                    title: "Add Ex Alarm",
+                                                  ))),
+                                      child: const Icon(Icons.add))
                                 ],
                               ),
                             ),

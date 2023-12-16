@@ -1,11 +1,13 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:io';
 
 import 'package:easy_image_viewer/easy_image_viewer.dart';
 import 'package:flutter/material.dart';
-import 'package:plnicon_mobile/models/master/exalarm_master_model.dart';
+import 'package:intl/intl.dart';
+import 'package:plnicon_mobile/models/nilai/exalarm_nilai_model.dart';
 import 'package:plnicon_mobile/models/pm_model.dart';
-import 'package:plnicon_mobile/pages/edit_master/edit_exalarm_page.dart';
-import 'package:plnicon_mobile/pages/main_page.dart';
+import 'package:plnicon_mobile/pages/pm_detail_page.dart';
 import 'package:plnicon_mobile/providers/images_provider.dart';
 import 'package:plnicon_mobile/providers/page_provider.dart';
 import 'package:plnicon_mobile/providers/transaksional_provider.dart';
@@ -14,6 +16,7 @@ import 'package:plnicon_mobile/services/master/exalarm_service.dart';
 import 'package:plnicon_mobile/services/user_service.dart';
 import 'package:plnicon_mobile/theme/theme.dart';
 import 'package:plnicon_mobile/widgets/custom_button.dart';
+import 'package:plnicon_mobile/widgets/custom_button_loading.dart';
 import 'package:plnicon_mobile/widgets/custom_popup.dart';
 import 'package:plnicon_mobile/widgets/input_dokumentasi.dart';
 import 'package:plnicon_mobile/widgets/text_input.dart';
@@ -25,13 +28,15 @@ class ExAlarmPage extends StatefulWidget {
       required this.exalarm,
       required this.title,
       required this.pm});
-  final ExAlarmMasterModel exalarm;
+  final ExAlarmNilaiModel exalarm;
   final String title;
   final PmModel pm;
 
   @override
   State<ExAlarmPage> createState() => _ExAlarmPageState();
 }
+
+String tglInstalasi = '';
 
 class _ExAlarmPageState extends State<ExAlarmPage> {
   @override
@@ -44,6 +49,9 @@ class _ExAlarmPageState extends State<ExAlarmPage> {
   String fotoEa = "";
   bool loading = true;
   getinit() async {
+    setState(() {
+      loading = true;
+    });
     UserProvider userProvider =
         Provider.of<UserProvider>(context, listen: false);
     TransaksionalProvider exAlarmProvider =
@@ -59,6 +67,9 @@ class _ExAlarmPageState extends State<ExAlarmPage> {
         await exAlarmProvider.getExalarm(widget.pm.id, widget.exalarm.id);
 
         if (exAlarmProvider.listExalarm.isNotEmpty) {
+          setState(() {
+            tglInstalasi = exAlarmProvider.listExalarm.last.tanggalInstalasi;
+          });
           for (var element in exAlarmProvider.listExalarm.first.foto!) {
             String url = element.url.replaceAll("http://localhost",
                 "https://jakban.iconpln.co.id/backend-plnicon/public");
@@ -73,14 +84,29 @@ class _ExAlarmPageState extends State<ExAlarmPage> {
         }
       }
     }
-    loading = false;
-    print(exAlarmProvider.listExalarm);
+    setState(() {
+      loading = false;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    TransaksionalProvider exAlarmProvider =
+    TransaksionalProvider exalarmProvider =
         Provider.of<TransaksionalProvider>(context);
+    TextEditingController eaController =
+        TextEditingController(text: widget.exalarm.ea);
+    TextEditingController gensetRunFailController =
+        TextEditingController(text: widget.exalarm.gensetRunFail);
+    TextEditingController pintuController =
+        TextEditingController(text: widget.exalarm.pintu);
+    TextEditingController smokeNFireController =
+        TextEditingController(text: widget.exalarm.smokeAndFire);
+    TextEditingController suhuController =
+        TextEditingController(text: widget.exalarm.suhu);
+    TextEditingController plnOffController =
+        TextEditingController(text: widget.exalarm.plnOff.toString());
+    TextEditingController perangkatEaController =
+        TextEditingController(text: widget.exalarm.perangkatEa.toString());
     ImagesProvider imagesProvider = Provider.of<ImagesProvider>(context);
     Future<void> handlePicker() async {
       imagesProvider.setCroppedImageFile = null;
@@ -177,19 +203,10 @@ class _ExAlarmPageState extends State<ExAlarmPage> {
                   const SizedBox(
                     height: 20,
                   ),
-                  CustomButton(
-                      text: "Edit",
-                      onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => EditExAlarmPage(
-                                    pm: widget.pm,
-                                    exalarm: widget.exalarm,
-                                    title: "Edit Inverter")));
-                      },
-                      color: primaryGreen,
-                      clickColor: clickGreen),
+                  Text(
+                    "Tanggal Instalasi : ${widget.exalarm.tanggalInstalasi}",
+                    style: buttonText.copyWith(color: textDarkColor),
+                  ),
                 ],
               ),
             );
@@ -317,10 +334,7 @@ class _ExAlarmPageState extends State<ExAlarmPage> {
                               if (imagesProvider.croppedImageFile != null) {
                                 imagesProvider.addDeskripsi(
                                     path: contentPath, deskripsi: "RACK EA");
-                                // imagesProvider.foto[contentPath] =
-                                //     imagesProvider.foto;
                                 fotoRackEa = contentPath;
-                                print(imagesProvider.foto);
                                 deskripsiController.clear();
                               }
                             }
@@ -346,10 +360,7 @@ class _ExAlarmPageState extends State<ExAlarmPage> {
                                           imagesProvider.addDeskripsi(
                                               path: contentPath,
                                               deskripsi: "RACK EA");
-                                          // imagesProvider.listFoto[contentPath] =
-                                          //     imagesProvider.foto;
                                           fotoRackEa = contentPath;
-                                          print(imagesProvider.foto);
                                           deskripsiController.clear();
                                         }
                                       }
@@ -398,10 +409,7 @@ class _ExAlarmPageState extends State<ExAlarmPage> {
                               if (imagesProvider.croppedImageFile != null) {
                                 imagesProvider.addDeskripsi(
                                     path: contentPath, deskripsi: "FOTO EA");
-                                // imagesProvider.listFoto[contentPath] =
-                                //     imagesProvider.foto;
                                 fotoEa = contentPath;
-                                print(imagesProvider.foto);
                                 deskripsiController.clear();
                               }
                             }
@@ -427,10 +435,7 @@ class _ExAlarmPageState extends State<ExAlarmPage> {
                                           imagesProvider.addDeskripsi(
                                               path: contentPath,
                                               deskripsi: "FOTO EA");
-                                          // imagesProvider.listFoto[contentPath] =
-                                          //     imagesProvider.foto;
                                           fotoEa = contentPath;
-                                          print(imagesProvider.foto);
                                           deskripsiController.clear();
                                         }
                                       }
@@ -469,10 +474,7 @@ class _ExAlarmPageState extends State<ExAlarmPage> {
                                         imagesProvider.addDeskripsi(
                                             path: contentPath,
                                             deskripsi: "FOTO EA");
-                                        // imagesProvider.listFoto[contentPath] =
-                                        //     imagesProvider.foto;
                                         fotoEa = contentPath;
-                                        print(imagesProvider.foto);
                                         deskripsiController.clear();
                                       }
                                     },
@@ -496,7 +498,6 @@ class _ExAlarmPageState extends State<ExAlarmPage> {
                       onTap: () async {
                         await handlePicker();
                         if (imagesProvider.croppedImageFile != null) {
-                          // ignore: use_build_context_synchronously
                           showDialog(
                             context: context,
                             builder: (context) => CustomPopUp(
@@ -538,6 +539,106 @@ class _ExAlarmPageState extends State<ExAlarmPage> {
                         ),
                       ),
                     ),
+                    Text(
+                      "Tanggal Instalasi",
+                      style: buttonText.copyWith(color: textDarkColor),
+                    ),
+                    GestureDetector(
+                        onTap: () async {
+                          DateTime? pickedDate = await showDatePicker(
+                              context: context,
+                              cancelText: "Cancel",
+                              confirmText: "Set",
+                              initialDate: DateTime.now(),
+                              firstDate: DateTime(1945),
+                              lastDate: DateTime.now());
+                          if (pickedDate != null) {
+                            String formattedDate =
+                                DateFormat('yyyy-MM-dd hh:mm:ss')
+                                    .format(pickedDate);
+                            setState(() {
+                              tglInstalasi = formattedDate;
+                            });
+                          }
+                        },
+                        child: Container(
+                          padding: EdgeInsets.all(defaultMargin),
+                          decoration: BoxDecoration(
+                              color: primaryBlue,
+                              borderRadius:
+                                  BorderRadius.circular(defaultRadius)),
+                          child: Row(
+                            children: [
+                              Text(
+                                tglInstalasi.isEmpty
+                                    ? DateFormat('yyyy-MM-dd hh:mm:ss')
+                                        .format(DateTime.now())
+                                        .toString()
+                                    : tglInstalasi,
+                                style: buttonText,
+                              )
+                            ],
+                          ),
+                        )),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Text(
+                      "Ea",
+                      style: buttonText.copyWith(color: textDarkColor),
+                    ),
+                    TextInput(controller: eaController),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Text(
+                      "Pintu",
+                      style: buttonText.copyWith(color: textDarkColor),
+                    ),
+                    TextInput(controller: pintuController),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Text(
+                      "Genset Run Fail",
+                      style: buttonText.copyWith(color: textDarkColor),
+                    ),
+                    TextInput(controller: gensetRunFailController),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Text(
+                      "Smoke and Fire",
+                      style: buttonText.copyWith(color: textDarkColor),
+                    ),
+                    TextInput(controller: smokeNFireController),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Text(
+                      "Suhu",
+                      style: buttonText.copyWith(color: textDarkColor),
+                    ),
+                    TextInput(controller: suhuController),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Text(
+                      "Perangkat Ea",
+                      style: buttonText.copyWith(color: textDarkColor),
+                    ),
+                    TextInput(controller: perangkatEaController),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Text(
+                      "PLN Off",
+                      style: buttonText.copyWith(color: textDarkColor),
+                    ),
+                    TextInput(controller: plnOffController),
+                    const SizedBox(
+                      height: 20,
+                    ),
                     TextInput(
                       controller: temuanController,
                       label: "Temuan",
@@ -556,26 +657,102 @@ class _ExAlarmPageState extends State<ExAlarmPage> {
                     Padding(
                       padding: EdgeInsets.symmetric(
                           horizontal: defaultMargin + 32, vertical: 40),
-                      child: CustomButton(
-                          text: "Save",
-                          onPressed: () {
-                            imagesProvider.foto.forEach((key, value) async {
-                              await ExAlarmService().postFotoexalarm(
-                                  exalarmNilaiId: widget.exalarm.id,
-                                  urlFoto: key,
-                                  description: value);
-                            });
-                            Navigator.pop(context);
-                          },
-                          color: primaryBlue,
-                          clickColor: clickBlue),
+                      child: isLoading
+                          ? CustomButtonLoading(color: primaryGreen)
+                          : CustomButton(
+                              text: "Save",
+                              onPressed: () async {
+                                setState(() {
+                                  isLoading = false;
+                                });
+                                if (eaController.text.isNotEmpty &&
+                                    suhuController.text.isNotEmpty &&
+                                    perangkatEaController.text.isNotEmpty &&
+                                    plnOffController.text.isNotEmpty &&
+                                    gensetRunFailController.text.isNotEmpty &&
+                                    smokeNFireController.text.isNotEmpty &&
+                                    pintuController.text.isNotEmpty &&
+                                    fotoEa.isNotEmpty &&
+                                    fotoRackEa.isNotEmpty) {
+                                  await ExAlarmService().editExAlarm(
+                                      exAlarmId: widget.exalarm.id,
+                                      pmId: widget.pm.id,
+                                      plnOff: int.parse(plnOffController.text),
+                                      popId: widget.pm.popId,
+                                      suhu: suhuController.text,
+                                      ea: eaController.text,
+                                      perangkatEa: perangkatEaController.text,
+                                      pintu: pintuController.text,
+                                      gensetRunFail:
+                                          gensetRunFailController.text,
+                                      smokeAndFire: smokeNFireController.text,
+                                      temuan: temuanController.text,
+                                      rekomendasi: rekomendasiController.text);
+                                  if (exalarmProvider.listExalarm.isNotEmpty) {
+                                    for (var item in exalarmProvider
+                                        .listExalarm.last.foto!) {
+                                      bool isDelete = true;
+                                      for (var itemImagesProvider
+                                          in imagesProvider.foto.entries) {
+                                        String url = item.url.replaceAll(
+                                            "http://localhost",
+                                            "https://jakban.iconpln.co.id/backend-plnicon/public");
+                                        if (url == itemImagesProvider.key) {
+                                          isDelete = false;
+                                        }
+                                      }
+                                      if (isDelete) {
+                                        await ExAlarmService()
+                                            .deleteImage(imageId: item.id);
+                                      }
+                                    }
+                                  }
+                                  await Future.forEach(
+                                      imagesProvider.foto.entries,
+                                      (element) async {
+                                    if (!(element.key.contains(
+                                        "https://jakban.iconpln.co.id"))) {
+                                      await ExAlarmService().postFotoexalarm(
+                                          exalarmNilaiId: widget.exalarm.id,
+                                          urlFoto: element.key,
+                                          description: element.value);
+                                    }
+                                  });
+                                  setState(() {
+                                    isLoading = false;
+                                  });
+                                  Navigator.pushAndRemoveUntil(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              PmDetailPage(pm: widget.pm)),
+                                      (route) => false);
+                                } else {
+                                  setState(() {
+                                    isLoading = false;
+                                  });
+                                  ScaffoldMessenger.of(context)
+                                      .removeCurrentSnackBar();
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      backgroundColor: primaryRed,
+                                      content: const Text(
+                                        'Isi data serta foto dengan lengkap',
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ),
+                                  );
+                                }
+                              },
+                              color: primaryGreen,
+                              clickColor: clickGreen),
                     )
                   ]),
             );
           }
         default:
           {
-            return Scaffold();
+            return const Scaffold();
           }
       }
     }

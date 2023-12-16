@@ -2,6 +2,7 @@
 
 import 'dart:convert';
 
+import 'package:intl/intl.dart';
 import 'package:plnicon_mobile/models/nilai/exalarm_nilai_model.dart';
 import 'package:plnicon_mobile/services/url_service.dart';
 import 'package:http/http.dart' as http;
@@ -34,11 +35,14 @@ class ExAlarmService {
   Future<ExAlarmNilaiModel> postExAlarm(
       {required int pmId,
       required int plnOff,
+      required int popId,
       required String suhu,
       required String ea,
+      required String perangkatEa,
       required String pintu,
       required String gensetRunFail,
       required String smokeAndFire,
+      String? tglInstalasi,
       required String temuan,
       required String rekomendasi}) async {
     late Uri url = UrlService().api('ex-alarm');
@@ -49,12 +53,16 @@ class ExAlarmService {
 
     var body = {
       'pm_id': pmId,
+      'pop_id': popId,
       'pln_off': plnOff,
       'suhu': suhu,
       'ea': ea,
+      'perangkat_ea': perangkatEa,
       'pintu': pintu,
       'genset_run_fail': gensetRunFail,
-      'smoke_and_fire': smokeAndFire,
+      'smokenfire': smokeAndFire,
+      'tgl_instalasi': tglInstalasi ??
+          DateFormat('yyyy-MM-dd hh:mm:ss').format(DateTime.now()),
       'temuan': temuan,
       'rekomendasi': rekomendasi
     };
@@ -63,14 +71,62 @@ class ExAlarmService {
       url,
       headers: headers,
       body: jsonEncode(body),
-      encoding: Encoding.getByName('utf-8'),
     );
-    print(response.request);
     if (response.statusCode == 200) {
       var data = jsonDecode(response.body)['data'];
       return ExAlarmNilaiModel.fromJson(data);
     } else {
       throw "Post data exalarm failed";
+    }
+  }
+
+  Future<ExAlarmNilaiModel> editExAlarm(
+      {required int exAlarmId,
+      required int pmId,
+      required int plnOff,
+      required int popId,
+      required String suhu,
+      required String ea,
+      required String perangkatEa,
+      required String pintu,
+      required String gensetRunFail,
+      required String smokeAndFire,
+      String? tglInstalasi,
+      required String temuan,
+      required String rekomendasi}) async {
+    late Uri url = UrlService().api('edit-ex-alarm');
+    var headers = {
+      'Content-Type': 'application/json',
+      'Authorization': await UserService().getTokenPreference() ?? '',
+    };
+
+    var body = {
+      'id': exAlarmId,
+      'pm_id': pmId,
+      'pop_id': popId,
+      'pln_off': plnOff,
+      'suhu': suhu,
+      'ea': ea,
+      'perangkat_ea': perangkatEa,
+      'pintu': pintu,
+      'genset_run_fail': gensetRunFail,
+      'smokenfire': smokeAndFire,
+      'tgl_instalasi': tglInstalasi ??
+          DateFormat('yyyy-MM-dd hh:mm:ss').format(DateTime.now()),
+      'temuan': temuan,
+      'rekomendasi': rekomendasi
+    };
+
+    var response = await http.post(
+      url,
+      headers: headers,
+      body: jsonEncode(body),
+    );
+    if (response.statusCode == 200) {
+      var data = jsonDecode(response.body)['data'];
+      return ExAlarmNilaiModel.fromJson(data);
+    } else {
+      throw "edit data exalarm failed";
     }
   }
 
@@ -103,6 +159,30 @@ class ExAlarmService {
       return true;
     } else {
       throw "Add foto exalarm failed";
+    }
+  }
+
+  Future<bool> deleteImage({required int imageId}) async {
+    late Uri url = UrlService().api('delete-ex-alarm-foto');
+    var headers = {
+      'Content-Type': 'application/json',
+      'Authorization': await UserService().getTokenPreference() ?? '',
+    };
+
+    var body = {
+      'id': imageId,
+    };
+
+    var response = await http.post(
+      url,
+      headers: headers,
+      body: jsonEncode(body),
+    );
+
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      throw "Delete image failed";
     }
   }
 }

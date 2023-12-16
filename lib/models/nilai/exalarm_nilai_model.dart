@@ -7,6 +7,7 @@ class ExAlarmNilaiModel extends Equatable {
   final int pmId;
   final String suhu;
   final String ea;
+  final String perangkatEa;
   final String pintu;
   final String gensetRunFail;
   final String smokeAndFire;
@@ -15,6 +16,7 @@ class ExAlarmNilaiModel extends Equatable {
   final DateTime createdAt;
   final DateTime updatedAt;
   final List<FotoModel>? foto;
+  final String tanggalInstalasi;
 
   const ExAlarmNilaiModel({
     required this.id,
@@ -30,6 +32,8 @@ class ExAlarmNilaiModel extends Equatable {
     required this.createdAt,
     required this.updatedAt,
     required this.foto,
+    required this.perangkatEa,
+    required this.tanggalInstalasi,
   });
 
   factory ExAlarmNilaiModel.fromJson(Map<String, dynamic> json) {
@@ -38,11 +42,13 @@ class ExAlarmNilaiModel extends Equatable {
       plnOff: json['pln_off'],
       pmId: json['pm_id'],
       suhu: json['suhu'],
-      ea: json['ea'],
+      ea: json['perangkat_ea'],
+      perangkatEa: json['ea'],
       smokeAndFire: json['smokenfire'],
       gensetRunFail: json['genset_run_fail'],
-      pintu: json['pintu'],
       temuan: json['temuan'] ?? "",
+      pintu: json['pintu'],
+      tanggalInstalasi: json['tgl_instalasi'],
       rekomendasi: json['rekomendasi'] ?? "",
       createdAt: DateTime.parse(json['created_at']),
       updatedAt: DateTime.parse(json['created_at']),
@@ -69,5 +75,7 @@ class ExAlarmNilaiModel extends Equatable {
         createdAt,
         updatedAt,
         foto,
+        perangkatEa,
+        tanggalInstalasi
       ];
 }

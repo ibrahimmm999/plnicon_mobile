@@ -82,7 +82,6 @@ class TransaksionalProvider extends ChangeNotifier {
   Future<bool> getExalarm(int pmId, int exalarm) async {
     try {
       _listExalarm = await ExAlarmService().getExAlarm();
-      print("TOTOTOT");
       print(_listExalarm);
       notifyListeners();
       return true;
@@ -156,107 +155,4 @@ class TransaksionalProvider extends ChangeNotifier {
       rethrow;
     }
   }
-
-  set setListKwh(List<KwhNilaiModel> kwh) {
-    _listKwh = kwh;
-    notifyListeners();
-  }
-
-  set setListRect(RectNilaiModel rect) {
-    _listRect.add(rect);
-    notifyListeners();
-  }
-
-  set setListBaterai(List<BateraiNilaiModel> batt) {
-    _listBaterai = batt;
-    notifyListeners();
-  }
-
-  set setListInverter(List<InverterNilaiModel> inv) {
-    _listInverter = inv;
-    notifyListeners();
-  }
-
-  set setListPdb(List<PdbNilaiModel> pdb) {
-    _listPdb = pdb;
-    notifyListeners();
-  }
-
-  set setListGenset(List<GensetNilaiModel> genset) {
-    _listGenset = genset;
-    notifyListeners();
-  }
-
-  set setListPerangkat(List<PerangkatNilaiModel> perangkat) {
-    _listPerangkat = perangkat;
-    notifyListeners();
-  }
-
-  // set setListEnvironment(List<EnvironmentModel> env) {
-  //   _listEnvironment = env;
-  //   notifyListeners();
-  // }
-
-  Future<bool> addAc(AcNilaiModel ac) async {
-    try {
-      await AcService().postAc(
-          acId: ac.acId,
-          pmId: ac.pmId,
-          suhuAc: ac.suhuAc,
-          hasilPengujian: ac.hasilPengujian,
-          temuan: ac.temuan,
-          rekomendasi: ac.rekomendasi);
-      for (var i = 0; i < _listAc.length; i++) {
-        if (_listAc[i].pmId == ac.pmId && _listAc[i].acId == ac.acId) {
-          _listAc.removeAt(i);
-          break;
-        }
-      }
-      notifyListeners();
-      return true;
-    } catch (e) {
-      print("ERROR ADD AC: $e");
-      return false;
-    }
-  }
-
-  void addKwh(KwhNilaiModel kwh) {
-    _listKwh.add(kwh);
-    notifyListeners();
-  }
-
-  void addRect(RectNilaiModel rect) {
-    _listRect.add(rect);
-    notifyListeners();
-  }
-
-  void addBaterai(BateraiNilaiModel batt) {
-    _listBaterai.add(batt);
-    notifyListeners();
-  }
-
-  void addInverter(InverterNilaiModel inv) {
-    _listInverter.add(inv);
-    notifyListeners();
-  }
-
-  void addPdb(PdbNilaiModel pdb) {
-    _listPdb.add(pdb);
-    notifyListeners();
-  }
-
-  void addGenset(GensetNilaiModel genset) {
-    _listGenset.add(genset);
-    notifyListeners();
-  }
-
-  void addPerangkat(PerangkatNilaiModel perangkat) {
-    _listPerangkat.add(perangkat);
-    notifyListeners();
-  }
-
-  // void addEnvironment(EnvironmentModel env) {
-  //   _listEnvironment.add(env);
-  //   notifyListeners();
-  // }
 }
