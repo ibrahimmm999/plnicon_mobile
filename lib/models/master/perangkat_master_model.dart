@@ -10,6 +10,7 @@ class PerangkatMasterModel extends Equatable {
   final String terminasi;
   final String jenis;
   final String tipe;
+  final String? tanggalInstalasi;
   final DateTime createdAt;
   final DateTime updatedAt;
 
@@ -23,14 +24,15 @@ class PerangkatMasterModel extends Equatable {
     required this.terminasi,
     required this.jenis,
     required this.tipe,
+    this.tanggalInstalasi,
     required this.createdAt,
     required this.updatedAt,
   });
 
   factory PerangkatMasterModel.fromJson(Map<String, dynamic> json) {
     return PerangkatMasterModel(
-      id: json['id'],
-      rackId: json['rack_id'],
+      id: int.parse(json['id'].toString()),
+      rackId: int.parse(json['rack_id'].toString()),
       nama: json['nama'],
       merk: json['merk'],
       jenis: json['jenis'],
@@ -38,6 +40,7 @@ class PerangkatMasterModel extends Equatable {
       sumberBackup: json['sumber_backup'],
       sumberMain: json['sumber_main'],
       terminasi: json['terminasi'],
+      tanggalInstalasi: json['tgl_instalasi'],
       createdAt: DateTime.parse(json['created_at']),
       updatedAt: DateTime.parse(json['created_at']),
     );
@@ -55,6 +58,7 @@ class PerangkatMasterModel extends Equatable {
         terminasi,
         merk,
         createdAt,
+        tanggalInstalasi,
         updatedAt,
       ];
 }

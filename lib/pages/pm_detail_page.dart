@@ -11,10 +11,12 @@ import 'package:plnicon_mobile/pages/add_master/add_kwh_page.dart';
 import 'package:plnicon_mobile/pages/add_master/add_mcb_page.dart';
 import 'package:plnicon_mobile/pages/add_master/add_modul_page.dart';
 import 'package:plnicon_mobile/pages/add_master/add_pdb_page.dart';
+import 'package:plnicon_mobile/pages/add_master/add_perangkat_page.dart';
 import 'package:plnicon_mobile/pages/add_master/add_rack_page.dart';
 import 'package:plnicon_mobile/pages/add_master/add_recti_page.dart';
 import 'package:plnicon_mobile/pages/ats_page.dart';
 import 'package:plnicon_mobile/pages/baterai_page.dart';
+import 'package:plnicon_mobile/pages/data_perangkat_page.dart';
 import 'package:plnicon_mobile/pages/environment_page.dart';
 import 'package:plnicon_mobile/pages/ex_alarm_page.dart';
 import 'package:plnicon_mobile/pages/genset_page.dart';
@@ -1320,6 +1322,131 @@ class _PmDetailPageState extends State<PmDetailPage> {
                                                         );
                                                       },
                                                       child: card("MCB $index"),
+                                                    );
+                                                  }).toList(),
+                                                )
+                                              ],
+                                            );
+                                          } else {
+                                            return Text(
+                                              "N/A",
+                                              style: body,
+                                            );
+                                          }
+                                        }).toList()
+                                      : [
+                                          Text(
+                                            "N/A",
+                                            style: body,
+                                          )
+                                        ]),
+                            ),
+                          ],
+                        )),
+                    const SizedBox(
+                      height: 20,
+                    ),
+
+                    // Perangkat
+                    Container(
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                            boxShadow: const [
+                              BoxShadow(
+                                  color: Color.fromARGB(30, 0, 0, 0),
+                                  offset: Offset(0, 4),
+                                  blurRadius: 4)
+                            ],
+                            color: primaryBlue,
+                            borderRadius: BorderRadius.circular(defaultRadius)),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: defaultMargin, vertical: 12),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    "Perangkat",
+                                    style: buttonText.copyWith(
+                                        color: textDarkColor),
+                                  ),
+                                  GestureDetector(
+                                      onTap: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  AddPerangkatPage(
+                                                      popId: widget.pm.popId)),
+                                        );
+                                      },
+                                      child: const Icon(Icons.add))
+                                ],
+                              ),
+                            ),
+                            Container(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: defaultMargin, vertical: 8),
+                              decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.vertical(
+                                      bottom: Radius.circular(defaultRadius))),
+                              width: double.infinity,
+                              child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: popProvider
+                                          .listPop.first.listRack.isNotEmpty
+                                      ? popProvider.listPop.first.listRack
+                                          .map((rack) {
+                                          if (rack.listPerangkat.isNotEmpty) {
+                                            var index = popProvider
+                                                    .listPop.first.listRack
+                                                    .indexOf(rack) +
+                                                1;
+                                            return Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                SizedBox(
+                                                  height: index == 1 ? 8 : 16,
+                                                ),
+                                                Text(
+                                                  "Rack $index :",
+                                                  style: buttonText.copyWith(
+                                                      color: textDarkColor),
+                                                ),
+                                                const SizedBox(
+                                                  height: 8,
+                                                ),
+                                                Column(
+                                                  children: rack.listPerangkat
+                                                      .map((e) {
+                                                    var index = rack
+                                                            .listPerangkat
+                                                            .indexOf(e) +
+                                                        1;
+                                                    return GestureDetector(
+                                                      onTap: () {
+                                                        imagesProvider
+                                                            .clearList();
+                                                        Navigator.push(
+                                                          context,
+                                                          MaterialPageRoute(
+                                                              builder: (context) =>
+                                                                  DataPerangkatPage(
+                                                                    perangkat:
+                                                                        e,
+                                                                    pm: widget
+                                                                        .pm,
+                                                                  )),
+                                                        );
+                                                      },
+                                                      child: card(
+                                                          "Perangkat $index"),
                                                     );
                                                   }).toList(),
                                                 )

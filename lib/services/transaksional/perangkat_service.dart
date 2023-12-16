@@ -8,32 +8,7 @@ import 'package:http/http.dart' as http;
 import 'package:plnicon_mobile/services/user_service.dart';
 
 class PerangkatService {
-  Future<List<PerangkatNilaiModel>> getPerangkat(
-      {required String token}) async {
-    var url = UrlService().api('perangkat');
-    var headers = {
-      'Content-Type': 'application/json',
-      'Authorization': token,
-    };
-
-    var response = await http.get(
-      url,
-      headers: headers,
-    );
-
-    if (response.statusCode == 200) {
-      var data = jsonDecode(response.body)['data'] as List;
-      // print(data);
-      List<PerangkatNilaiModel> perangkat = List<PerangkatNilaiModel>.from(
-        data.map((e) => PerangkatNilaiModel.fromJson(e)),
-      );
-      return perangkat;
-    } else {
-      throw "Get data perangkat failed";
-    }
-  }
-
-  Future<List<PerangkatNilaiModel>> getAcByPmAndMaster(
+  Future<List<PerangkatNilaiModel>> getByPmAndMaster(
       {required int pmId, required int perangkatId}) async {
     var url = UrlService()
         .api('perangkat-nilai?pm_id=$pmId&perangkat_id=$perangkatId');
@@ -49,7 +24,6 @@ class PerangkatService {
 
     if (response.statusCode == 200) {
       var data = jsonDecode(response.body)['data'] as List;
-      print(data);
       List<PerangkatNilaiModel> perangkat = List<PerangkatNilaiModel>.from(
         data.map((e) => PerangkatNilaiModel.fromJson(e)),
       );
@@ -64,7 +38,7 @@ class PerangkatService {
       required String pmId,
       required String temuan,
       required String rekomendasi}) async {
-    late Uri url = UrlService().api('perangkat');
+    late Uri url = UrlService().api('perangkat-nilai');
     var headers = {
       'Content-Type': 'application/json',
       'Authorization': await UserService().getTokenPreference() ?? '',
@@ -89,6 +63,41 @@ class PerangkatService {
       return PerangkatNilaiModel.fromJson(data);
     } else {
       throw "Post data perangkat failed";
+    }
+  }
+
+  Future<PerangkatNilaiModel> editPerangkat(
+      {required int id,
+      required int perangkatId,
+      required String pmId,
+      required String temuan,
+      required String rekomendasi}) async {
+    late Uri url = UrlService().api('edit-perangkat-nilai');
+    var headers = {
+      'Content-Type': 'application/json',
+      'Authorization': await UserService().getTokenPreference() ?? '',
+    };
+
+    var body = {
+      'id': id,
+      'perangkat_id': perangkatId,
+      'pm_id': pmId,
+      'temuan': temuan,
+      'rekomendasi': rekomendasi
+    };
+
+    var response = await http.post(
+      url,
+      headers: headers,
+      body: jsonEncode(body),
+      encoding: Encoding.getByName('utf-8'),
+    );
+
+    if (response.statusCode == 200) {
+      var data = jsonDecode(response.body)['data'];
+      return PerangkatNilaiModel.fromJson(data);
+    } else {
+      throw "Edit data perangkat failed";
     }
   }
 
@@ -121,6 +130,30 @@ class PerangkatService {
       return true;
     } else {
       throw "Add foto perangkat failed";
+    }
+  }
+
+  Future<bool> deleteImage({required int imageId}) async {
+    late Uri url = UrlService().api('delete-perangkat-foto');
+    var headers = {
+      'Content-Type': 'application/json',
+      'Authorization': await UserService().getTokenPreference() ?? '',
+    };
+
+    var body = {
+      'id': imageId,
+    };
+
+    var response = await http.post(
+      url,
+      headers: headers,
+      body: jsonEncode(body),
+    );
+
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      throw "Delete image failed";
     }
   }
 }

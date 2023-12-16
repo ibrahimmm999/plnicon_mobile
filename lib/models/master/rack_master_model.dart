@@ -7,7 +7,7 @@ class RackMasterModel extends Equatable {
   final int nomorRack;
   final String lokasi;
   final String? tglInstalasi;
-  final List<PerangkatMasterModel>? listPerangkat;
+  final List<PerangkatMasterModel> listPerangkat;
   final DateTime createdAt;
   final DateTime updatedAt;
 
@@ -16,7 +16,7 @@ class RackMasterModel extends Equatable {
     required this.popId,
     required this.nomorRack,
     required this.lokasi,
-    this.listPerangkat,
+    required this.listPerangkat,
     required this.createdAt,
     required this.updatedAt,
     this.tglInstalasi,
