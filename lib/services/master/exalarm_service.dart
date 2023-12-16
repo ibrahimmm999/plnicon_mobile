@@ -9,31 +9,35 @@ import 'package:http/http.dart' as http;
 import 'package:plnicon_mobile/services/user_service.dart';
 
 class ExAlarmService {
-  Future<List<ExAlarmNilaiModel>> getExAlarm() async {
-    var url = UrlService().api('ex-alarm');
+  Future<bool> delete({required int id}) async {
+    late Uri url = UrlService().api('delete-ex-alarm');
+
     var headers = {
       'Content-Type': 'application/json',
       'Authorization': await UserService().getTokenPreference() ?? '',
     };
-
-    var response = await http.get(
-      url,
-      headers: headers,
-    );
-
-    if (response.statusCode == 200) {
-      var data = jsonDecode(response.body)['data'] as List;
-      List<ExAlarmNilaiModel> exalarm = List<ExAlarmNilaiModel>.from(
-        data.map((e) => ExAlarmNilaiModel.fromJson(e)),
+    var body = {
+      'id': id,
+    };
+    try {
+      var response = await http.post(
+        url,
+        headers: headers,
+        body: jsonEncode(body),
       );
-      return exalarm;
-    } else {
-      throw "Get data exalarm failed";
+      if (response.statusCode == 200) {
+        return true;
+      } else {
+        throw "Delete data failed";
+      }
+    } catch (e) {
+      rethrow;
     }
   }
 
   Future<List<ExAlarmNilaiModel>> getByPmAndPop(
       {required int pmId, required int popId}) async {
+    print("pm_id=$pmId&pop_id=$popId");
     var url = UrlService().api('ex-alarm?pm_id=$pmId&pop_id=$popId');
     var headers = {
       'Content-Type': 'application/json',

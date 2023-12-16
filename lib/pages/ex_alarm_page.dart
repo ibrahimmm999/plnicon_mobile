@@ -64,7 +64,7 @@ class _ExAlarmPageState extends State<ExAlarmPage> {
     if (token == null) {
     } else {
       if (await userProvider.getUser(token: token)) {
-        await exAlarmProvider.getExalarm(widget.pm.id, widget.exalarm.id);
+        await exAlarmProvider.getExalarm(widget.pm.id, widget.pm.popId);
 
         if (exAlarmProvider.listExalarm.isNotEmpty) {
           setState(() {
@@ -207,6 +207,22 @@ class _ExAlarmPageState extends State<ExAlarmPage> {
                     "Tanggal Instalasi : ${widget.exalarm.tanggalInstalasi}",
                     style: buttonText.copyWith(color: textDarkColor),
                   ),
+                  const SizedBox(
+                    height: 32,
+                  ),
+                  CustomButton(
+                      text: "Delete",
+                      onPressed: () async {
+                        await ExAlarmService().delete(id: widget.exalarm.id);
+                        Navigator.pushAndRemoveUntil(
+                            context,
+                            MaterialPageRoute(
+                                builder: ((context) =>
+                                    PmDetailPage(pm: widget.pm))),
+                            (route) => false);
+                      },
+                      color: primaryRed,
+                      clickColor: clickRed),
                 ],
               ),
             );

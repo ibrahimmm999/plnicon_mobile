@@ -111,6 +111,7 @@ class EnvironmentMasterService {
   Future<EnvironmentMasterModel> editEnvMaster(
       {required int envId,
       required int popId,
+      required int pmId,
       required String exhaust,
       required String lampu,
       required String jumlahLampu,
@@ -130,6 +131,7 @@ class EnvironmentMasterService {
     var body = {
       'id': envId,
       'pop_id': popId,
+      'pm_id': pmId,
       'exhaust': exhaust,
       'kebersihan_exhaust': kebersihanExhaust,
       'lampu': lampu,

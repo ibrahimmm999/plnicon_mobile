@@ -4,9 +4,9 @@ import 'dart:io';
 
 import 'package:easy_image_viewer/easy_image_viewer.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:plnicon_mobile/models/master/environment_master_model.dart';
 import 'package:plnicon_mobile/models/pm_model.dart';
-import 'package:plnicon_mobile/pages/add_master/add_environment_page.dart';
 import 'package:plnicon_mobile/pages/pm_detail_page.dart';
 import 'package:plnicon_mobile/providers/images_provider.dart';
 import 'package:plnicon_mobile/providers/page_provider.dart';
@@ -49,6 +49,8 @@ class _EnvironmentPageState extends State<EnvironmentPage> {
   String fotoPopTampakSampingKiri = "";
   String fotoPopBagianDalam = "";
   String bangunan = "";
+  String tglInstalasi = "";
+
   bool loading = true;
   getinit() async {
     UserProvider userProvider =
@@ -64,6 +66,9 @@ class _EnvironmentPageState extends State<EnvironmentPage> {
     } else {
       if (await userProvider.getUser(token: token)) {
         await envProvider.getEnv(widget.pm.id, widget.pm.popId);
+        setState(() {
+          tglInstalasi = widget.environment.tglInstalasi;
+        });
         bangunan = widget.environment.bangunan.isEmpty
             ? ""
             : widget.environment.bangunan;
@@ -906,6 +911,46 @@ class _EnvironmentPageState extends State<EnvironmentPage> {
                       ),
                     ),
                   ),
+                  Text(
+                    "Tanggal Instalasi",
+                    style: buttonText.copyWith(color: textDarkColor),
+                  ),
+                  GestureDetector(
+                      onTap: () async {
+                        DateTime? pickedDate = await showDatePicker(
+                            context: context,
+                            cancelText: "Cancel",
+                            confirmText: "Set",
+                            initialDate:
+                                DateTime.parse(widget.environment.tglInstalasi),
+                            firstDate: DateTime(1945),
+                            lastDate: DateTime.now());
+                        if (pickedDate != null) {
+                          String formattedDate =
+                              DateFormat('yyyy-MM-dd hh:mm:ss')
+                                  .format(pickedDate);
+                          setState(() {
+                            tglInstalasi = formattedDate;
+                          });
+                        }
+                      },
+                      child: Container(
+                        padding: EdgeInsets.all(defaultMargin),
+                        decoration: BoxDecoration(
+                            color: primaryBlue,
+                            borderRadius: BorderRadius.circular(defaultRadius)),
+                        child: Row(
+                          children: [
+                            Text(
+                              tglInstalasi,
+                              style: buttonText,
+                            )
+                          ],
+                        ),
+                      )),
+                  const SizedBox(
+                    height: 20,
+                  ),
                   TextInput(
                     controller: exhaustController,
                     label: "Exhaust",
@@ -1017,22 +1062,29 @@ class _EnvironmentPageState extends State<EnvironmentPage> {
                               jumlahLampuController.text.isNotEmpty &&
                               kebersihanBangunanController.text.isNotEmpty &&
                               bangunan.isNotEmpty &&
+                              fotoPopBagianDalam.isNotEmpty &&
+                              fotoPopTampakBelakang.isNotEmpty &&
+                              fotoPopTampakDepan.isNotEmpty &&
+                              fotoPopTampakSampingKanan.isNotEmpty &&
+                              fotoPopTampakSampingKiri.isNotEmpty &&
                               suhuRuanganController.text.isNotEmpty) {
                             await EnvironmentMasterService().editEnvMaster(
-                                envId: widget.environment.id,
-                                popId: widget.pm.popId,
-                                exhaust: exhaustController.text,
-                                lampu: lampuController.text,
-                                jumlahLampu: jumlahLampuController.text,
-                                kebersihanBangunan:
-                                    kebersihanBangunanController.text,
-                                bangunan: bangunan,
-                                suhuRuangan: suhuRuanganController.text,
-                                kebersihanExhaust:
-                                    kebersihanExhaustController.text,
-                                rekomendasi: rekomendasiController.text,
-                                temuan: temuanController.text,
-                                tglInstalasi: tglInstalasi);
+                              pmId: widget.pm.id,
+                              envId: widget.environment.id,
+                              popId: widget.pm.popId,
+                              exhaust: exhaustController.text,
+                              tglInstalasi: tglInstalasi,
+                              lampu: lampuController.text,
+                              jumlahLampu: jumlahLampuController.text,
+                              kebersihanBangunan:
+                                  kebersihanBangunanController.text,
+                              bangunan: bangunan,
+                              suhuRuangan: suhuRuanganController.text,
+                              kebersihanExhaust:
+                                  kebersihanExhaustController.text,
+                              rekomendasi: rekomendasiController.text,
+                              temuan: temuanController.text,
+                            );
                             if (envProvider.listEnvironment.isNotEmpty) {
                               for (var item
                                   in envProvider.listEnvironment.last.foto!) {
@@ -1081,15 +1133,15 @@ class _EnvironmentPageState extends State<EnvironmentPage> {
                               SnackBar(
                                 backgroundColor: primaryRed,
                                 content: const Text(
-                                  'Isi data suhu, pengujian, serta foto dengan lengkap',
+                                  'Isi data serta foto dengan lengkap',
                                   textAlign: TextAlign.center,
                                 ),
                               ),
                             );
                           }
                         },
-                        color: primaryBlue,
-                        clickColor: clickBlue),
+                        color: primaryGreen,
+                        clickColor: clickGreen),
                   )
                 ],
               ),
