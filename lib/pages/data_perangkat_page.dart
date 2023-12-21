@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:easy_image_viewer/easy_image_viewer.dart';
 import 'package:flutter/material.dart';
 import 'package:plnicon_mobile/models/master/perangkat_master_model.dart';
+import 'package:plnicon_mobile/models/nilai/perangkat_nilai_model.dart';
 import 'package:plnicon_mobile/models/pm_model.dart';
 import 'package:plnicon_mobile/pages/edit_master/edit_perangkat_page.dart';
 import 'package:plnicon_mobile/pages/pm_detail_page.dart';
@@ -13,6 +14,7 @@ import 'package:plnicon_mobile/providers/page_provider.dart';
 import 'package:plnicon_mobile/providers/transaksional_provider.dart';
 import 'package:plnicon_mobile/providers/user_provider.dart';
 import 'package:plnicon_mobile/services/master/perangkat_service_master.dart';
+import 'package:plnicon_mobile/services/transaksional/perangkat_service.dart';
 import 'package:plnicon_mobile/services/user_service.dart';
 import 'package:plnicon_mobile/theme/theme.dart';
 import 'package:plnicon_mobile/widgets/custom_appbar.dart';
@@ -42,9 +44,9 @@ class _DataPerangkatPageState extends State<DataPerangkatPage> {
     super.initState();
   }
 
-  String fotoAcOutdoor = "";
-  String fotoAcSuhu = "";
-  String fotoAcIndoor = "";
+  String fotoRackPerangkat = "";
+  String fotoPerangkat = "";
+  String fotoPembersihanPerangkat = "";
   bool loading = true;
   getinit() async {
     UserProvider userProvider =
@@ -59,18 +61,18 @@ class _DataPerangkatPageState extends State<DataPerangkatPage> {
     if (token == null) {
     } else {
       if (await userProvider.getUser(token: token)) {
-        await perangkatProvider.getAc(widget.pm.id, widget.perangkat.id);
+        await perangkatProvider.getPerangkat(widget.pm.id, widget.perangkat.id);
         if (perangkatProvider.listPerangkat.isNotEmpty) {
           for (var element in perangkatProvider.listPerangkat.first.foto!) {
             String url = element.url.replaceAll("http://localhost",
                 "https://jakban.iconpln.co.id/backend-plnicon/public");
 
-            if (element.deskripsi == "AC Outdoor") {
-              fotoAcOutdoor = url;
-            } else if (element.deskripsi == "AC Indoor") {
-              fotoAcIndoor = url;
-            } else if (element.deskripsi == "Suhu AC") {
-              fotoAcSuhu = url;
+            if (element.deskripsi == "Foto Rack Perangkat") {
+              fotoRackPerangkat = url;
+            } else if (element.deskripsi == "Foto Perangkat") {
+              fotoPerangkat = url;
+            } else if (element.deskripsi == "Foto Pembersihan Perangkat") {
+              fotoPembersihanPerangkat = url;
             }
             imagesProvider.foto[url] = element.deskripsi;
           }
@@ -306,14 +308,15 @@ class _DataPerangkatPageState extends State<DataPerangkatPage> {
                                               setState(() {
                                                 imagesProvider.deleteImage(
                                                     path: e.key);
-                                                if (e.value == "AC Outdoor") {
-                                                  fotoAcOutdoor = "";
+                                                if (e.value ==
+                                                    "Foto Rack Perangkat") {
+                                                  fotoRackPerangkat = "";
                                                 } else if (e.value ==
-                                                    "AC Indoor") {
-                                                  fotoAcIndoor = "";
+                                                    "Foto Perangkat") {
+                                                  fotoPerangkat = "";
                                                 } else if (e.value ==
-                                                    "Suhu AC") {
-                                                  fotoAcSuhu = "";
+                                                    "Foto Pembersihan Perangkat") {
+                                                  fotoPembersihanPerangkat = "";
                                                 }
                                               });
                                             },
@@ -350,17 +353,18 @@ class _DataPerangkatPageState extends State<DataPerangkatPage> {
                   height: 28,
                 ),
                 Text(
-                  "Foto Ac Outdoor",
+                  "Foto Rack Perangkat",
                   style: buttonText.copyWith(color: textDarkColor),
                 ),
                 GestureDetector(
-                  onTap: fotoAcOutdoor.isEmpty
+                  onTap: fotoRackPerangkat.isEmpty
                       ? () async {
                           await handlePicker();
                           if (imagesProvider.croppedImageFile != null) {
                             imagesProvider.addDeskripsi(
-                                path: contentPath, deskripsi: "AC Outdoor");
-                            fotoAcOutdoor = contentPath;
+                                path: contentPath,
+                                deskripsi: "Foto Rack Perangkat");
+                            fotoRackPerangkat = contentPath;
                             deskripsiController.clear();
                           }
                         }
@@ -378,43 +382,45 @@ class _DataPerangkatPageState extends State<DataPerangkatPage> {
                       children: [
                         Expanded(
                           child: GestureDetector(
-                            onTap: fotoAcOutdoor.isEmpty
+                            onTap: fotoRackPerangkat.isEmpty
                                 ? () async {
                                     await handlePicker();
                                     if (imagesProvider.croppedImageFile !=
                                         null) {
                                       imagesProvider.addDeskripsi(
                                           path: contentPath,
-                                          deskripsi: "AC Outdoor");
-                                      fotoAcOutdoor = contentPath;
+                                          deskripsi: "Foto Rack Perangkat");
+                                      fotoRackPerangkat = contentPath;
                                       deskripsiController.clear();
                                     }
                                   }
                                 : () {
-                                    fotoAcOutdoor.contains(
+                                    fotoRackPerangkat.contains(
                                             "https://jakban.iconpln.co.id")
-                                        ? showImageViewer(context,
-                                            Image.network(fotoAcOutdoor).image,
+                                        ? showImageViewer(
+                                            context,
+                                            Image.network(fotoRackPerangkat)
+                                                .image,
                                             swipeDismissible: true,
                                             doubleTapZoomable: true)
                                         : showImageViewer(
                                             context,
-                                            Image.file(File(fotoAcOutdoor))
+                                            Image.file(File(fotoRackPerangkat))
                                                 .image,
                                             swipeDismissible: true,
                                             doubleTapZoomable: true);
                                   },
                             child: Text(
-                              fotoAcOutdoor.isEmpty
+                              fotoRackPerangkat.isEmpty
                                   ? "Tambah Foto"
-                                  : fotoAcOutdoor,
+                                  : fotoRackPerangkat,
                               style: buttonText,
                               overflow: TextOverflow.ellipsis,
                             ),
                           ),
                         ),
                         Visibility(
-                          visible: fotoAcOutdoor.isEmpty,
+                          visible: fotoRackPerangkat.isEmpty,
                           child: Icon(
                             Icons.photo_camera_outlined,
                             color: textLightColor,
@@ -425,17 +431,17 @@ class _DataPerangkatPageState extends State<DataPerangkatPage> {
                   ),
                 ),
                 Text(
-                  "Foto Ac Indoor",
+                  "Foto Perangkat",
                   style: buttonText.copyWith(color: textDarkColor),
                 ),
                 GestureDetector(
-                  onTap: fotoAcIndoor.isEmpty
+                  onTap: fotoPerangkat.isEmpty
                       ? () async {
                           await handlePicker();
                           if (imagesProvider.croppedImageFile != null) {
                             imagesProvider.addDeskripsi(
-                                path: contentPath, deskripsi: "AC Indoor");
-                            fotoAcIndoor = contentPath;
+                                path: contentPath, deskripsi: "Foto Perangkat");
+                            fotoPerangkat = contentPath;
                             deskripsiController.clear();
                           }
                         }
@@ -453,48 +459,48 @@ class _DataPerangkatPageState extends State<DataPerangkatPage> {
                       children: [
                         Expanded(
                           child: GestureDetector(
-                            onTap: fotoAcIndoor.isEmpty
+                            onTap: fotoPerangkat.isEmpty
                                 ? () async {
                                     await handlePicker();
                                     if (imagesProvider.croppedImageFile !=
                                         null) {
                                       imagesProvider.addDeskripsi(
                                           path: contentPath,
-                                          deskripsi: "AC Indoor");
-                                      fotoAcIndoor = contentPath;
+                                          deskripsi: "Foto Perangkat");
+                                      fotoPerangkat = contentPath;
                                       deskripsiController.clear();
                                     }
                                   }
                                 : () {
-                                    fotoAcIndoor.contains(
+                                    fotoPerangkat.contains(
                                             "https://jakban.iconpln.co.id")
                                         ? showImageViewer(context,
-                                            Image.network(fotoAcIndoor).image,
+                                            Image.network(fotoPerangkat).image,
                                             swipeDismissible: true,
                                             doubleTapZoomable: true)
                                         : showImageViewer(
                                             context,
-                                            Image.file(File(fotoAcIndoor))
+                                            Image.file(File(fotoPerangkat))
                                                 .image,
                                             swipeDismissible: true,
                                             doubleTapZoomable: true);
                                   },
                             child: Text(
-                              fotoAcIndoor.isEmpty
+                              fotoPerangkat.isEmpty
                                   ? "Tambah Foto"
-                                  : fotoAcIndoor,
+                                  : fotoPerangkat,
                               style: buttonText,
                               overflow: TextOverflow.ellipsis,
                             ),
                           ),
                         ),
                         GestureDetector(
-                          onTap: fotoAcIndoor.isNotEmpty
+                          onTap: fotoPerangkat.isNotEmpty
                               ? () {
                                   setState(() {
                                     imagesProvider.deleteImage(
-                                        path: fotoAcIndoor);
-                                    fotoAcIndoor = "";
+                                        path: fotoPerangkat);
+                                    fotoPerangkat = "";
                                   });
                                 }
                               : () async {
@@ -502,13 +508,13 @@ class _DataPerangkatPageState extends State<DataPerangkatPage> {
                                   if (imagesProvider.croppedImageFile != null) {
                                     imagesProvider.addDeskripsi(
                                         path: contentPath,
-                                        deskripsi: "AC Indoor");
-                                    fotoAcIndoor = contentPath;
+                                        deskripsi: "Foto Perangkat");
+                                    fotoPerangkat = contentPath;
                                     deskripsiController.clear();
                                   }
                                 },
                           child: Visibility(
-                            visible: fotoAcIndoor.isEmpty,
+                            visible: fotoPerangkat.isEmpty,
                             child: Icon(
                               Icons.photo_camera_outlined,
                               color: textLightColor,
@@ -520,28 +526,32 @@ class _DataPerangkatPageState extends State<DataPerangkatPage> {
                   ),
                 ),
                 Text(
-                  "Foto Suhu",
+                  "Foto Pembersihan Perangkat",
                   style: buttonText.copyWith(color: textDarkColor),
                 ),
                 GestureDetector(
-                  onTap: fotoAcSuhu.isEmpty
+                  onTap: fotoPembersihanPerangkat.isEmpty
                       ? () async {
                           await handlePicker();
                           if (imagesProvider.croppedImageFile != null) {
                             imagesProvider.addDeskripsi(
-                                path: contentPath, deskripsi: "Suhu AC");
-                            fotoAcSuhu = contentPath;
+                                path: contentPath,
+                                deskripsi: "Foto Pembersihan Perangkat");
+                            fotoPembersihanPerangkat = contentPath;
                             deskripsiController.clear();
                           }
                         }
                       : () {
-                          fotoAcSuhu.contains("https://jakban.iconpln.co.id")
-                              ? showImageViewer(
-                                  context, Image.network(fotoAcSuhu).image,
+                          fotoPembersihanPerangkat
+                                  .contains("https://jakban.iconpln.co.id")
+                              ? showImageViewer(context,
+                                  Image.network(fotoPembersihanPerangkat).image,
                                   swipeDismissible: true,
                                   doubleTapZoomable: true)
                               : showImageViewer(
-                                  context, Image.file(File(fotoAcSuhu)).image,
+                                  context,
+                                  Image.file(File(fotoPembersihanPerangkat))
+                                      .image,
                                   swipeDismissible: true,
                                   doubleTapZoomable: true);
                         },
@@ -558,46 +568,56 @@ class _DataPerangkatPageState extends State<DataPerangkatPage> {
                       children: [
                         Expanded(
                           child: GestureDetector(
-                            onTap: fotoAcSuhu.isEmpty
+                            onTap: fotoPembersihanPerangkat.isEmpty
                                 ? () async {
                                     await handlePicker();
                                     if (imagesProvider.croppedImageFile !=
                                         null) {
                                       imagesProvider.addDeskripsi(
                                           path: contentPath,
-                                          deskripsi: "Suhu AC");
-                                      fotoAcSuhu = contentPath;
+                                          deskripsi:
+                                              "Foto Pembersihan Perangkat");
+                                      fotoPembersihanPerangkat = contentPath;
                                       deskripsiController.clear();
                                     }
                                   }
                                 : () {
-                                    fotoAcSuhu.contains(
+                                    fotoPembersihanPerangkat.contains(
                                             "https://jakban.iconpln.co.id")
-                                        ? showImageViewer(context,
-                                            Image.network(fotoAcSuhu).image,
+                                        ? showImageViewer(
+                                            context,
+                                            Image.network(
+                                                    fotoPembersihanPerangkat)
+                                                .image,
                                             swipeDismissible: true,
                                             doubleTapZoomable: true)
-                                        : showImageViewer(context,
-                                            Image.file(File(fotoAcSuhu)).image,
+                                        : showImageViewer(
+                                            context,
+                                            Image.file(File(
+                                                    fotoPembersihanPerangkat))
+                                                .image,
                                             swipeDismissible: true,
                                             doubleTapZoomable: true);
                                   },
                             child: Text(
-                              fotoAcSuhu.isEmpty ? "Tambah Foto" : fotoAcSuhu,
+                              fotoPembersihanPerangkat.isEmpty
+                                  ? "Tambah Foto"
+                                  : fotoPembersihanPerangkat,
                               style: buttonText,
                               overflow: TextOverflow.ellipsis,
                             ),
                           ),
                         ),
                         Visibility(
-                          visible: fotoAcSuhu.isEmpty,
+                          visible: fotoPembersihanPerangkat.isEmpty,
                           child: GestureDetector(
                             onTap: () async {
                               await handlePicker();
                               if (imagesProvider.croppedImageFile != null) {
                                 imagesProvider.addDeskripsi(
-                                    path: contentPath, deskripsi: "Suhu AC");
-                                fotoAcSuhu = contentPath;
+                                    path: contentPath,
+                                    deskripsi: "Foto Pembersihan Perangkat");
+                                fotoPembersihanPerangkat = contentPath;
                                 deskripsiController.clear();
                               }
                             },
@@ -680,137 +700,129 @@ class _DataPerangkatPageState extends State<DataPerangkatPage> {
                       : CustomButton(
                           text: "Save",
                           onPressed: () async {
-                            // setState(() {
-                            //   isLoading = true;
-                            // });
-                            // if (acProvider.listAc.isEmpty) {
-                            //   if (suhuController.text.isNotEmpty &&
-                            //       pengujian.isNotEmpty &&
-                            //       fotoAcIndoor.isNotEmpty &&
-                            //       fotoAcOutdoor.isNotEmpty &&
-                            //       fotoAcSuhu.isNotEmpty) {
-                            //     AcNilaiModel ac = await AcService().postAc(
-                            //         acId: widget.perangkat.id,
-                            //         pmId: widget.pm.id,
-                            //         suhuAc: int.parse(suhuController.text),
-                            //         hasilPengujian: pengujian,
-                            //         temuan: temuanController.text,
-                            //         rekomendasi: rekomendasiController.text);
+                            setState(() {
+                              isLoading = true;
+                            });
+                            if (perangkatProvider.listPerangkat.isEmpty) {
+                              if (fotoPerangkat.isNotEmpty &&
+                                  fotoRackPerangkat.isNotEmpty &&
+                                  fotoPembersihanPerangkat.isNotEmpty) {
+                                PerangkatNilaiModel perangkat =
+                                    await PerangkatService().postPerangkat(
+                                        perangkatId: widget.perangkat.id,
+                                        pmId: widget.pm.id,
+                                        temuan: temuanController.text,
+                                        rekomendasi:
+                                            rekomendasiController.text);
 
-                            //     await Future.forEach(
-                            //         imagesProvider.foto.entries,
-                            //         (element) async {
-                            //       await AcService().postFotoAc(
-                            //           acNilaiId: ac.id,
-                            //           urlFoto: element.key,
-                            //           description: element.value);
-                            //     });
-                            //     setState(() {
-                            //       isLoading = false;
-                            //     });
-                            //     // ignore: use_build_context_synchronously
-                            //     Navigator.pushAndRemoveUntil(
-                            //         context,
-                            //         MaterialPageRoute(
-                            //             builder: (context) =>
-                            //                 PmDetailPage(pm: widget.pm)),
-                            //         (route) => false);
-                            //   } else {
-                            //     setState(() {
-                            //       isLoading = false;
-                            //     });
-                            //     ScaffoldMessenger.of(context)
-                            //         .removeCurrentSnackBar();
-                            //     ScaffoldMessenger.of(context).showSnackBar(
-                            //       SnackBar(
-                            //         backgroundColor: primaryRed,
-                            //         content: const Text(
-                            //           'Isi data suhu, pengujian, serta foto dengan lengkap',
-                            //           textAlign: TextAlign.center,
-                            //         ),
-                            //       ),
-                            //     );
-                            //   }
-                            // } else {
-                            //   if (suhuController.text.isNotEmpty &&
-                            //       pengujian.isNotEmpty &&
-                            //       fotoAcIndoor.isNotEmpty &&
-                            //       fotoAcOutdoor.isNotEmpty &&
-                            //       fotoAcSuhu.isNotEmpty) {
-                            //     setState(() {
-                            //       isLoading = true;
-                            //     });
-                            //     AcNilaiModel ac = await AcService().editAc(
-                            //         foto: [
-                            //           const FotoModel(
-                            //               id: 99,
-                            //               url: "url",
-                            //               deskripsi: "deskripsi")
-                            //         ],
-                            //         id: acProvider.listAc.last.id,
-                            //         acId: widget.perangkat.id,
-                            //         pmId: widget.pm.id,
-                            //         suhuAc: int.parse(suhuController.text),
-                            //         hasilPengujian: pengujian,
-                            //         temuan: temuanController.text,
-                            //         rekomendasi: rekomendasiController.text);
-                            //     if (acProvider.listAc.isNotEmpty) {
-                            //       for (var item
-                            //           in acProvider.listAc.last.foto!) {
-                            //         bool isDelete = true;
-                            //         for (var itemImagesProvider
-                            //             in imagesProvider.foto.entries) {
-                            //           String url = item.url.replaceAll(
-                            //               "http://localhost",
-                            //               "https://jakban.iconpln.co.id/backend-plnicon/public");
-                            //           if (url == itemImagesProvider.key) {
-                            //             isDelete = false;
-                            //           }
-                            //         }
-                            //         if (isDelete) {
-                            //           await AcService()
-                            //               .deleteImage(imageId: item.id);
-                            //         }
-                            //       }
-                            //     }
-                            //     await Future.forEach(
-                            //         imagesProvider.foto.entries,
-                            //         (element) async {
-                            //       if (!(element.key.contains(
-                            //           "https://jakban.iconpln.co.id"))) {
-                            //         await AcService().postFotoAc(
-                            //             acNilaiId: ac.id,
-                            //             urlFoto: element.key,
-                            //             description: element.value);
-                            //       }
-                            //     });
-                            //     setState(() {
-                            //       isLoading = false;
-                            //     });
-                            //     // ignore: use_build_context_synchronously
-                            //     Navigator.pushAndRemoveUntil(
-                            //         context,
-                            //         MaterialPageRoute(
-                            //             builder: (context) =>
-                            //                 PmDetailPage(pm: widget.pm)),
-                            //         (route) => false);
-                            //   } else {
-                            //     setState(() {
-                            //       isLoading = false;
-                            //     });
-                            //     ScaffoldMessenger.of(context)
-                            //         .removeCurrentSnackBar();
-                            //     ScaffoldMessenger.of(context).showSnackBar(
-                            //       SnackBar(
-                            //         backgroundColor: primaryRed,
-                            //         content: const Text(
-                            //           'Isi data suhu, pengujian, serta foto dengan lengkap',
-                            //           textAlign: TextAlign.center,
-                            //         ),
-                            //       ),
-                            //     );
-                            //   }
-                            // }
+                                await Future.forEach(
+                                    imagesProvider.foto.entries,
+                                    (element) async {
+                                  await PerangkatService().postFotoPerangkat(
+                                      rackId: widget.perangkat.rackId,
+                                      perangkatNilaiId: perangkat.id,
+                                      urlFoto: element.key,
+                                      description: element.value);
+                                });
+                                setState(() {
+                                  isLoading = false;
+                                });
+                                Navigator.pushAndRemoveUntil(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            PmDetailPage(pm: widget.pm)),
+                                    (route) => false);
+                              } else {
+                                setState(() {
+                                  isLoading = false;
+                                });
+                                ScaffoldMessenger.of(context)
+                                    .removeCurrentSnackBar();
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    backgroundColor: primaryRed,
+                                    content: const Text(
+                                      'Isi data suhu, pengujian, serta foto dengan lengkap',
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
+                                );
+                              }
+                            } else {
+                              if (fotoPerangkat.isNotEmpty &&
+                                  fotoRackPerangkat.isNotEmpty &&
+                                  fotoPembersihanPerangkat.isNotEmpty) {
+                                setState(() {
+                                  isLoading = true;
+                                });
+                                PerangkatNilaiModel perangkat =
+                                    await PerangkatService().editPerangkat(
+                                        id: perangkatProvider
+                                            .listPerangkat.last.id,
+                                        perangkatId: widget.perangkat.id,
+                                        pmId: widget.pm.id,
+                                        temuan: temuanController.text,
+                                        rekomendasi:
+                                            rekomendasiController.text);
+                                if (perangkatProvider
+                                    .listPerangkat.isNotEmpty) {
+                                  for (var item in perangkatProvider
+                                      .listPerangkat.last.foto!) {
+                                    bool isDelete = true;
+                                    for (var itemImagesProvider
+                                        in imagesProvider.foto.entries) {
+                                      String url = item.url.replaceAll(
+                                          "http://localhost",
+                                          "https://jakban.iconpln.co.id/backend-plnicon/public");
+                                      if (url == itemImagesProvider.key) {
+                                        isDelete = false;
+                                      }
+                                    }
+                                    if (isDelete) {
+                                      await PerangkatService()
+                                          .deleteImage(imageId: item.id);
+                                    }
+                                  }
+                                }
+                                await Future.forEach(
+                                    imagesProvider.foto.entries,
+                                    (element) async {
+                                  if (!(element.key.contains(
+                                      "https://jakban.iconpln.co.id"))) {
+                                    await PerangkatService().postFotoPerangkat(
+                                        rackId: widget.perangkat.rackId,
+                                        perangkatNilaiId: perangkat.id,
+                                        urlFoto: element.key,
+                                        description: element.value);
+                                  }
+                                });
+                                setState(() {
+                                  isLoading = false;
+                                });
+                                Navigator.pushAndRemoveUntil(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            PmDetailPage(pm: widget.pm)),
+                                    (route) => false);
+                              } else {
+                                setState(() {
+                                  isLoading = false;
+                                });
+                                ScaffoldMessenger.of(context)
+                                    .removeCurrentSnackBar();
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    backgroundColor: primaryRed,
+                                    content: const Text(
+                                      'Isi foto dengan lengkap',
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
+                                );
+                              }
+                            }
                           },
                           color: primaryGreen,
                           clickColor: clickGreen),

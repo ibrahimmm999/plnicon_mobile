@@ -35,7 +35,7 @@ class PerangkatService {
 
   Future<PerangkatNilaiModel> postPerangkat(
       {required int perangkatId,
-      required String pmId,
+      required int pmId,
       required String temuan,
       required String rekomendasi}) async {
     late Uri url = UrlService().api('perangkat-nilai');
@@ -69,7 +69,7 @@ class PerangkatService {
   Future<PerangkatNilaiModel> editPerangkat(
       {required int id,
       required int perangkatId,
-      required String pmId,
+      required int pmId,
       required String temuan,
       required String rekomendasi}) async {
     late Uri url = UrlService().api('edit-perangkat-nilai');
@@ -104,6 +104,7 @@ class PerangkatService {
   Future<bool> postFotoPerangkat(
       {required int perangkatNilaiId,
       required String urlFoto,
+      required int rackId,
       required String description}) async {
     late Uri url = UrlService().api('perangkat-foto');
 
@@ -117,6 +118,7 @@ class PerangkatService {
     request.headers.addAll(headers);
 
     request.fields['perangkat_nilai_id'] = perangkatNilaiId.toString();
+    request.fields['rack_id'] = rackId.toString();
     request.fields['deskripsi'] = description;
     request.files.add(await http.MultipartFile.fromPath('fotoFile', urlFoto));
 
