@@ -3,6 +3,7 @@ import 'package:plnicon_mobile/models/pm_model.dart';
 import 'package:plnicon_mobile/pages/ac_page.dart';
 import 'package:plnicon_mobile/pages/add_master/add_ac_page.dart';
 import 'package:plnicon_mobile/pages/add_master/add_ats_page.dart';
+import 'package:plnicon_mobile/pages/add_master/add_baterai_page.dart';
 import 'package:plnicon_mobile/pages/add_master/add_environment_page.dart';
 import 'package:plnicon_mobile/pages/add_master/add_exalarm_page.dart';
 import 'package:plnicon_mobile/pages/add_master/add_genset_page.dart';
@@ -727,7 +728,17 @@ class _PmDetailPageState extends State<PmDetailPage> {
                                     style: buttonText.copyWith(
                                         color: textDarkColor),
                                   ),
-                                  const Icon(Icons.add)
+                                  GestureDetector(
+                                      onTap: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  AddBateraiPage(
+                                                      popId: widget.pm.popId)),
+                                        );
+                                      },
+                                      child: const Icon(Icons.add))
                                 ],
                               ),
                             ),

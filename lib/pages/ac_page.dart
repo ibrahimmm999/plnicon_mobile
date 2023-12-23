@@ -197,7 +197,7 @@ class _AcPageState extends State<AcPage> {
                     style: buttonText.copyWith(color: textDarkColor),
                   ),
                   const SizedBox(
-                    height: 32,
+                    height: 52,
                   ),
                   CustomButton(
                       text: "Edit Data",

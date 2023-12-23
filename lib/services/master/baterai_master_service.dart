@@ -2,6 +2,7 @@
 
 import 'dart:convert';
 
+import 'package:intl/intl.dart';
 import 'package:plnicon_mobile/models/master/baterai_master_model.dart';
 import 'package:plnicon_mobile/services/url_service.dart';
 import 'package:http/http.dart' as http;
@@ -9,8 +10,7 @@ import 'package:plnicon_mobile/services/user_service.dart';
 
 class BateraiMasterService {
   Future<BateraiMasterModel> postBateraiMaster(
-      {required int bateraiId,
-      required int popId,
+      {required int popId,
       required int bankId,
       required int rectId,
       required String nama,
@@ -20,8 +20,8 @@ class BateraiMasterService {
       required String sn,
       required String persentase,
       required String vbatt,
-      required DateTime tglInstalasi,
-      required DateTime tglUji}) async {
+      String? tglInstalasi,
+      required String tglUji}) async {
     late Uri url = UrlService().api('baterai');
 
     var headers = {
@@ -29,7 +29,6 @@ class BateraiMasterService {
       'Authorization': await UserService().getTokenPreference() ?? '',
     };
     var body = {
-      'id': bateraiId,
       'pop_id': popId,
       'rect_id': rectId,
       'bank_id': bankId,
@@ -40,7 +39,8 @@ class BateraiMasterService {
       'sn': sn,
       'vbatt': vbatt,
       'persentase': persentase,
-      'tgl_instalasi': tglInstalasi,
+      'tgl_instalasi': tglInstalasi ??
+          DateFormat('yyyy-MM-dd hh:mm:ss').format(DateTime.now()),
       'tgl_uji': tglUji
     };
 
@@ -70,8 +70,8 @@ class BateraiMasterService {
       required String sn,
       required String persentase,
       required String vbatt,
-      required DateTime tglInstalasi,
-      required DateTime tglUji}) async {
+      String? tglInstalasi,
+      required String tglUji}) async {
     late Uri url = UrlService().api('edit-baterai');
 
     var headers = {
@@ -90,7 +90,8 @@ class BateraiMasterService {
       'sn': sn,
       'vbatt': vbatt,
       'persentase': persentase,
-      'tgl_instalasi': tglInstalasi,
+      'tgl_instalasi': tglInstalasi ??
+          DateFormat('yyyy-MM-dd hh:mm:ss').format(DateTime.now()),
       'tgl_uji': tglUji
     };
 
@@ -105,6 +106,32 @@ class BateraiMasterService {
       return BateraiMasterModel.fromJson(data);
     } else {
       throw "Edit data baterai failed";
+    }
+  }
+
+  Future<bool> delete({required int id}) async {
+    late Uri url = UrlService().api('delete-baterai');
+
+    var headers = {
+      'Content-Type': 'application/json',
+      'Authorization': await UserService().getTokenPreference() ?? '',
+    };
+    var body = {
+      'id': id,
+    };
+    try {
+      var response = await http.post(
+        url,
+        headers: headers,
+        body: jsonEncode(body),
+      );
+      if (response.statusCode == 200) {
+        return true;
+      } else {
+        throw "Delete data baterai failed";
+      }
+    } catch (e) {
+      rethrow;
     }
   }
 }
